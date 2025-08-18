@@ -361,6 +361,10 @@
             background: var(--secondary-blue);
         }
 
+        .export-btn.fsm {
+            background: var(--success-green);
+        }
+
         .export-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
@@ -661,6 +665,9 @@
                     </button>
                     <button class="export-btn client" onclick="exportClientInstructions()">
                         Export Client Instructions
+                    </button>
+                    <button class="export-btn fsm" onclick="exportFSMSummary()">
+                        Export FSM Job Summary
                     </button>
                 </div>
             </div>
@@ -1186,6 +1193,165 @@
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
             }).format(amount);
+        }
+
+        function exportFSMSummary() {
+            // Gather all the key data points
+            const serviceType = document.getElementById('serviceType').selectedOptions[0].text;
+            const storyCount = document.getElementById('storyCount').selectedOptions[0].text;
+            const windowCondition = document.getElementById('windowCondition').selectedOptions[0].text;
+            const accessDifficulty = document.getElementById('accessDifficulty').selectedOptions[0].text;
+            const timeOfService = document.getElementById('timeOfService').selectedOptions[0].text;
+            const buildingType = document.getElementById('buildingType').selectedOptions[0].text;
+            const crewSize = document.getElementById('crewSize').value;
+            
+            // Get window counts
+            let windowSummary = '';
+            let totalWindows = 0;
+            const storyCountVal = document.getElementById('storyCount').value;
+            let storiesNum = storyCountVal === 'mid_rise' ? 10 : storyCountVal === 'high_rise' ? 20 : parseInt(storyCountVal);
+            
+            for (let i = 1; i <= storiesNum; i++) {
+                const small = parseInt(document.getElementById(`story${i}_small`)?.value || 0);
+                const medium = parseInt(document.getElementById(`story${i}_medium`)?.value || 0);
+                const large = parseInt(document.getElementById(`story${i}_large`)?.value || 0);
+                const xlarge = parseInt(document.getElementById(`story${i}_xlarge`)?.value || 0);
+                const doors = parseInt(document.getElementById(`story${i}_doors`)?.value || 0);
+                
+                if (small + medium + large + xlarge + doors > 0) {
+                    windowSummary += `Story ${i}: ${small} Small, ${medium} Medium, ${large} Large, ${xlarge} XL, ${doors} Doors\\line`;
+                }
+                totalWindows += small + medium + large + xlarge + doors;
+            }
+            
+            // Get pricing results - need to calculate vendor payment
+            const finalPrice = document.querySelector('.result-card.highlight .value').textContent;
+            const grossProfit = document.querySelectorAll('.result-card.highlight .value')[1].textContent;
+            const laborHours = document.querySelector('.result-card .value').textContent;
+            const pricePerWindow = document.querySelectorAll('.result-card .value')[5].textContent;
+            
+            // Calculate total vendor payment (Final Price - City Wide Margin)
+            const finalPriceNum = parseFloat(finalPrice.replace(/[$,]/g, ''));
+            const grossProfitNum = parseFloat(grossProfit.replace(/[$,]/g, ''));
+            const totalVendorPayment = finalPriceNum - grossProfitNum;
+            
+            // Get provider selections
+            const laborProvider = getProviderType('labor');
+            const equipmentProvider = getProviderType('equipment');
+            const materialsProvider = getProviderType('materials');
+            const suppliesProvider = getProviderType('supplies');
+            
+            // Get equipment details
+            const equipmentType = equipmentRequirements[storyCountVal]?.type || 'ground';
+            const needsLift = equipmentRequirements[storyCountVal]?.needsLift || false;
+            
+            // Get rates
+            const rawLaborRate = document.getElementById('rawLaborRate').value;
+            const icRate = getICLoadedRate().toFixed(2);
+            const margin = document.getElementById('cityWideMargin').value;
+            
+            // Check add-ons
+            let addOns = [];
+            if (document.getElementById('screenCleaning').checked) addOns.push('Screen Cleaning');
+            if (document.getElementById('glassdoors').checked) addOns.push('Glass Doors Extra');
+            if (document.getElementById('framesCleaning').checked) addOns.push('Frame Cleaning');
+            if (document.getElementById('sillCleaning').checked) addOns.push('Sill Cleaning');
+            if (document.getElementById('mineralRemoval').checked) addOns.push('Mineral Removal');
+            if (document.getElementById('rustRemoval').checked) addOns.push('Rust Treatment');
+            
+            const content = `{\\rtf1\\ansi\\deff0 {\\fonttbl {\\f0 Times New Roman;}}
+\\f0\\fs24
+FACILITY SOLUTIONS MANAGER - COMPLETE JOB SUMMARY\\line
+Las Vegas Commercial Window Cleaning\\line\\line
+
+======== JOB OVERVIEW ========\\line
+Service Type: ${serviceType}\\line
+Building Type: ${buildingType}\\line
+Building Height: ${storyCount}\\line
+Total Windows: ${totalWindows} windows\\line
+Estimated Labor: ${laborHours} hours\\line
+Crew Size Recommended: ${crewSize} people\\line\\line
+
+======== WINDOW BREAKDOWN ========\\line
+${windowSummary}\\line
+
+======== PRICING SUMMARY ========\\line
+Final Client Price: ${finalPrice}\\line
+Total Vendor Payment: ${new Intl.NumberFormat('en-US', {style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0}).format(totalVendorPayment)}\\line
+City Wide Gross Profit: ${grossProfit}\\line
+City Wide Margin: ${margin}%\\line
+Price Per Window: ${pricePerWindow}\\line\\line
+
+======== VENDOR PAYMENT STRUCTURE ========\\line
+Labor Provider: ${laborProvider}\\line
+Raw Labor Rate: ${rawLaborRate}/hour\\line
+IC Loaded Rate: ${icRate}/hour\\line
+Equipment Provider: ${equipmentProvider}\\line
+Materials Provider: ${materialsProvider}\\line
+Supplies Provider: ${suppliesProvider}\\line\\line
+
+======== SITE CONDITIONS & CHALLENGES ========\\line
+Window Condition: ${windowCondition}\\line
+Access Difficulty: ${accessDifficulty}\\line
+Service Timing: ${timeOfService}\\line
+Equipment Required: ${equipmentType.replace('_', ' ').toUpperCase()}\\line
+${needsLift ? `Lift Rental Required: YES - Budget for daily rental costs\\line` : `Lift Rental Required: NO - Ground/pole access only\\line`}\\line
+
+======== ADD-ON SERVICES ========\\line
+${addOns.length > 0 ? addOns.join(', ') : 'None selected'}\\line\\line
+
+======== VENDOR QUESTIONS TO ASK ========\\line
+1. Do you have current general liability insurance?\\line
+2. Are your crews trained on water-fed pole systems?\\line
+3. Do you have RO/DI water purification for Las Vegas hard water?\\line
+4. ${needsLift ? 'Can you provide certified lift operators?' : 'Do you have poles up to 40 feet for 3-story access?'}\\line
+5. Are you available for the requested service timing?\\line
+6. Do you guarantee spot-free results in Las Vegas conditions?\\line
+7. What is your plan for dust storm delays/rescheduling?\\line\\line
+
+======== CLIENT COMMUNICATION POINTS ========\\line
+1. Service will be performed during optimal hours (early morning preferred)\\line
+2. ${needsLift ? 'Lift equipment will be on-site - ensure clear access paths' : 'Minimal equipment footprint - mostly ground-based tools'}\\line
+3. Water usage will be minimal due to purified water systems\\line
+4. Crew will work around building operations and minimize disruption\\line
+5. Post-service inspection recommended within 24 hours\\line
+6. Hard water stain prevention included in service\\line\\line
+
+======== SCHEDULING CONSIDERATIONS ========\\line
+- Avoid scheduling during dust storm season peaks (July-August)\\line
+- Early morning start times (6-10 AM) recommended in summer\\line
+- Allow extra time for ${windowCondition.toLowerCase()} window conditions\\line
+- ${accessDifficulty !== 'easy' ? 'Site walk-through recommended due to access challenges' : 'Standard access - no site visit required'}\\line
+- Weather delays likely during monsoon season (July-September)\\line\\line
+
+======== QUALITY ASSURANCE CHECKLIST ========\\line
+[ ] All windows streak-free and spot-free\\line
+[ ] Hard water deposits completely removed\\line
+[ ] Window frames and sills clean (if selected)\\line
+[ ] Screens properly reinstalled (if applicable)\\line
+[ ] Site clean-up completed\\line
+[ ] Client walkthrough and approval\\line\\line
+
+======== EMERGENCY CONTACTS & BACKUP PLANS ========\\line
+- Have backup vendor identified for weather delays\\line
+- Confirm equipment rental company 24-hour support\\line
+- Ensure client contact for access issues\\line
+- Weather monitoring for dust storm/wind conditions\\line\\line
+
+======== PROFITABILITY ANALYSIS ========\\line
+Final Client Price: ${finalPrice}\\line
+Less: Total Vendor Payment: ${new Intl.NumberFormat('en-US', {style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0}).format(totalVendorPayment)}\\line
+Equals: City Wide Profit: ${grossProfit} (${margin}% margin)\\line\\line
+Labor efficiency target: Complete within ${laborHours} hours to maintain profitability.\\line
+Key cost drivers: ${needsLift ? 'Lift rental costs - monitor daily rates' : 'Labor time - watch for condition-related delays'}\\line\\line
+
+======== NOTES ========\\line
+Generated: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}\\line
+Calculator Version: Las Vegas Commercial Window Cleaning v2.0\\line
+All pricing includes Las Vegas environmental factors and market rates.\\line
+}`;
+
+            downloadRTF(content, 'fsm-job-summary.rtf');
         }
 
         function exportVendorSpecs() {
