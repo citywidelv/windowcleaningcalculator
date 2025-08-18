@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Las Vegas Commercial Window Cleaning Calculator</title>
+    <style>
+        :root {
+            --primary-blue: #1E3A8A;
+            --secondary-blue: #3B82F6;
+            --accent-red: #DC2626;
+            --dark-gray: #374151;
+            --light-gray: #F3F4F6;
+            --success-green: #059669;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: white;
+            text-align: center;
+            padding: 2rem 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .cost-provider-section {
+            grid-column: 1 / -1;
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+        }
+
+        .cost-provider-section h3 {
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .toggle-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .toggle-group {
+            text-align: center;
+        }
+
+        .toggle-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark-gray);
+        }
+
+        .toggle-buttons {
+            display: flex;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 2px solid var(--light-gray);
+        }
+
+        .toggle-buttons button {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: none;
+            background: white;
+            color: var(--dark-gray);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .vendor-btn.active {
+            background: var(--accent-red);
+            color: white;
+        }
+
+        .inhouse-btn.active {
+            background: var(--success-green);
+            color: white;
+        }
+
+        .toggle-buttons button:hover {
+            opacity: 0.8;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+        }
+
+        .card h3 {
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            border-bottom: 2px solid var(--light-gray);
+            padding-bottom: 0.5rem;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        .input-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--light-gray);
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: var(--secondary-blue);
+        }
+
+        .story-section {
+            background: #F8FAFC;
+            border: 2px solid var(--secondary-blue);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .story-section h4 {
+            color: var(--secondary-blue);
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+        }
+
+        .window-count-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .window-input {
+            text-align: center;
+        }
+
+        .window-input label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+            margin-bottom: 0.25rem;
+        }
+
+        .window-input input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--light-gray);
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .ic-breakdown {
+            background: #F8FAFC;
+            border: 2px solid var(--secondary-blue);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .ic-breakdown h4 {
+            color: var(--secondary-blue);
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+        }
+
+        .breakdown-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .breakdown-grid .label {
+            color: var(--dark-gray);
+        }
+
+        .breakdown-grid .value {
+            text-align: right;
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+
+        .results-section {
+            grid-column: 1 / -1;
+            margin-top: 2rem;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .result-card.highlight {
+            background: linear-gradient(135deg, var(--accent-red), #EF4444);
+            color: white;
+        }
+
+        .result-card h4 {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.8;
+        }
+
+        .result-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .result-card .unit {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .breakdown-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .breakdown-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .breakdown-card h4 {
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            border-bottom: 1px solid var(--light-gray);
+            padding-bottom: 0.5rem;
+        }
+
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            padding: 0.25rem 0;
+        }
+
+        .breakdown-item.total {
+            border-top: 2px solid var(--light-gray);
+            margin-top: 0.5rem;
+            padding-top: 0.75rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+
+        .export-section {
+            grid-column: 1 / -1;
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .export-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .export-btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .export-btn.vendor {
+            background: var(--accent-red);
+        }
+
+        .export-btn.client {
+            background: var(--secondary-blue);
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .calculator-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .input-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .toggle-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .breakdown-section {
+                grid-template-columns: 1fr;
+            }
+
+            .export-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .window-count-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Las Vegas Commercial Window Cleaning Calculator</h1>
+        <p>Professional Window Cleaning Pricing by Story Count & Window Types</p>
+    </div>
+
+    <div class="container">
+        <!-- Cost Provider Toggle System -->
+        <div class="cost-provider-section">
+            <h3>Cost Provider Selection</h3>
+            <div class="toggle-grid">
+                <div class="toggle-group">
+                    <label>Labor</label>
+                    <div class="toggle-buttons">
+                        <button class="vendor-btn active" data-category="labor">Vendor</button>
+                        <button class="inhouse-btn" data-category="labor">In-House</button>
+                    </div>
+                </div>
+                <div class="toggle-group">
+                    <label>Equipment</label>
+                    <div class="toggle-buttons">
+                        <button class="vendor-btn active" data-category="equipment">Vendor</button>
+                        <button class="inhouse-btn" data-category="equipment">In-House</button>
+                    </div>
+                </div>
+                <div class="toggle-group">
+                    <label>Materials</label>
+                    <div class="toggle-buttons">
+                        <button class="vendor-btn active" data-category="materials">Vendor</button>
+                        <button class="inhouse-btn" data-category="materials">In-House</button>
+                    </div>
+                </div>
+                <div class="toggle-group">
+                    <label>Supplies</label>
+                    <div class="toggle-buttons">
+                        <button class="vendor-btn active" data-category="supplies">Vendor</button>
+                        <button class="inhouse-btn" data-category="supplies">In-House</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="calculator-grid">
+            <!-- Project Details -->
+            <div class="card">
+                <h3>Building & Service Details</h3>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="serviceType">Service Type</label>
+                        <select id="serviceType" onchange="updateCalculations()">
+                            <option value="maintenance_exterior">Maintenance - Exterior Only</option>
+                            <option value="maintenance_interior">Maintenance - Interior Only</option>
+                            <option value="maintenance_both">Maintenance - Interior & Exterior</option>
+                            <option value="post_construction">Post-Construction Cleanup</option>
+                            <option value="initial_cleaning">Initial Deep Cleaning</option>
+                            <option value="high_rise">High-Rise Specialist Cleaning</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="storyCount">Number of Stories</label>
+                        <select id="storyCount" onchange="generateStoryInputs()">
+                            <option value="1">1 Story (Ground Level)</option>
+                            <option value="2">2 Stories (Tucker Pole)</option>
+                            <option value="3">3 Stories (Extended Pole/Lift)</option>
+                            <option value="4">4 Stories (Scissor Lift)</option>
+                            <option value="5">5 Stories (Scissor Lift)</option>
+                            <option value="6">6 Stories (Scissor Lift)</option>
+                            <option value="mid_rise">7-15 Stories (Boom Lift)</option>
+                            <option value="high_rise">16+ Stories (Rappelling/RDS)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="windowCondition">Window Condition</label>
+                        <select id="windowCondition" onchange="updateCalculations()">
+                            <option value="excellent">Excellent - Recently cleaned</option>
+                            <option value="good">Good - Well-maintained</option>
+                            <option value="fair">Fair - Some buildup/staining</option>
+                            <option value="poor">Poor - Heavy buildup</option>
+                            <option value="very_poor">Very Poor - Severe staining/oxidation</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="accessDifficulty">Access Difficulty</label>
+                        <select id="accessDifficulty" onchange="updateCalculations()">
+                            <option value="easy">Easy - Open access, minimal obstacles</option>
+                            <option value="moderate">Moderate - Some landscaping/obstacles</option>
+                            <option value="difficult">Difficult - Dense landscaping/equipment</option>
+                            <option value="very_difficult">Very Difficult - Severe access restrictions</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="timeOfService">Time of Service</label>
+                        <select id="timeOfService" onchange="updateCalculations()">
+                            <option value="normal">Normal Hours (6 AM - 6 PM)</option>
+                            <option value="early_morning">Early Morning (4 AM - 8 AM) +15%</option>
+                            <option value="evening">Evening (6 PM - 10 PM) +20%</option>
+                            <option value="weekend">Weekend +25%</option>
+                            <option value="holiday">Holiday +50%</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="buildingType">Building Type</label>
+                        <select id="buildingType" onchange="updateCalculations()">
+                            <option value="office">Office Building</option>
+                            <option value="retail">Retail/Shopping Center</option>
+                            <option value="medical">Medical Facility</option>
+                            <option value="industrial">Industrial/Warehouse</option>
+                            <option value="hotel">Hotel/Hospitality</option>
+                            <option value="restaurant">Restaurant/Food Service</option>
+                            <option value="mixed_use">Mixed Use</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Dynamic Story Window Inputs -->
+                <div id="storyInputsContainer">
+                    <!-- Populated by JavaScript -->
+                </div>
+
+                <!-- Add-On Services -->
+                <div class="input-group full-width">
+                    <label>Additional Services</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="screenCleaning" onchange="updateCalculations()">
+                            <label for="screenCleaning">Screen Cleaning & Removal</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="glassdoors" onchange="updateCalculations()">
+                            <label for="glassdoors">Glass Doors & Storefronts</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="framesCleaning" onchange="updateCalculations()">
+                            <label for="framesCleaning">Window Frame Cleaning</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="sillCleaning" onchange="updateCalculations()">
+                            <label for="sillCleaning">Sill & Track Cleaning</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="mineralRemoval" onchange="updateCalculations()">
+                            <label for="mineralRemoval">Hard Water Stain Removal</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="rustRemoval" onchange="updateCalculations()">
+                            <label for="rustRemoval">Rust & Oxidation Treatment</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vendor Labor & Equipment -->
+            <div class="card">
+                <h3>Vendor Labor & Equipment Rates</h3>
+
+                <!-- IC Rate Breakdown -->
+                <div class="ic-breakdown">
+                    <h4>Independent Contractor Rate Breakdown</h4>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label for="rawLaborRate">Raw Labor Rate ($/hour)</label>
+                            <input type="number" id="rawLaborRate" value="25.00" step="0.50" onchange="updateICBreakdown()">
+                        </div>
+                        <div class="input-group">
+                            <label for="stateTaxRate">State Income Tax (%)</label>
+                            <input type="number" id="stateTaxRate" value="0.00" step="0.01" onchange="updateICBreakdown()">
+                        </div>
+                        <div class="input-group">
+                            <label for="icProfitRate">IC Profit & OH (%)</label>
+                            <input type="number" id="icProfitRate" value="10.0" step="0.1" onchange="updateICBreakdown()">
+                        </div>
+                    </div>
+                    <div class="breakdown-grid" id="icBreakdownDisplay">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="crewSize">Crew Size</label>
+                        <select id="crewSize" onchange="updateCalculations()">
+                            <option value="1">1 Person</option>
+                            <option value="2" selected>2 People</option>
+                            <option value="3">3 People</option>
+                            <option value="4">4 People</option>
+                            <option value="5">5 People</option>
+                            <option value="6">6 People</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="cityWideMargin">City Wide Margin (%)</label>
+                        <input type="number" id="cityWideMargin" value="35" step="1" onchange="updateCalculations()">
+                    </div>
+                    <div class="input-group">
+                        <label for="equipmentDailyRate">Base Equipment ($/day)</label>
+                        <input type="number" id="equipmentDailyRate" value="150" onchange="updateCalculations()">
+                    </div>
+                    <div class="input-group">
+                        <label for="liftRentalDaily">Lift Rental ($/day)</label>
+                        <input type="number" id="liftRentalDaily" value="253" onchange="updateCalculations()">
+                    </div>
+                    <div class="input-group">
+                        <label for="materialCostPerWindow">Materials ($/window)</label>
+                        <input type="number" id="materialCostPerWindow" value="0.75" step="0.05" onchange="updateCalculations()">
+                    </div>
+                    <div class="input-group">
+                        <label for="supplyCostBase">Supply Cost Base ($)</label>
+                        <input type="number" id="supplyCostBase" value="75" onchange="updateCalculations()">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section">
+            <div class="card">
+                <h3>Pricing Results</h3>
+                <div class="results-grid" id="resultsGrid">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Detailed Breakdown -->
+            <div class="breakdown-section" id="breakdownSection">
+                <!-- Populated by JavaScript -->
+            </div>
+
+            <!-- Export Functions -->
+            <div class="export-section">
+                <h3>Export Options</h3>
+                <p style="margin-bottom: 1rem;">Generate professional documents for vendors and clients</p>
+                <div class="export-buttons">
+                    <button class="export-btn vendor" onclick="exportVendorSpecs()">
+                        Export Vendor Specifications
+                    </button>
+                    <button class="export-btn client" onclick="exportClientInstructions()">
+                        Export Client Instructions
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Window size pricing per window (based on Las Vegas market research)
+        const windowPricing = {
+            small: { minutes: 3, description: "Small (30x30 or smaller)" },
+            medium: { minutes: 5, description: "Medium (30x50 typical office)" },
+            large: { minutes: 8, description: "Large (4x6 or storefront)" },
+            xlarge: { minutes: 12, description: "Extra Large (6x8+ floor-to-ceiling)" },
+            doors: { minutes: 10, description: "Glass Doors & Entries" }
+        };
+
+        // Service type multipliers
+        const serviceMultipliers = {
+            maintenance_exterior: 1.0,
+            maintenance_interior: 1.2,
+            maintenance_both: 1.8,
+            post_construction: 3.5,
+            initial_cleaning: 2.0,
+            high_rise: 2.5
+        };
+
+        // Condition multipliers
+        const conditionMultipliers = {
+            excellent: 0.9,
+            good: 1.0,
+            fair: 1.3,
+            poor: 1.7,
+            very_poor: 2.2
+        };
+
+        // Access difficulty multipliers
+        const difficultyMultipliers = {
+            easy: 1.0,
+            moderate: 1.15,
+            difficult: 1.35,
+            very_difficult: 1.60
+        };
+
+        // Time multipliers
+        const timeMultipliers = {
+            normal: 1.0,
+            early_morning: 1.15,
+            evening: 1.20,
+            weekend: 1.25,
+            holiday: 1.50
+        };
+
+        // Equipment requirements by story count
+        const equipmentRequirements = {
+            1: { needsLift: false, type: 'ground', multiplier: 1.0 },
+            2: { needsLift: false, type: 'tucker_pole', multiplier: 1.1 },
+            3: { needsLift: true, type: 'scissor_lift', dailyRate: 253, multiplier: 1.2 },
+            4: { needsLift: true, type: 'scissor_lift', dailyRate: 253, multiplier: 1.3 },
+            5: { needsLift: true, type: 'scissor_lift', dailyRate: 253, multiplier: 1.4 },
+            6: { needsLift: true, type: 'scissor_lift', dailyRate: 253, multiplier: 1.5 },
+            mid_rise: { needsLift: true, type: 'boom_lift', dailyRate: 839, multiplier: 2.0 },
+            high_rise: { needsLift: false, type: 'rappelling', setupHours: 4, multiplier: 3.0 }
+        };
+
+        function generateStoryInputs() {
+            const storyCount = document.getElementById('storyCount').value;
+            const container = document.getElementById('storyInputsContainer');
+            
+            let storiesNum;
+            if (storyCount === 'mid_rise') {
+                storiesNum = 10; // Average for mid-rise
+            } else if (storyCount === 'high_rise') {
+                storiesNum = 20; // Average for high-rise
+            } else {
+                storiesNum = parseInt(storyCount);
+            }
+            
+            container.innerHTML = '';
+            
+            for (let i = 1; i <= storiesNum; i++) {
+                const storySection = document.createElement('div');
+                storySection.className = 'story-section';
+                storySection.innerHTML = `
+                    <h4>Story ${i} Window Count</h4>
+                    <div class="window-count-grid">
+                        <div class="window-input">
+                            <label>Small Windows</label>
+                            <input type="number" id="story${i}_small" value="0" min="0" onchange="updateCalculations()">
+                            <small>${windowPricing.small.description}</small>
+                        </div>
+                        <div class="window-input">
+                            <label>Medium Windows</label>
+                            <input type="number" id="story${i}_medium" value="${i === 1 ? '10' : '8'}" min="0" onchange="updateCalculations()">
+                            <small>${windowPricing.medium.description}</small>
+                        </div>
+                        <div class="window-input">
+                            <label>Large Windows</label>
+                            <input type="number" id="story${i}_large" value="${i === 1 ? '4' : '2'}" min="0" onchange="updateCalculations()">
+                            <small>${windowPricing.large.description}</small>
+                        </div>
+                        <div class="window-input">
+                            <label>Extra Large</label>
+                            <input type="number" id="story${i}_xlarge" value="0" min="0" onchange="updateCalculations()">
+                            <small>${windowPricing.xlarge.description}</small>
+                        </div>
+                        <div class="window-input">
+                            <label>Glass Doors</label>
+                            <input type="number" id="story${i}_doors" value="${i === 1 ? '2' : '0'}" min="0" onchange="updateCalculations()">
+                            <small>${windowPricing.doors.description}</small>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(storySection);
+            }
+            
+            updateCalculations();
+        }
+
+        function updateICBreakdown() {
+            const rawRate = parseFloat(document.getElementById('rawLaborRate').value) || 25.00;
+            const stateTax = parseFloat(document.getElementById('stateTaxRate').value) || 0.00;
+            const icProfitRate = parseFloat(document.getElementById('icProfitRate').value) || 10.0;
+            
+            const fica = rawRate * 0.0765;
+            const futa = rawRate * 0.0060;
+            const workComp = rawRate * 0.0250;
+            const gl = rawRate * 0.0050;
+            const stateTaxAmount = rawRate * (stateTax / 100);
+            
+            const subTotal = rawRate + fica + futa + workComp + gl + stateTaxAmount;
+            const icProfitAmount = subTotal * (icProfitRate / 100);
+            const icLoadedRate = subTotal + icProfitAmount;
+            
+            const breakdownDisplay = document.getElementById('icBreakdownDisplay');
+            breakdownDisplay.innerHTML = `
+                <div class="label">Raw Labor Rate:</div>
+                <div class="value">$${rawRate.toFixed(2)}</div>
+                <div class="label">FICA (7.65%):</div>
+                <div class="value">$${fica.toFixed(2)}</div>
+                <div class="label">FUTA (0.60%):</div>
+                <div class="value">$${futa.toFixed(2)}</div>
+                <div class="label">Work Comp (2.50%):</div>
+                <div class="value">$${workComp.toFixed(2)}</div>
+                <div class="label">General Liability (0.50%):</div>
+                <div class="value">$${gl.toFixed(2)}</div>
+                <div class="label">State Income Tax:</div>
+                <div class="value">$${stateTaxAmount.toFixed(2)}</div>
+                <div class="label">Subtotal:</div>
+                <div class="value">$${subTotal.toFixed(2)}</div>
+                <div class="label">IC Profit & OH (${icProfitRate}%):</div>
+                <div class="value">$${icProfitAmount.toFixed(2)}</div>
+                <div class="label"><strong>IC Loaded Rate:</strong></div>
+                <div class="value"><strong>$${icLoadedRate.toFixed(2)}</strong></div>
+            `;
+            
+            updateCalculations();
+        }
+
+        function getICLoadedRate() {
+            const rawRate = parseFloat(document.getElementById('rawLaborRate').value) || 25.00;
+            const stateTax = parseFloat(document.getElementById('stateTaxRate').value) || 0.00;
+            const icProfitRate = parseFloat(document.getElementById('icProfitRate').value) || 10.0;
+            
+            const fica = rawRate * 0.0765;
+            const futa = rawRate * 0.0060;
+            const workComp = rawRate * 0.0250;
+            const gl = rawRate * 0.0050;
+            const stateTaxAmount = rawRate * (stateTax / 100);
+            
+            const subTotal = rawRate + fica + futa + workComp + gl + stateTaxAmount;
+            const icProfitAmount = subTotal * (icProfitRate / 100);
+            
+            return subTotal + icProfitAmount;
+        }
+
+        function calculateInHouseLoadedRate() {
+            const rawRate = parseFloat(document.getElementById('rawLaborRate').value) || 25.00;
+            const stateTax = parseFloat(document.getElementById('stateTaxRate').value) || 0.00;
+            
+            const fica = rawRate * 0.0765;
+            const futa = rawRate * 0.0060;
+            const workComp = rawRate * 0.0250;
+            const gl = rawRate * 0.0050;
+            const stateTaxAmount = rawRate * (stateTax / 100);
+            
+            return rawRate + fica + futa + workComp + gl + stateTaxAmount;
+        }
+
+        function calculateProviderCosts(category, baseCost) {
+            const vendorBtn = document.querySelector(`[data-category="${category}"] .vendor-btn`);
+            if (!vendorBtn) return baseCost; // Fallback if element not found
+            
+            const isVendor = vendorBtn.classList.contains('active');
+            const margin = parseFloat(document.getElementById('cityWideMargin').value) || 35;
+            
+            if (category === 'labor') {
+                if (isVendor) {
+                    const icLoadedRate = getICLoadedRate();
+                    return icLoadedRate / (1 - margin / 100);
+                } else {
+                    const inHouseRate = calculateInHouseLoadedRate();
+                    return inHouseRate / (1 - margin / 100);
+                }
+            } else {
+                if (isVendor) {
+                    const costWithICProfit = baseCost * 1.10;
+                    return costWithICProfit / (1 - margin / 100);
+                } else {
+                    return baseCost / (1 - margin / 100);
+                }
+            }
+        }
+
+        function updateCalculations() {
+            const storyCount = document.getElementById('storyCount').value;
+            const serviceType = document.getElementById('serviceType').value;
+            const windowCondition = document.getElementById('windowCondition').value;
+            const accessDifficulty = document.getElementById('accessDifficulty').value;
+            const timeOfService = document.getElementById('timeOfService').value;
+            const crewSize = parseInt(document.getElementById('crewSize').value) || 2;
+            
+            // Calculate total windows and minutes
+            let totalWindows = 0;
+            let totalMinutes = 0;
+            
+            let storiesNum;
+            if (storyCount === 'mid_rise') {
+                storiesNum = 10;
+            } else if (storyCount === 'high_rise') {
+                storiesNum = 20;
+            } else {
+                storiesNum = parseInt(storyCount);
+            }
+            
+            for (let i = 1; i <= storiesNum; i++) {
+                for (const [size, pricing] of Object.entries(windowPricing)) {
+                    const elementId = `story${i}_${size === 'doors' ? 'doors' : size}`;
+                    const element = document.getElementById(elementId);
+                    if (element) {
+                        const count = parseInt(element.value) || 0;
+                        totalWindows += count;
+                        totalMinutes += count * pricing.minutes;
+                    }
+                }
+            }
+            
+            // Apply multipliers
+            const serviceMultiplier = serviceMultipliers[serviceType] || 1.0;
+            const conditionMultiplier = conditionMultipliers[windowCondition] || 1.0;
+            const difficultyMultiplier = difficultyMultipliers[accessDifficulty] || 1.0;
+            const timeMultiplier = timeMultipliers[timeOfService] || 1.0;
+            
+            // Equipment requirements
+            const equipment = equipmentRequirements[storyCount] || equipmentRequirements[1];
+            const equipmentMultiplier = equipment.multiplier || 1.0;
+            
+            // Total adjusted minutes
+            const adjustedMinutes = totalMinutes * serviceMultiplier * conditionMultiplier * 
+                                  difficultyMultiplier * timeMultiplier * equipmentMultiplier;
+            
+            const totalLaborHours = adjustedMinutes / 60;
+            
+            // Calculate labor costs
+            const laborVendorBtn = document.querySelector('[data-category="labor"] .vendor-btn');
+            const isLaborVendor = laborVendorBtn ? laborVendorBtn.classList.contains('active') : true; // Default to vendor
+            const margin = parseFloat(document.getElementById('cityWideMargin').value) || 35;
+            let laborHourlyRate;
+            
+            if (isLaborVendor) {
+                laborHourlyRate = getICLoadedRate() / (1 - margin / 100);
+            } else {
+                laborHourlyRate = calculateInHouseLoadedRate() / (1 - margin / 100);
+            }
+            
+            const totalLaborCost = laborHourlyRate * totalLaborHours;
+            
+            // Equipment costs
+            let equipmentCost = 0;
+            let liftRentalCost = 0;
+            
+            if (equipment.needsLift) {
+                const days = Math.max(1, Math.ceil(totalLaborHours / (8 * crewSize)));
+                const liftDaily = parseFloat(document.getElementById('liftRentalDaily').value) || equipment.dailyRate;
+                liftRentalCost = calculateProviderCosts('equipment', liftDaily * days);
+            }
+            
+            // Base equipment cost
+            const baseEquipmentRate = parseFloat(document.getElementById('equipmentDailyRate').value) || 150;
+            const equipmentDays = Math.max(1, Math.ceil(totalLaborHours / 8));
+            equipmentCost = calculateProviderCosts('equipment', baseEquipmentRate * equipmentDays);
+            
+            // Materials and supplies
+            const materialRate = parseFloat(document.getElementById('materialCostPerWindow').value) || 0.75;
+            const materialCost = calculateProviderCosts('materials', materialRate * totalWindows);
+            
+            const supplyBase = parseFloat(document.getElementById('supplyCostBase').value) || 75;
+            const supplyCost = calculateProviderCosts('supplies', supplyBase + (totalWindows * 0.25));
+            
+            // Add-on services
+            let addOnCost = 0;
+            
+            if (document.getElementById('screenCleaning').checked) {
+                addOnCost += (totalWindows * 3 * laborHourlyRate) / 60; // 3 minutes per screen
+            }
+            if (document.getElementById('glassdoors').checked) {
+                addOnCost += (totalWindows * 0.1 * 5 * laborHourlyRate) / 60; // 10% have screens, 5 min each
+            }
+            if (document.getElementById('framesCleaning').checked) {
+                addOnCost += totalLaborHours * 0.3 * laborHourlyRate; // 30% more time
+            }
+            if (document.getElementById('sillCleaning').checked) {
+                addOnCost += (totalWindows * 2 * laborHourlyRate) / 60; // 2 minutes per window
+            }
+            if (document.getElementById('mineralRemoval').checked) {
+                addOnCost += calculateProviderCosts('materials', totalWindows * 0.50); // Premium materials
+            }
+            if (document.getElementById('rustRemoval').checked) {
+                addOnCost += calculateProviderCosts('materials', totalWindows * 0.75); // Specialized chemicals
+            }
+            
+            // Total costs
+            const totalCostToCW = totalLaborCost + equipmentCost + liftRentalCost + materialCost + supplyCost + addOnCost;
+            const pricePerWindow = totalCostToCW / Math.max(1, totalWindows);
+            const grossProfit = totalCostToCW * (margin / 100);
+            
+            // Update results display
+            updateResultsDisplay({
+                totalWindows,
+                totalLaborHours,
+                totalLaborCost,
+                equipmentCost: equipmentCost + liftRentalCost,
+                materialCost,
+                totalCostToCW,
+                pricePerWindow,
+                finalClientPrice: totalCostToCW,
+                grossProfit
+            });
+            
+            updateBreakdownDisplay({
+                totalWindows,
+                laborHours: totalLaborHours,
+                laborRate: laborHourlyRate,
+                totalLaborCost,
+                equipmentDays,
+                baseEquipmentRate,
+                liftDays: equipment.needsLift ? Math.max(1, Math.ceil(totalLaborHours / (8 * crewSize))) : 0,
+                liftRate: equipment.needsLift ? parseFloat(document.getElementById('liftRentalDaily').value) : 0,
+                materialRate,
+                materialCost,
+                supplyCost,
+                addOnCost,
+                serviceType,
+                equipment: equipment.type,
+                adjustedMinutes,
+                totalMinutes
+            });
+        }
+
+        function updateResultsDisplay(results) {
+            const resultsGrid = document.getElementById('resultsGrid');
+            resultsGrid.innerHTML = `
+                <div class="result-card">
+                    <h4>Total Windows</h4>
+                    <div class="value">${results.totalWindows}</div>
+                    <div class="unit">windows</div>
+                </div>
+                <div class="result-card">
+                    <h4>Total Labor Hours</h4>
+                    <div class="value">${results.totalLaborHours.toFixed(1)}</div>
+                    <div class="unit">hours</div>
+                </div>
+                <div class="result-card">
+                    <h4>Labor Cost</h4>
+                    <div class="value">${formatCurrency(results.totalLaborCost)}</div>
+                    <div class="unit">with load factors</div>
+                </div>
+                <div class="result-card">
+                    <h4>Equipment & Lift Cost</h4>
+                    <div class="value">${formatCurrency(results.equipmentCost)}</div>
+                    <div class="unit">including rentals</div>
+                </div>
+                <div class="result-card">
+                    <h4>Material Cost</h4>
+                    <div class="value">${formatCurrency(results.materialCost)}</div>
+                    <div class="unit">cleaning supplies</div>
+                </div>
+                <div class="result-card">
+                    <h4>Price Per Window</h4>
+                    <div class="value">${formatCurrencyDetailed(results.pricePerWindow)}</div>
+                    <div class="unit">average per window</div>
+                </div>
+                <div class="result-card highlight">
+                    <h4>Final Client Price</h4>
+                    <div class="value">${formatCurrency(results.finalClientPrice)}</div>
+                    <div class="unit">total project cost</div>
+                </div>
+                <div class="result-card highlight">
+                    <h4>CW Gross Profit</h4>
+                    <div class="value">${formatCurrency(results.grossProfit)}</div>
+                    <div class="unit">margin earned</div>
+                </div>
+            `;
+        }
+
+        function updateBreakdownDisplay(data) {
+            const breakdownSection = document.getElementById('breakdownSection');
+            breakdownSection.innerHTML = `
+                <div class="breakdown-card">
+                    <h4>Window Count & Time</h4>
+                    <div class="breakdown-item">
+                        <span>Total Windows:</span>
+                        <span>${data.totalWindows} windows</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span>Base Time:</span>
+                        <span>${(data.totalMinutes/60).toFixed(1)} hrs</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span>Adjusted Time:</span>
+                        <span>${(data.adjustedMinutes/60).toFixed(1)} hrs</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span>Labor Hours:</span>
+                        <span>${data.laborHours.toFixed(1)} hrs</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span>Hourly Rate (loaded):</span>
+                        <span>${formatCurrencyDetailed(data.laborRate)}</span>
+                    </div>
+                    <div class="breakdown-item total">
+                        <span>Total Labor Cost:</span>
+                        <span>${formatCurrency(data.totalLaborCost)}</span>
+                    </div>
+                </div>
+                
+                <div class="breakdown-card">
+                    <h4>Equipment & Access</h4>
+                    <div class="breakdown-item">
+                        <span>Access Method:</span>
+                        <span>${data.equipment.replace('_', ' ').toUpperCase()}</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span>Equipment Days:</span>
+                        <span>${data.equipmentDays} days</span>
+                    </div>
+                    ${data.liftDays > 0 ? `
+                    <div class="breakdown-item">
+                        <span>Lift Rental (${data.liftDays} days):</span>
+                        <span>${formatCurrency(data.liftRate * data.liftDays)}</span>
+                    </div>
+                    ` : ''}
+                    <div class="breakdown-item">
+                        <span>Provider Type:</span>
+                        <span>${getProviderType('equipment')}</span>
+                    </div>
+                </div>
+                
+                <div class="breakdown-card">
+                    <h4>Materials & Supplies</h4>
+                    <div class="breakdown-item">
+                        <span>Total Windows:</span>
+                        <span>${data.totalWindows} windows</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span>Material Rate:</span>
+                        <span>${formatCurrencyDetailed(data.materialRate)}/window</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span>Materials:</span>
+                        <span>${formatCurrency(data.materialCost)}</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span>Supplies:</span>
+                        <span>${formatCurrency(data.supplyCost)}</span>
+                    </div>
+                    ${data.addOnCost > 0 ? `
+                    <div class="breakdown-item">
+                        <span>Add-On Services:</span>
+                        <span>${formatCurrency(data.addOnCost)}</span>
+                    </div>
+                    ` : ''}
+                </div>
+                
+                <div class="breakdown-card">
+                    <h4>Service Details</h4>
+                    <div class="breakdown-item">
+                        <span>Service Type:</span>
+                        <span>${data.serviceType.replace('_', ' ').toUpperCase()}</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span>Building Stories:</span>
+                        <span>${document.getElementById('storyCount').selectedOptions[0].text}</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span>Window Condition:</span>
+                        <span>${document.getElementById('windowCondition').selectedOptions[0].text}</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span>Access Difficulty:</span>
+                        <span>${document.getElementById('accessDifficulty').selectedOptions[0].text}</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span>Time Premium:</span>
+                        <span>${document.getElementById('timeOfService').selectedOptions[0].text}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+
+        function formatCurrencyDetailed(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(amount);
+        }
+
+        function exportVendorSpecs() {
+            const storyCount = document.getElementById('storyCount').selectedOptions[0].text;
+            const serviceType = document.getElementById('serviceType').selectedOptions[0].text;
+            const totalWindows = document.querySelector('.result-card .value').textContent;
+            
+            const content = `{\\rtf1\\ansi\\deff0 {\\fonttbl {\\f0 Times New Roman;}}
+\\f0\\fs24
+VENDOR SPECIFICATIONS - LAS VEGAS COMMERCIAL WINDOW CLEANING\\line\\line
+
+PROJECT DETAILS:\\line
+Service Type: ${serviceType}\\line
+Building Height: ${storyCount}\\line
+Total Windows: ${totalWindows} windows\\line\\line
+
+SCOPE OF WORK:\\line
+- Professional window cleaning as specified\\line
+- All equipment and materials included\\line
+- Safety compliance per OSHA and IWCA standards\\line
+- Spot-free cleaning using purified water systems\\line\\line
+
+EQUIPMENT REQUIREMENTS:\\line
+- Water-fed pole systems for buildings up to 3 stories\\line
+- Lift equipment rental as needed for height access\\line
+- Professional squeegees and cleaning tools\\line
+- Purified water systems (RO/DI) for Las Vegas hard water\\line\\line
+
+SAFETY REQUIREMENTS:\\line
+- Current general liability insurance\\line
+- Workers compensation coverage\\line
+- OSHA-compliant safety equipment\\line
+- Proper fall protection for elevated work\\line\\line
+
+QUALITY STANDARDS:\\line
+- Streak-free, spot-free finish\\line
+- Complete removal of water spots and mineral deposits\\line
+- Professional appearance upon completion\\line
+- Client satisfaction guarantee\\line
+}`;
+
+            downloadRTF(content, 'vendor-specifications.rtf');
+        }
+
+        function exportClientInstructions() {
+            const serviceType = document.getElementById('serviceType').selectedOptions[0].text;
+            const storyCount = document.getElementById('storyCount').selectedOptions[0].text;
+            const finalPrice = document.querySelector('.result-card.highlight .value').textContent;
+            
+            const content = `{\\rtf1\\ansi\\deff0 {\\fonttbl {\\f0 Times New Roman;}}
+\\f0\\fs24
+CLIENT INSTRUCTIONS - COMMERCIAL WINDOW CLEANING SERVICE\\line\\line
+
+SERVICE OVERVIEW:\\line
+Service Type: ${serviceType}\\line
+Building Configuration: ${storyCount}\\line
+Total Investment: ${finalPrice}\\line\\line
+
+PREPARATION REQUIREMENTS:\\line
+- Ensure access to all window areas\\line
+- Remove obstacles from cleaning zones\\line
+- Provide electrical access if needed\\line
+- Notify tenants of scheduled service\\line\\line
+
+DURING SERVICE:\\line
+- Professional crew will arrive as scheduled\\line
+- All safety protocols will be followed\\line
+- Water-fed pole systems minimize disruption\\line
+- Interior access coordination as needed\\line\\line
+
+POST-SERVICE CARE:\\line
+- Avoid touching glass for 24 hours\\line
+- Report any concerns within 48 hours\\line
+- Schedule regular maintenance for optimal results\\line\\line
+
+LAS VEGAS CONSIDERATIONS:\\line
+- Service scheduled for early morning hours when possible\\line
+- Purified water systems prevent mineral deposits\\line
+- Dust storm protection measures included\\line
+- Seasonal adjustments for extreme weather\\line\\line
+
+WARRANTY:\\line
+- 100% satisfaction guarantee\\line
+- Re-service at no charge if not completely satisfied\\line
+- Professional results backed by City Wide standards\\line
+}`;
+
+            downloadRTF(content, 'client-instructions.rtf');
+        }
+
+        function getProviderType(category) {
+            const activeBtn = document.querySelector(`[data-category="${category}"] .active`);
+            return activeBtn ? activeBtn.textContent : 'Vendor';
+        }
+
+        function downloadRTF(content, filename) {
+            const blob = new Blob([content], { type: 'application/rtf' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Initialize toggle functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Wait a bit to ensure all elements are rendered
+            setTimeout(function() {
+                const toggleButtons = document.querySelectorAll('.toggle-buttons button');
+                
+                toggleButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const parent = this.parentElement;
+                        const buttons = parent.querySelectorAll('button');
+                        
+                        buttons.forEach(btn => btn.classList.remove('active'));
+                        this.classList.add('active');
+                        
+                        updateCalculations();
+                    });
+                });
+                
+                updateICBreakdown();
+                generateStoryInputs();
+                updateCalculations();
+            }, 100);
+        });
+    </script>
+</body>
+</html>
