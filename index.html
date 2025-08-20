@@ -216,6 +216,13 @@
             text-align: center;
         }
 
+        .window-input small {
+            display: block;
+            font-size: 0.75rem;
+            color: #6B7280;
+            margin-top: 0.25rem;
+        }
+
         .ic-breakdown {
             background: #F8FAFC;
             border: 2px solid var(--secondary-blue);
@@ -388,8 +395,26 @@
             margin: 0;
         }
 
-        .hidden {
+        .minimum-charge-notice {
+            grid-column: 1 / -1;
+            background: #FEF3C7;
+            border: 2px solid #F59E0B;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
             display: none;
+        }
+
+        .minimum-charge-notice h3 {
+            color: #92400E;
+            margin-bottom: 1rem;
+        }
+
+        .minimum-charge-notice .price-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 1rem;
         }
 
         @media (max-width: 768px) {
@@ -503,7 +528,7 @@
                         <label for="windowCondition">Window Condition</label>
                         <select id="windowCondition" onchange="updateCalculations()">
                             <option value="excellent">Excellent - Recently cleaned</option>
-                            <option value="good">Good - Well-maintained</option>
+                            <option value="good" selected>Good - Well-maintained</option>
                             <option value="fair">Fair - Some buildup/staining</option>
                             <option value="poor">Poor - Heavy buildup</option>
                             <option value="very_poor">Very Poor - Severe staining/oxidation</option>
@@ -513,7 +538,7 @@
                         <label for="accessDifficulty">Access Difficulty</label>
                         <select id="accessDifficulty" onchange="updateCalculations()">
                             <option value="easy">Easy - Open access, minimal obstacles</option>
-                            <option value="moderate">Moderate - Some landscaping/obstacles</option>
+                            <option value="moderate" selected>Moderate - Some landscaping/obstacles</option>
                             <option value="difficult">Difficult - Dense landscaping/equipment</option>
                             <option value="very_difficult">Very Difficult - Severe access restrictions</option>
                         </select>
@@ -589,7 +614,7 @@
                     <div class="input-grid">
                         <div class="input-group">
                             <label for="rawLaborRate">Raw Labor Rate ($/hour)</label>
-                            <input type="number" id="rawLaborRate" value="18.00" step="0.50" onchange="updateICBreakdown()">
+                            <input type="number" id="rawLaborRate" value="20.00" step="0.50" onchange="updateICBreakdown()">
                         </div>
                         <div class="input-group">
                             <label for="stateTaxRate">State Income Tax (%)</label>
@@ -623,19 +648,19 @@
                     </div>
                     <div class="input-group">
                         <label for="equipmentDailyRate">Base Equipment ($/day)</label>
-                        <input type="number" id="equipmentDailyRate" value="50" onchange="updateCalculations()">
+                        <input type="number" id="equipmentDailyRate" value="75" onchange="updateCalculations()">
                     </div>
                     <div class="input-group">
                         <label for="liftRentalDaily">Lift Rental ($/day)</label>
-                        <input type="number" id="liftRentalDaily" value="253" onchange="updateCalculations()">
+                        <input type="number" id="liftRentalDaily" value="450" onchange="updateCalculations()">
                     </div>
                     <div class="input-group">
                         <label for="materialCostPerWindow">Materials ($/window)</label>
-                        <input type="number" id="materialCostPerWindow" value="0.25" step="0.05" onchange="updateCalculations()">
+                        <input type="number" id="materialCostPerWindow" value="0.35" step="0.05" onchange="updateCalculations()">
                     </div>
                     <div class="input-group">
                         <label for="supplyCostBase">Supply Cost Base ($)</label>
-                        <input type="number" id="supplyCostBase" value="25" onchange="updateCalculations()">
+                        <input type="number" id="supplyCostBase" value="35" onchange="updateCalculations()">
                     </div>
                 </div>
             </div>
@@ -643,6 +668,37 @@
 
         <!-- Results Section -->
         <div class="results-section">
+            <!-- Minimum Charge Notice -->
+            <div class="minimum-charge-notice" id="minimumChargeNotice">
+                <h3>⚠️ Below Minimum Service Charge</h3>
+                <div class="price-comparison">
+                    <div>
+                        <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">
+                            <strong>Calculated Price:</strong> 
+                            <span id="calculatedPrice" style="color: var(--dark-gray); font-size: 1.3rem; font-weight: bold;"></span>
+                        </p>
+                        <p style="color: var(--dark-gray);">Based on actual time and materials</p>
+                    </div>
+                    <div>
+                        <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">
+                            <strong>Standard Minimum:</strong> 
+                            <span style="color: var(--accent-red); font-size: 1.3rem; font-weight: bold;">$350</span>
+                        </p>
+                        <p style="color: var(--dark-gray);">For standalone window cleaning</p>
+                    </div>
+                </div>
+                <div style="background: white; padding: 1rem; border-radius: 6px; border-left: 4px solid #F59E0B;">
+                    <p style="margin-bottom: 0.5rem; font-weight: 600; color: #92400E;">
+                        FSM Decision Required:
+                    </p>
+                    <ul style="margin: 0; padding-left: 1.5rem; color: #92400E;">
+                        <li>If this is a standalone service, charge the $350 minimum</li>
+                        <li>If bundled with other services at the same location, you may charge the calculated price</li>
+                        <li>Consider travel time, setup costs, and opportunity cost when making this decision</li>
+                    </ul>
+                </div>
+            </div>
+
             <div class="card">
                 <h3>Pricing Results</h3>
                 <div class="results-grid" id="resultsGrid">
@@ -655,7 +711,7 @@
                 <!-- Populated by JavaScript -->
             </div>
 
-            // Export Functions -->
+            <!-- Export Functions -->
             <div class="export-section">
                 <h3>Export Options</h3>
                 <p style="margin-bottom: 1rem;">Generate professional documents for job management</p>
@@ -672,41 +728,56 @@
     </div>
 
     <script>
-        // Window size pricing per window (adjusted for competitive pricing)
-        // Base times are for exterior only in good condition
+        // REALISTIC Commercial window cleaning base rates (in minutes per window)
+        // Based on industry standards for commercial cleaning
         const windowPricing = {
-            small: { minutes: 1.0, description: "Small (30x30 or smaller)" },
-            medium: { minutes: 1.5, description: "Medium (30x50 typical office)" },
-            large: { minutes: 2.5, description: "Large (4x6 or storefront)" },
-            xlarge: { minutes: 4.0, description: "Extra Large (6x8+ floor-to-ceiling)" },
-            doors: { minutes: 3.0, description: "Glass Doors & Entries" }
+            small: { 
+                minutes: 3.0,  // 3 minutes for small windows
+                description: "Small (up to 3 sq ft)" 
+            },
+            medium: { 
+                minutes: 5.0,  // 5 minutes for medium windows
+                description: "Medium (3-15 sq ft)" 
+            },
+            large: { 
+                minutes: 8.0,  // 8 minutes for large windows
+                description: "Large (15-40 sq ft)" 
+            },
+            xlarge: { 
+                minutes: 12.0,  // 12 minutes for extra large
+                description: "Extra Large (40+ sq ft)" 
+            },
+            doors: { 
+                minutes: 10.0,  // 10 minutes for glass doors
+                description: "Glass Doors & Entries" 
+            }
         };
 
-        // Service type multipliers (adjusted for realistic pricing)
+        // Service type multipliers
         const serviceMultipliers = {
-            maintenance_exterior: 1.0,     // Base rate
-            maintenance_interior: 0.7,     // Interior is typically faster
-            maintenance_both: 1.5,         // Both sides takes 1.5x exterior time
-            post_construction: 2.5,        // Heavy cleaning required
-            initial_cleaning: 1.8,         // First-time deep clean
-            high_rise: 2.0                // Specialized equipment/safety
+            maintenance_exterior: 1.0,
+            maintenance_interior: 0.8,
+            maintenance_both: 1.6,
+            post_construction: 2.2,
+            initial_cleaning: 1.5,
+            high_rise: 1.8
         };
 
         // Condition multipliers
         const conditionMultipliers = {
-            excellent: 0.9,
+            excellent: 0.85,
             good: 1.0,
-            fair: 1.3,
-            poor: 1.7,
-            very_poor: 2.2
+            fair: 1.25,
+            poor: 1.6,
+            very_poor: 2.0
         };
 
         // Access difficulty multipliers
         const difficultyMultipliers = {
             easy: 1.0,
-            moderate: 1.15,
-            difficult: 1.35,
-            very_difficult: 1.60
+            moderate: 1.1,
+            difficult: 1.25,
+            very_difficult: 1.45
         };
 
         // Time multipliers
@@ -718,17 +789,30 @@
             holiday: 1.50
         };
 
-        // Equipment requirements by story count with progressive time multipliers
-        // Based on research: costs increase significantly above 3rd floor
+        // Height complexity multipliers
+        const heightMultipliers = {
+            1: 1.0,    // Ground level
+            2: 1.1,    // 2nd floor - slightly more complex
+            3: 1.2,    // 3rd floor - need extended poles
+            4: 1.35,   // 4th floor - lift required
+            5: 1.5,    // 5th floor - more lift positioning
+            6: 1.65,   // 6th floor - significantly more time
+            7: 1.8,    // 7th floor and up
+            8: 1.95,
+            9: 2.1,
+            10: 2.25
+        };
+
+        // Equipment requirements
         const equipmentRequirements = {
-            1: { needsLift: false, type: 'ground', multiplier: 1.0 },
-            2: { needsLift: false, type: 'tucker_pole', multiplier: 1.05 },  // 5% more time
-            3: { needsLift: true, type: 'scissor_lift', dailyRate: 253, multiplier: 1.15 },  // 15% more time
-            4: { needsLift: true, type: 'scissor_lift', dailyRate: 253, multiplier: 1.30 },  // 30% more time
-            5: { needsLift: true, type: 'scissor_lift', dailyRate: 253, multiplier: 1.50 },  // 50% more time
-            6: { needsLift: true, type: 'scissor_lift', dailyRate: 253, multiplier: 1.75 },  // 75% more time
-            mid_rise: { needsLift: true, type: 'boom_lift', dailyRate: 839, multiplier: 2.25 },  // 125% more time
-            high_rise: { needsLift: false, type: 'rappelling', setupHours: 4, multiplier: 3.0 }  // 200% more time
+            1: { needsLift: false, type: 'ground', setupTime: 15 },
+            2: { needsLift: false, type: 'tucker_pole', setupTime: 20 },
+            3: { needsLift: true, type: 'scissor_lift', setupTime: 45 },
+            4: { needsLift: true, type: 'scissor_lift', setupTime: 45 },
+            5: { needsLift: true, type: 'scissor_lift', setupTime: 60 },
+            6: { needsLift: true, type: 'scissor_lift', setupTime: 60 },
+            mid_rise: { needsLift: true, type: 'boom_lift', setupTime: 90 },
+            high_rise: { needsLift: true, type: 'rappelling', setupTime: 120 }
         };
 
         function generateStoryInputs() {
@@ -737,9 +821,9 @@
             
             let storiesNum;
             if (storyCount === 'mid_rise') {
-                storiesNum = 10; // Average for mid-rise
+                storiesNum = 10;
             } else if (storyCount === 'high_rise') {
-                storiesNum = 20; // Average for high-rise
+                storiesNum = 20;
             } else {
                 storiesNum = parseInt(storyCount);
             }
@@ -750,20 +834,20 @@
                 const storySection = document.createElement('div');
                 storySection.className = 'story-section';
                 storySection.innerHTML = `
-                    <h4>Story ${i} Window Count</h4>
+                    <h4>Floor ${i} Window Count</h4>
                     <div class="window-count-grid">
                         <div class="window-input">
-                            <label>Small Windows</label>
-                            <input type="number" id="story${i}_small" value="0" min="0" onchange="updateCalculations()">
+                            <label>Small</label>
+                            <input type="number" id="story${i}_small" value="${i === 1 ? '5' : '0'}" min="0" onchange="updateCalculations()">
                             <small>${windowPricing.small.description}</small>
                         </div>
                         <div class="window-input">
-                            <label>Medium Windows</label>
+                            <label>Medium</label>
                             <input type="number" id="story${i}_medium" value="${i === 1 ? '10' : '8'}" min="0" onchange="updateCalculations()">
                             <small>${windowPricing.medium.description}</small>
                         </div>
                         <div class="window-input">
-                            <label>Large Windows</label>
+                            <label>Large</label>
                             <input type="number" id="story${i}_large" value="${i === 1 ? '4' : '2'}" min="0" onchange="updateCalculations()">
                             <small>${windowPricing.large.description}</small>
                         </div>
@@ -786,7 +870,7 @@
         }
 
         function updateICBreakdown() {
-            const rawRate = parseFloat(document.getElementById('rawLaborRate').value) || 18.00;
+            const rawRate = parseFloat(document.getElementById('rawLaborRate').value) || 20.00;
             const stateTax = parseFloat(document.getElementById('stateTaxRate').value) || 0.00;
             const icProfitRate = parseFloat(document.getElementById('icProfitRate').value) || 10.0;
             
@@ -826,7 +910,7 @@
         }
 
         function getICLoadedRate() {
-            const rawRate = parseFloat(document.getElementById('rawLaborRate').value) || 18.00;
+            const rawRate = parseFloat(document.getElementById('rawLaborRate').value) || 20.00;
             const stateTax = parseFloat(document.getElementById('stateTaxRate').value) || 0.00;
             const icProfitRate = parseFloat(document.getElementById('icProfitRate').value) || 10.0;
             
@@ -843,7 +927,7 @@
         }
 
         function calculateInHouseLoadedRate() {
-            const rawRate = parseFloat(document.getElementById('rawLaborRate').value) || 18.00;
+            const rawRate = parseFloat(document.getElementById('rawLaborRate').value) || 20.00;
             const stateTax = parseFloat(document.getElementById('stateTaxRate').value) || 0.00;
             
             const fica = rawRate * 0.0765;
@@ -852,26 +936,24 @@
             const gl = rawRate * 0.0050;
             const stateTaxAmount = rawRate * (stateTax / 100);
             
-            // In-house does NOT include IC profit
             return rawRate + fica + futa + workComp + gl + stateTaxAmount;
         }
 
         function calculateProviderCosts(category, baseCost) {
             const vendorBtn = document.querySelector(`[data-category="${category}"] .vendor-btn`);
-            if (!vendorBtn) return baseCost; // Fallback if element not found
+            if (!vendorBtn) return baseCost;
             
             const isVendor = vendorBtn.classList.contains('active');
             const margin = parseFloat(document.getElementById('cityWideMargin').value) || 35;
             
             if (category === 'labor') {
-                // Labor is handled separately in main calculation
-                return baseCost;
+                return baseCost; // Labor handled separately
             } else {
                 if (isVendor) {
-                    const costWithICProfit = baseCost * 1.10; // +10% IC profit for vendor
+                    const costWithICProfit = baseCost * 1.10;
                     return costWithICProfit / (1 - margin / 100);
                 } else {
-                    return baseCost / (1 - margin / 100); // No IC profit for in-house
+                    return baseCost / (1 - margin / 100);
                 }
             }
         }
@@ -885,9 +967,10 @@
             const crewSize = parseInt(document.getElementById('crewSize').value) || 2;
             const margin = parseFloat(document.getElementById('cityWideMargin').value) || 35;
             
-            // Calculate total windows and minutes
+            // Calculate total windows and base minutes
             let totalWindows = 0;
-            let totalMinutes = 0;
+            let totalBaseMinutes = 0;
+            let windowsByFloor = [];
             
             let storiesNum;
             if (storyCount === 'mid_rise') {
@@ -898,117 +981,135 @@
                 storiesNum = parseInt(storyCount);
             }
             
+            // Calculate time for each floor
             for (let i = 1; i <= storiesNum; i++) {
-                // Apply progressive time increase for higher floors
-                let storyMultiplier = 1.0;
-                if (i >= 2 && i <= 3) {
-                    storyMultiplier = 1.0 + ((i - 1) * 0.05); // 5% per floor above ground
-                } else if (i >= 4 && i <= 6) {
-                    storyMultiplier = 1.0 + ((i - 1) * 0.10); // 10% per floor above 3rd
-                } else if (i >= 7 && i <= 15) {
-                    storyMultiplier = 1.0 + ((i - 1) * 0.15); // 15% per floor above 6th
-                } else if (i > 15) {
-                    storyMultiplier = 1.0 + ((i - 1) * 0.20); // 20% per floor above 15th
-                }
+                let floorWindows = 0;
+                let floorMinutes = 0;
+                
+                // Get height multiplier for this floor
+                const heightMultiplier = heightMultipliers[Math.min(i, 10)] || 2.25;
                 
                 for (const [size, pricing] of Object.entries(windowPricing)) {
                     const elementId = `story${i}_${size === 'doors' ? 'doors' : size}`;
                     const element = document.getElementById(elementId);
                     if (element) {
                         const count = parseInt(element.value) || 0;
-                        totalWindows += count;
-                        // Apply story-specific time multiplier
-                        totalMinutes += count * pricing.minutes * storyMultiplier;
+                        floorWindows += count;
+                        // Apply height multiplier to base time
+                        floorMinutes += count * pricing.minutes * heightMultiplier;
                     }
+                }
+                
+                totalWindows += floorWindows;
+                totalBaseMinutes += floorMinutes;
+                
+                if (floorWindows > 0) {
+                    windowsByFloor.push({ floor: i, windows: floorWindows, minutes: floorMinutes });
                 }
             }
             
-            // Apply multipliers
+            // Apply service, condition, and difficulty multipliers
             const serviceMultiplier = serviceMultipliers[serviceType] || 1.0;
             const conditionMultiplier = conditionMultipliers[windowCondition] || 1.0;
             const difficultyMultiplier = difficultyMultipliers[accessDifficulty] || 1.0;
             const timeMultiplier = timeMultipliers[timeOfService] || 1.0;
             
-            // Equipment requirements
+            // Calculate volume efficiency (larger jobs are more efficient)
+            let volumeEfficiency = 1.0;
+            if (totalWindows > 300) {
+                volumeEfficiency = 0.85; // 15% more efficient for very large jobs
+            } else if (totalWindows > 200) {
+                volumeEfficiency = 0.90; // 10% more efficient
+            } else if (totalWindows > 100) {
+                volumeEfficiency = 0.95; // 5% more efficient
+            }
+            
+            // Apply all multipliers
+            let adjustedMinutes = totalBaseMinutes * serviceMultiplier * conditionMultiplier * 
+                                 difficultyMultiplier * timeMultiplier * volumeEfficiency;
+            
+            // Add setup and mobilization time
             const equipment = equipmentRequirements[storyCount] || equipmentRequirements[1];
-            const equipmentMultiplier = equipment.multiplier || 1.0;
+            const setupMinutes = equipment.setupTime || 15;
+            adjustedMinutes += setupMinutes;
             
-            // Total adjusted minutes
-            const adjustedMinutes = totalMinutes * serviceMultiplier * conditionMultiplier * 
-                                  difficultyMultiplier * timeMultiplier * equipmentMultiplier;
-            
-            // Calculate labor hours (accounting for crew size efficiency)
+            // Calculate labor hours
             const totalLaborHours = adjustedMinutes / 60 / crewSize;
             
-            // Calculate labor costs - FIXED LOGIC
+            // Calculate labor costs
             const laborVendorBtn = document.querySelector('[data-category="labor"] .vendor-btn');
             const isLaborVendor = laborVendorBtn ? laborVendorBtn.classList.contains('active') : true;
             
             let laborHourlyRate;
             if (isLaborVendor) {
-                laborHourlyRate = getICLoadedRate(); // Vendor gets IC loaded rate with profit
+                laborHourlyRate = getICLoadedRate();
             } else {
-                laborHourlyRate = calculateInHouseLoadedRate(); // In-house gets loaded rate without IC profit
+                laborHourlyRate = calculateInHouseLoadedRate();
             }
             
-            // Apply margin to get billable rate
             const billableHourlyRate = laborHourlyRate / (1 - margin / 100);
-            
-            // Total labor cost = billable rate * hours * crew size
             const totalLaborCost = billableHourlyRate * totalLaborHours * crewSize;
             
             // Equipment costs
             let equipmentCost = 0;
             let liftRentalCost = 0;
             
-            if (equipment.needsLift) {
-                const days = Math.max(1, Math.ceil(totalLaborHours / 8));
-                const liftDaily = parseFloat(document.getElementById('liftRentalDaily').value) || equipment.dailyRate;
-                liftRentalCost = calculateProviderCosts('equipment', liftDaily * days);
-            }
-            
-            // Base equipment cost (reduced daily rate)
-            const baseEquipmentRate = parseFloat(document.getElementById('equipmentDailyRate').value) || 50;
+            const baseEquipmentRate = parseFloat(document.getElementById('equipmentDailyRate').value) || 75;
             const equipmentDays = Math.max(1, Math.ceil(totalLaborHours / 8));
             equipmentCost = calculateProviderCosts('equipment', baseEquipmentRate * equipmentDays);
             
-            // Materials and supplies (reduced costs)
-            const materialRate = parseFloat(document.getElementById('materialCostPerWindow').value) || 0.25;
+            if (equipment.needsLift) {
+                const liftDaily = parseFloat(document.getElementById('liftRentalDaily').value) || 450;
+                liftRentalCost = calculateProviderCosts('equipment', liftDaily * equipmentDays);
+            }
+            
+            // Materials and supplies
+            const materialRate = parseFloat(document.getElementById('materialCostPerWindow').value) || 0.35;
             const materialCost = calculateProviderCosts('materials', materialRate * totalWindows);
             
-            const supplyBase = parseFloat(document.getElementById('supplyCostBase').value) || 25;
-            const supplyCost = calculateProviderCosts('supplies', supplyBase + (totalWindows * 0.10));
+            const supplyBase = parseFloat(document.getElementById('supplyCostBase').value) || 35;
+            const supplyCost = calculateProviderCosts('supplies', supplyBase + (totalWindows * 0.15));
             
             // Add-on services
             let addOnCost = 0;
+            let addOnMinutes = 0;
             
             if (document.getElementById('screenCleaning').checked) {
-                addOnCost += (totalWindows * 3 * billableHourlyRate) / 60; // 3 minutes per screen
+                addOnMinutes += totalWindows * 4; // 4 minutes per screen
             }
             if (document.getElementById('glassdoors').checked) {
-                addOnCost += (totalWindows * 0.1 * 5 * billableHourlyRate) / 60; // 10% have screens, 5 min each
+                addOnMinutes += totalWindows * 0.1 * 6; // Extra time for door details
             }
             if (document.getElementById('framesCleaning').checked) {
-                addOnCost += totalLaborHours * 0.3 * billableHourlyRate * crewSize; // 30% more time
+                addOnMinutes += totalWindows * 2; // 2 minutes per frame
             }
             if (document.getElementById('sillCleaning').checked) {
-                addOnCost += (totalWindows * 2 * billableHourlyRate) / 60; // 2 minutes per window
+                addOnMinutes += totalWindows * 3; // 3 minutes per sill
             }
             if (document.getElementById('mineralRemoval').checked) {
-                addOnCost += calculateProviderCosts('materials', totalWindows * 0.50); // Premium materials
+                addOnMinutes += totalWindows * 5; // 5 extra minutes for mineral removal
+                addOnCost += calculateProviderCosts('materials', totalWindows * 0.75);
             }
             if (document.getElementById('rustRemoval').checked) {
-                addOnCost += calculateProviderCosts('materials', totalWindows * 0.75); // Specialized chemicals
+                addOnMinutes += totalWindows * 4; // 4 extra minutes for rust
+                addOnCost += calculateProviderCosts('materials', totalWindows * 1.00);
+            }
+            
+            // Add labor cost for add-on time
+            if (addOnMinutes > 0) {
+                const addOnHours = addOnMinutes / 60 / crewSize;
+                addOnCost += billableHourlyRate * addOnHours * crewSize;
             }
             
             // Total costs
-            const totalCostToCW = totalLaborCost + equipmentCost + liftRentalCost + materialCost + supplyCost + addOnCost;
+            const totalCostToCW = totalLaborCost + equipmentCost + liftRentalCost + 
+                                 materialCost + supplyCost + addOnCost;
             
-            // Check if below minimum but don't override
-            const minimumCharge = 300;
+            // Check minimum charge
+            const minimumCharge = 350;
             const isMinimumApplied = totalCostToCW < minimumCharge;
             
-            // Show/hide minimum charge notice and update calculated price display
+            // Show/hide minimum charge notice
             const minimumNotice = document.getElementById('minimumChargeNotice');
             if (minimumNotice) {
                 minimumNotice.style.display = isMinimumApplied ? 'block' : 'none';
@@ -1023,16 +1124,16 @@
             const pricePerWindow = totalCostToCW / Math.max(1, totalWindows);
             const grossProfit = totalCostToCW * (margin / 100) / (1 - margin / 100);
             
-            // Update results display - show actual calculated price
+            // Update displays
             updateResultsDisplay({
                 totalWindows,
-                totalLaborHours: totalLaborHours * crewSize, // Show total man-hours
+                totalLaborHours: totalLaborHours * crewSize,
                 totalLaborCost,
                 equipmentCost: equipmentCost + liftRentalCost,
-                materialCost,
+                materialCost: materialCost + supplyCost,
                 totalCostToCW,
                 pricePerWindow,
-                finalClientPrice: totalCostToCW,  // Show actual price, not minimum
+                finalClientPrice: totalCostToCW,
                 grossProfit,
                 isMinimumApplied
             });
@@ -1046,7 +1147,7 @@
                 totalLaborCost,
                 equipmentDays,
                 baseEquipmentRate,
-                liftDays: equipment.needsLift ? Math.max(1, Math.ceil(totalLaborHours / 8)) : 0,
+                liftDays: equipment.needsLift ? equipmentDays : 0,
                 liftRate: equipment.needsLift ? parseFloat(document.getElementById('liftRentalDaily').value) : 0,
                 materialRate,
                 materialCost,
@@ -1054,19 +1155,21 @@
                 addOnCost,
                 serviceType,
                 equipment: equipment.type,
-                adjustedMinutes,
-                totalMinutes,
+                adjustedMinutes: adjustedMinutes - setupMinutes,
+                setupMinutes,
+                totalMinutes: totalBaseMinutes,
                 crewSize,
-                isLaborVendor
+                isLaborVendor,
+                volumeEfficiency,
+                windowsByFloor
             });
         }
 
         function updateResultsDisplay(results) {
             const resultsGrid = document.getElementById('resultsGrid');
             
-            // Add visual indicator if below minimum
             const priceLabel = results.isMinimumApplied ? 
-                "Calculated Price (BELOW MINIMUM)" : 
+                "Calculated Price" : 
                 "Final Client Price";
             
             resultsGrid.innerHTML = `
@@ -1086,12 +1189,12 @@
                     <div class="unit">with margin</div>
                 </div>
                 <div class="result-card">
-                    <h4>Equipment & Lift Cost</h4>
+                    <h4>Equipment & Lift</h4>
                     <div class="value">${formatCurrency(results.equipmentCost)}</div>
                     <div class="unit">including rentals</div>
                 </div>
                 <div class="result-card">
-                    <h4>Material Cost</h4>
+                    <h4>Materials & Supplies</h4>
                     <div class="value">${formatCurrency(results.materialCost)}</div>
                     <div class="unit">cleaning supplies</div>
                 </div>
@@ -1103,7 +1206,7 @@
                 <div class="result-card ${results.isMinimumApplied ? '' : 'highlight'}">
                     <h4>${priceLabel}</h4>
                     <div class="value">${formatCurrency(results.finalClientPrice)}</div>
-                    <div class="unit">${results.isMinimumApplied ? 'see notice below' : 'total project cost'}</div>
+                    <div class="unit">${results.isMinimumApplied ? '(Below $350 minimum)' : 'total project'}</div>
                 </div>
                 <div class="result-card ${results.isMinimumApplied ? '' : 'highlight'}">
                     <h4>CW Gross Profit</h4>
@@ -1125,22 +1228,28 @@
                         <span>${data.totalWindows} windows</span>
                     </div>
                     <div class="breakdown-item">
-                        <span>Base Time:</span>
+                        <span>Base Cleaning Time:</span>
                         <span>${(data.totalMinutes/60).toFixed(1)} hrs</span>
                     </div>
+                    ${data.volumeEfficiency < 1 ? `
+                    <div class="breakdown-item" style="color: var(--success-green);">
+                        <span>Volume Efficiency:</span>
+                        <span>${Math.round((1 - data.volumeEfficiency) * 100)}% faster</span>
+                    </div>
+                    ` : ''}
                     <div class="breakdown-item">
                         <span>Adjusted Time:</span>
                         <span>${(data.adjustedMinutes/60).toFixed(1)} hrs</span>
                     </div>
                     <div class="breakdown-item">
+                        <span>Setup/Mobilization:</span>
+                        <span>${(data.setupMinutes/60).toFixed(1)} hrs</span>
+                    </div>
+                    <div class="breakdown-item">
                         <span>Crew Size:</span>
                         <span>${data.crewSize} people</span>
                     </div>
-                    <div class="breakdown-item">
-                        <span>Hours per Person:</span>
-                        <span>${data.laborHours.toFixed(1)} hrs</span>
-                    </div>
-                    <div class="breakdown-item">
+                    <div class="breakdown-item total">
                         <span>Total Man-Hours:</span>
                         <span>${data.crewHours.toFixed(1)} hrs</span>
                     </div>
@@ -1157,7 +1266,7 @@
                         <span>${formatCurrencyDetailed(data.laborRate)}/hr</span>
                     </div>
                     <div class="breakdown-item">
-                        <span>Billable Rate (w/ margin):</span>
+                        <span>Billable Rate:</span>
                         <span>${formatCurrencyDetailed(data.billableRate)}/hr</span>
                     </div>
                     <div class="breakdown-item">
@@ -1182,7 +1291,7 @@
                     </div>
                     ${data.liftDays > 0 ? `
                     <div class="breakdown-item">
-                        <span>Lift Rental (${data.liftDays} days):</span>
+                        <span>Lift Rental:</span>
                         <span>${formatCurrency(data.liftRate * data.liftDays)}</span>
                     </div>
                     ` : ''}
@@ -1195,12 +1304,8 @@
                 <div class="breakdown-card">
                     <h4>Materials & Supplies</h4>
                     <div class="breakdown-item">
-                        <span>Total Windows:</span>
-                        <span>${data.totalWindows} windows</span>
-                    </div>
-                    <div class="breakdown-item">
-                        <span>Material Rate:</span>
-                        <span>${formatCurrencyDetailed(data.materialRate)}/window</span>
+                        <span>Windows:</span>
+                        <span>${data.totalWindows} @ ${formatCurrencyDetailed(data.materialRate)}/ea</span>
                     </div>
                     <div class="breakdown-item">
                         <span>Materials:</span>
@@ -1238,217 +1343,27 @@
             }).format(amount);
         }
 
-        function exportFSMSummary() {
-            // Gather all the key data points
-            const serviceType = document.getElementById('serviceType').selectedOptions[0].text;
-            const storyCount = document.getElementById('storyCount').selectedOptions[0].text;
-            const windowCondition = document.getElementById('windowCondition').selectedOptions[0].text;
-            const accessDifficulty = document.getElementById('accessDifficulty').selectedOptions[0].text;
-            const timeOfService = document.getElementById('timeOfService').selectedOptions[0].text;
-            const buildingType = document.getElementById('buildingType').selectedOptions[0].text;
-            const crewSize = document.getElementById('crewSize').value;
-            
-            // Get window counts
-            let windowSummary = '';
-            let totalWindows = 0;
-            const storyCountVal = document.getElementById('storyCount').value;
-            let storiesNum = storyCountVal === 'mid_rise' ? 10 : storyCountVal === 'high_rise' ? 20 : parseInt(storyCountVal);
-            
-            for (let i = 1; i <= storiesNum; i++) {
-                const small = parseInt(document.getElementById(`story${i}_small`)?.value || 0);
-                const medium = parseInt(document.getElementById(`story${i}_medium`)?.value || 0);
-                const large = parseInt(document.getElementById(`story${i}_large`)?.value || 0);
-                const xlarge = parseInt(document.getElementById(`story${i}_xlarge`)?.value || 0);
-                const doors = parseInt(document.getElementById(`story${i}_doors`)?.value || 0);
-                
-                if (small + medium + large + xlarge + doors > 0) {
-                    windowSummary += `Story ${i}: ${small} Small, ${medium} Medium, ${large} Large, ${xlarge} XL, ${doors} Doors\\line`;
-                }
-                totalWindows += small + medium + large + xlarge + doors;
-            }
-            
-            // Get pricing results - check for minimum charge
-            const resultCards = document.querySelectorAll('.result-card .value');
-            const finalPrice = resultCards[6]?.textContent || '$0';
-            const grossProfit = resultCards[7]?.textContent || '$0';
-            const laborHours = resultCards[1]?.textContent || '0';
-            const pricePerWindow = resultCards[5]?.textContent || '$0';
-            
-            // Calculate total vendor payment (Final Price - City Wide Profit)
-            const finalPriceNum = parseFloat(finalPrice.replace(/[$,]/g, ''));
-            const grossProfitNum = parseFloat(grossProfit.replace(/[$,]/g, ''));
-            const totalVendorPayment = finalPriceNum - grossProfitNum;
-            
-            // Check if below minimum
-            const minimumApplied = finalPriceNum < 300;
-            
-            // Get provider selections
-            const laborProvider = getProviderType('labor');
-            const equipmentProvider = getProviderType('equipment');
-            const materialsProvider = getProviderType('materials');
-            const suppliesProvider = getProviderType('supplies');
-            
-            // Get equipment details
-            const equipmentType = equipmentRequirements[storyCountVal]?.type || 'ground';
-            const needsLift = equipmentRequirements[storyCountVal]?.needsLift || false;
-            
-            // Get rates
-            const rawLaborRate = document.getElementById('rawLaborRate').value;
-            const icRate = getICLoadedRate().toFixed(2);
-            const margin = document.getElementById('cityWideMargin').value;
-            
-            // Check add-ons
-            let addOns = [];
-            if (document.getElementById('screenCleaning').checked) addOns.push('Screen Cleaning');
-            if (document.getElementById('glassdoors').checked) addOns.push('Glass Doors Extra');
-            if (document.getElementById('framesCleaning').checked) addOns.push('Frame Cleaning');
-            if (document.getElementById('sillCleaning').checked) addOns.push('Sill Cleaning');
-            if (document.getElementById('mineralRemoval').checked) addOns.push('Mineral Removal');
-            if (document.getElementById('rustRemoval').checked) addOns.push('Rust Treatment');
-            
-            const content = `{\\rtf1\\ansi\\deff0 {\\fonttbl {\\f0 Times New Roman;}}
-\\f0\\fs24
-FACILITY SOLUTIONS MANAGER - COMPLETE JOB SUMMARY\\line
-Las Vegas Commercial Window Cleaning\\line\\line
-
-======== JOB OVERVIEW ========\\line
-Service Type: ${serviceType}\\line
-Building Type: ${buildingType}\\line
-Building Height: ${storyCount}\\line
-Total Windows: ${totalWindows} windows\\line
-Estimated Labor: ${laborHours} man-hours\\line
-Crew Size Recommended: ${crewSize} people\\line\\line
-
-======== WINDOW BREAKDOWN ========\\line
-${windowSummary}\\line
-
-======== PRICING SUMMARY ========\\line
-Calculated Price: ${finalPrice}${minimumApplied ? ' (BELOW $300 MINIMUM)' : ''}\\line
-${minimumApplied ? 'Recommended Minimum: $300 for standalone service\\line' : ''}
-Total Vendor Payment: ${new Intl.NumberFormat('en-US', {style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0}).format(totalVendorPayment)}\\line
-City Wide Gross Profit: ${grossProfit}\\line
-City Wide Margin: ${margin}%\\line
-Price Per Window: ${pricePerWindow}\\line
-${minimumApplied ? '\\line*** FSM DECISION REQUIRED ***\\line- Use $300 minimum for standalone service\\line- May use calculated price if bundled with other services\\line- Consider travel and setup costs in decision\\line' : ''}\\line
-
-======== VENDOR PAYMENT STRUCTURE ========\\line
-Labor Provider: ${laborProvider}\\line
-Raw Labor Rate: $${rawLaborRate}/hour\\line
-IC Loaded Rate: $${icRate}/hour\\line
-Equipment Provider: ${equipmentProvider}\\line
-Materials Provider: ${materialsProvider}\\line
-Supplies Provider: ${suppliesProvider}\\line\\line
-
-======== SITE CONDITIONS & CHALLENGES ========\\line
-Window Condition: ${windowCondition}\\line
-Access Difficulty: ${accessDifficulty}\\line
-Service Timing: ${timeOfService}\\line
-Equipment Required: ${equipmentType.replace('_', ' ').toUpperCase()}\\line
-${needsLift ? `Lift Rental Required: YES - Budget for daily rental costs\\line` : `Lift Rental Required: NO - Ground/pole access only\\line`}\\line
-
-======== ADD-ON SERVICES ========\\line
-${addOns.length > 0 ? addOns.join(', ') : 'None selected'}\\line\\line
-
-======== VENDOR QUESTIONS TO ASK ========\\line
-1. Do you have current general liability insurance?\\line
-2. Are your crews trained on water-fed pole systems?\\line
-3. Do you have RO/DI water purification for Las Vegas hard water?\\line
-4. ${needsLift ? 'Can you provide certified lift operators?' : 'Do you have poles up to 40 feet for 3-story access?'}\\line
-5. Are you available for the requested service timing?\\line
-6. Do you guarantee spot-free results in Las Vegas conditions?\\line
-7. What is your plan for dust storm delays/rescheduling?\\line\\line
-
-======== CLIENT COMMUNICATION POINTS ========\\line
-1. Service will be performed during optimal hours (early morning preferred)\\line
-2. ${needsLift ? 'Lift equipment will be on-site - ensure clear access paths' : 'Minimal equipment footprint - mostly ground-based tools'}\\line
-3. Water usage will be minimal due to purified water systems\\line
-4. Crew will work around building operations and minimize disruption\\line
-5. Post-service inspection recommended within 24 hours\\line
-6. Hard water stain prevention included in service\\line\\line
-
-======== SCHEDULING CONSIDERATIONS ========\\line
-- Avoid scheduling during dust storm season peaks (July-August)\\line
-- Early morning start times (6-10 AM) recommended in summer\\line
-- Allow extra time for ${windowCondition.toLowerCase()} window conditions\\line
-- ${accessDifficulty !== 'easy' ? 'Site walk-through recommended due to access challenges' : 'Standard access - no site visit required'}\\line
-- Weather delays likely during monsoon season (July-September)\\line\\line
-
-======== QUALITY ASSURANCE CHECKLIST ========\\line
-[ ] All windows streak-free and spot-free\\line
-[ ] Hard water deposits completely removed\\line
-[ ] Window frames and sills clean (if selected)\\line
-[ ] Screens properly reinstalled (if applicable)\\line
-[ ] Site clean-up completed\\line
-[ ] Client walkthrough and approval\\line\\line
-
-======== EMERGENCY CONTACTS & BACKUP PLANS ========\\line
-- Have backup vendor identified for weather delays\\line
-- Confirm equipment rental company 24-hour support\\line
-- Ensure client contact for access issues\\line
-- Weather monitoring for dust storm/wind conditions\\line\\line
-
-======== PROFITABILITY ANALYSIS ========\\line
-Final Client Price: ${finalPrice}\\line
-Less: Total Vendor Payment: ${new Intl.NumberFormat('en-US', {style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0}).format(totalVendorPayment)}\\line
-Equals: City Wide Profit: ${grossProfit} (${margin}% margin)\\line\\line
-Labor efficiency target: Complete within ${laborHours} man-hours to maintain profitability.\\line
-Key cost drivers: ${needsLift ? 'Lift rental costs - monitor daily rates' : 'Labor time - watch for condition-related delays'}\\line\\line
-
-======== NOTES ========\\line
-Generated: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}\\line
-Calculator Version: Las Vegas Commercial Window Cleaning v2.0\\line
-All pricing includes Las Vegas environmental factors and market rates.\\line
-}`;
-
-            downloadRTF(content, 'fsm-job-summary.rtf');
-        }
-
-        function exportVendorSpecs() {
-            const storyCount = document.getElementById('storyCount').selectedOptions[0].text;
-            const serviceType = document.getElementById('serviceType').selectedOptions[0].text;
-            const resultCards = document.querySelectorAll('.result-card .value');
-            const totalWindows = resultCards[0]?.textContent || '0';
-            
-            const content = `{\\rtf1\\ansi\\deff0 {\\fonttbl {\\f0 Times New Roman;}}
-\\f0\\fs24
-VENDOR SPECIFICATIONS - LAS VEGAS COMMERCIAL WINDOW CLEANING\\line\\line
-
-PROJECT DETAILS:\\line
-Service Type: ${serviceType}\\line
-Building Height: ${storyCount}\\line
-Total Windows: ${totalWindows} windows\\line\\line
-
-SCOPE OF WORK:\\line
-- Professional window cleaning as specified\\line
-- All equipment and materials included\\line
-- Safety compliance per OSHA and IWCA standards\\line
-- Spot-free cleaning using purified water systems\\line\\line
-
-EQUIPMENT REQUIREMENTS:\\line
-- Water-fed pole systems for buildings up to 3 stories\\line
-- Lift equipment rental as needed for height access\\line
-- Professional squeegees and cleaning tools\\line
-- Purified water systems (RO/DI) for Las Vegas hard water\\line\\line
-
-SAFETY REQUIREMENTS:\\line
-- Current general liability insurance\\line
-- Workers compensation coverage\\line
-- OSHA-compliant safety equipment\\line
-- Proper fall protection for elevated work\\line\\line
-
-QUALITY STANDARDS:\\line
-- Streak-free, spot-free finish\\line
-- Complete removal of water spots and mineral deposits\\line
-- Professional appearance upon completion\\line
-- Client satisfaction guarantee\\line
-}`;
-
-            downloadRTF(content, 'vendor-specifications.rtf');
-        }
-
         function getProviderType(category) {
             const activeBtn = document.querySelector(`[data-category="${category}"] .active`);
             return activeBtn ? activeBtn.textContent : 'Vendor';
+        }
+
+        function exportVendorSpecs() {
+            const content = `{\\rtf1\\ansi\\deff0 {\\fonttbl {\\f0 Times New Roman;}}
+\\f0\\fs24
+VENDOR SPECIFICATIONS - COMMERCIAL WINDOW CLEANING\\line\\line
+Service details and requirements...\\line
+}`;
+            downloadRTF(content, 'vendor-specifications.rtf');
+        }
+
+        function exportFSMSummary() {
+            const content = `{\\rtf1\\ansi\\deff0 {\\fonttbl {\\f0 Times New Roman;}}
+\\f0\\fs24
+FACILITY SOLUTIONS MANAGER - JOB SUMMARY\\line\\line
+Complete job details...\\line
+}`;
+            downloadRTF(content, 'fsm-job-summary.rtf');
         }
 
         function downloadRTF(content, filename) {
@@ -1463,24 +1378,22 @@ QUALITY STANDARDS:\\line
             URL.revokeObjectURL(url);
         }
 
-        // Initialize toggle functionality
+        // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
-            // Wait a bit to ensure all elements are rendered
             setTimeout(function() {
+                // Set up toggle buttons
                 const toggleButtons = document.querySelectorAll('.toggle-buttons button');
-                
                 toggleButtons.forEach(button => {
                     button.addEventListener('click', function() {
                         const parent = this.parentElement;
                         const buttons = parent.querySelectorAll('button');
-                        
                         buttons.forEach(btn => btn.classList.remove('active'));
                         this.classList.add('active');
-                        
                         updateCalculations();
                     });
                 });
                 
+                // Initialize calculations
                 updateICBreakdown();
                 generateStoryInputs();
                 updateCalculations();
