@@ -158,7 +158,7 @@ body{
 </head>
 <body>
 <div class="container">
-  <div class="logobar" style="position:relative"><a href="https://citywidelv.github.io/cw-ops-desk/" style="position:absolute;left:18px;top:50%;transform:translateY(-50%);font-size:11.5px;font-weight:700;color:var(--cw-grey);text-decoration:none;border:1.5px solid var(--cw-border);border-radius:14px;padding:5px 12px">&#8592; Ops Hub</a><img src="https://emailer.emfluence.com/clients/citywide/uploadedfiles/signature_logo.png" alt="City Wide Facility Solutions"></div>
+  <div class="logobar" style="position:relative"><a href="https://citywidelv.github.io/cw-ops-desk/" style="position:absolute;left:18px;top:50%;transform:translateY(-50%);font-size:12px;font-weight:700;color:#fff;background:var(--cw-red);text-decoration:none;border-radius:16px;padding:7px 15px;box-shadow:0 2px 6px rgba(210,39,48,.3)">&#8592; Back to Ops Hub</a><img src="https://emailer.emfluence.com/clients/citywide/uploadedfiles/signature_logo.png" alt="City Wide Facility Solutions"></div>
   <div class="header">
     <h1>Window Cleaning Calculator</h1>
     <p>Storefront to High-Rise: Every Method, Lift &amp; Access Plan for Las Vegas, Northern Nevada &amp; Arizona</p>
@@ -185,6 +185,7 @@ body{
           <option value="az">Arizona Border (Laughlin, Kingman, Havasu)</option>
         </select>
       </div>
+      <div class="cfield"><label>Performed By</label><select id="laborBy" onchange="recalc()"><option value="vendor">Vendor Crew</option><option value="inhouse">City Wide In-House</option></select></div>
       <div class="cfield"><label>Chemicals Provided By</label>
         <select id="chemProvider" onchange="recalc()">
           <option value="vendor">Crew Provides (their cost + 15%)</option>
@@ -403,7 +404,9 @@ function priceService(s){
   const chemProvider=$('chemProvider').value;
   const vendorChems=chemProvider==='vendor'?chemCost*(1+VENDOR_CHEM_MARKUP):0;
   const cwChems=chemProvider==='cw'?chemCost:0;
-  const vendorCost=(laborCost+equipCost+flatCost+vendorChems)*(1+SUB_PROFIT);
+  const inhouse=($('laborBy')&&$('laborBy').value==='inhouse');
+  const vendorBase=(laborCost+equipCost+flatCost+vendorChems);
+  const vendorCost=inhouse?vendorBase:vendorBase*(1+SUB_PROFIT);
   const totalCost=vendorCost+cwChems;
 
   /* margin, regional multiplier, unit price floor */
@@ -420,7 +423,7 @@ function priceService(s){
 
   const mktArr=sd?sd.mkt:s.mktUnit;
   const mktLow=mktArr[0]*region.mult, mktHigh=mktArr[1]*region.mult;
-  return {s,sf:qty,isUnit:true,sidesLabel,cond,events,manHrs,crew,clockHrs,wage,laborCost,chems,chemCost,cwChems,vendorChems,equipCost,flatCost,vendorCost,totalCost,margin,price,perSF:(price-flatCost)/qty,mktLow,mktHigh};
+  return {s,sf:qty,isUnit:true,sidesLabel,cond,events,manHrs,crew,clockHrs,wage,laborCost,chems,chemCost,cwChems,vendorChems,equipCost,flatCost,vendorBase,vendorCost,inhouse,totalCost,margin,price,perSF:(price-flatCost)/qty,mktLow,mktHigh};
 }
 function activeResults(){return SERVICES.filter(s=>S.svcOn[s.id]).map(priceService).filter(Boolean);}
 function applyMinimums(results){
@@ -469,8 +472,8 @@ function renderServices(){
         +r.chems.map(c=>'<div class="bl"><span>'+c.label+' ('+money2(c.perUnit)+uw+')</span><b>'+money(c.cost)+'</b></div>').join('')
         +'<div class="bl"><span>Equipment fee ('+r.clockHrs.toFixed(1)+' hrs @ $'+((st.equip)||s.equip)+'/hr)</span><b>'+money(r.equipCost)+'</b></div>'
         +(r.flatCost?'<div class="bl"><span>Lift rental / rigging pass-through</span><b>'+money(r.flatCost)+'</b></div>':'')
-        +'<div class="bl"><span>Crew company profit ('+(SUB_PROFIT*100).toFixed(0)+'%, hold 5-8%)</span><b>'+money(r.vendorCost-(r.laborCost+r.equipCost+r.flatCost+r.vendorChems))+'</b></div>'
-        +'<div class="bl tot"><span>We pay the crew'+(r.cwChems?' (City Wide supplies: '+money(r.cwChems)+')':'')+'</span><b>'+money(r.vendorCost)+'</b></div>'
+        +(r.inhouse?'':'<div class="bl"><span>Crew company profit ('+(SUB_PROFIT*100).toFixed(0)+'%, hold 5-8%)</span><b>'+money(r.vendorCost-r.vendorBase)+'</b></div>')
+        +'<div class="bl tot"><span>'+(r.inhouse?'In-house crew cost':'We pay the crew')+(r.cwChems?' (City Wide supplies: '+money(r.cwChems)+')':'')+'</span><b>'+money(r.vendorCost)+'</b></div>'
         +'<div class="bl tot" style="color:var(--cw-red)"><span>Client price @ '+r.margin+'% margin x '+REGIONS[$('region').value].mult.toFixed(2)+' regional</span><b>'+money(r.price)+' ('+money2(r.perSF)+uw+(r.flatCost?' + lift':'')+')</b></div>'
         +'<div class="bl mkt"><span>2026 market check: '+money2(r.mktLow)+'-'+money2(r.mktHigh)+uw+' here. '+flag+'</span></div>'
         +'</div>';
@@ -723,10 +726,10 @@ function copyQuote(){
 }
 
 /* ---------- SAVED WORK (local + cloud) ---------- */
-function snapshot(){return {acct:$('acct').value,qdate:$('qdate').value,prepBy:$('prepBy').value,region:$('region').value,chemProvider:$('chemProvider').value,ovMargin:$('ovMargin').value,minOverride:$('minOverride').checked,minReason:$('minReason').value,svcOn:S.svcOn,inputs:S.inputs};}
+function snapshot(){return {acct:$('acct').value,qdate:$('qdate').value,prepBy:$('prepBy').value,region:$('region').value,chemProvider:$('chemProvider').value,laborBy:$('laborBy').value,ovMargin:$('ovMargin').value,minOverride:$('minOverride').checked,minReason:$('minReason').value,svcOn:S.svcOn,inputs:S.inputs};}
 function applySnapshot(p){
   $('acct').value=p.acct||'';$('qdate').value=p.qdate||'';$('prepBy').value=p.prepBy||'';
-  $('region').value=p.region||'lv';$('chemProvider').value=p.chemProvider||'vendor';
+  $('region').value=p.region||'lv';$('chemProvider').value=p.chemProvider||'vendor';$('laborBy').value=p.laborBy||'vendor';
   $('ovMargin').value=p.ovMargin||'';$('minOverride').checked=!!p.minOverride;$('minReason').value=p.minReason||'';
   S.svcOn=p.svcOn||{};S.inputs=p.inputs||{};recalc();
 }
