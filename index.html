@@ -210,7 +210,7 @@ body{
         </div>
         <div class="card">
           <h2>Window &amp; Glass Services</h2>
-          <p style="font-size:11.5px;color:var(--cw-grey);margin-bottom:12px">Toggle on every service in this bid. Each service prices from a cost build-up: crew labor, supplies, equipment (including lift rentals passed through at cost), and a small crew-company profit, then City Wide margin. Every number is adjustable.</p>
+          <p style="font-size:11.5px;color:var(--cw-grey);margin-bottom:12px">Count the glass, pick which sides we are cleaning, and switch on each service in this bid. The tool then builds the price from the ground up: tech labor, supplies, equipment, lift rentals at cost, a fair crew-company profit, and City Wide margin on top. If you know better than the tool on any number, type over it.</p>
           <div id="svcList"></div>
         </div>
         <div class="card" id="shopCard" style="display:none">
@@ -295,25 +295,26 @@ const DEFAULT_CHEMS={
 
 /* ---------- SERVICES. All unit-priced. perHr = units per tech-hour all-in (setup, ladders, detailing). ---------- */
 const SERVICES=[
- {id:'ext', name:'Exterior Windows: Ground Level', sub:'Mop and squeegee, storefronts and first-story glass', ico:'squeegee', unit:'panes',
-  perHr:30, equip:3, crew1:true, chems:['soap','rubber'], mktUnit:[3,7], floorUnit:4.00,
-  desc:'Traditional strip washer and squeegee on ground-level exterior glass, edges and frames detailed dry. The bread and butter of commercial window work, and still the highest-quality finish on accessible glass.'},
- {id:'int', name:'Interior Windows & Partition Glass', sub:'Inside faces, lobby glass, office partitions, glass doors', ico:'partition', unit:'panes',
-  perHr:35, equip:2, crew1:true, chems:['soap','rubber'], mktUnit:[2,7], floorUnit:3.00,
-  desc:'Interior faces of exterior windows plus lobby glass, sidelites, partitions, and glass doors. No weather soil, but drop cloths, furniture, and working around tenants set the pace.'},
- {id:'pole', name:'Upper Floors by Pole (2-3 Stories)', sub:'Extension pole squeegee work, no ladders', ico:'pole', unit:'panes',
+ {id:'glass', name:'Window & Glass Cleaning: Ground Level', sub:'Storefronts, lobby glass, partitions, glass doors. Pick inside, outside, or both sides', ico:'squeegee', unit:'panes',
+  sides:true, sideDefault:'both',
+  sideDef:{out:{perHr:30,mkt:[3,7],floor:4.00,label:'Outside Only'}, inn:{perHr:35,mkt:[2,7],floor:3.00,label:'Inside Only'}, both:{perHr:16,mkt:[5,12],floor:6.50,label:'Both Sides'}},
+  perHr:16, equip:3, crew1:true, chems:['soap','rubber'], mktUnit:[5,12], floorUnit:6.50,
+  desc:'Hand-tool window cleaning on everything a tech can reach from the floor: storefront glass, lobby glass, office partitions, sidelites, and glass doors. Count each framed piece of glass once, then use the sides toggle to say whether the crew cleans the outside, the inside, or both.'},
+ {id:'pole', name:'Upper Floors by Pole (2-3 Stories)', sub:'Outside glass on floors 2-3, cleaned from the ground with no ladders', ico:'pole', unit:'panes',
   perHr:22, equip:4, crew1:true, chems:['soap','rubber'], mktUnit:[5,10], floorUnit:5.00,
   desc:'Second and third story exterior glass cleaned from the ground on extension poles. Slower and harder to detail than ground work, which is why upper-story panes carry a $2-5 premium.'},
- {id:'wfp', name:'Water-Fed Pole: Pure Water (to 6 Stories)', sub:'RO/DI purified water, spot-free, no squeegee needed', ico:'wfp', unit:'panes',
+ {id:'wfp', name:'Water-Fed Pole: Pure Water (to 6 Stories)', sub:'Outside glass to 6 floors: purified water on a tall pole, dries spot-free', ico:'wfp', unit:'panes',
   perHr:40, equip:8, crew1:true, chems:['purewater'], mktUnit:[4,10], floorUnit:4.00,
   desc:'A brush on a carbon fiber pole fed with purified water. At 0-10 TDS the water carries no minerals, so glass rinses clean and dries spot-free with no squeegee and no toweling. Reaches 5-6 stories from the ground with no lift and no ladder, and runs about 75% faster than traditional methods on open elevations. Exterior only.'},
- {id:'lift', name:'Aerial Lift Work (Boom / Scissor)', sub:'3-12 stories with ground access; rental passed through', ico:'lift', unit:'panes',
+ {id:'lift', name:'Aerial Lift Work (Boom / Scissor)', sub:'Outside glass, 3-12 floors with ground access; lift rental billed at cost', ico:'lift', unit:'panes',
   perHr:15, equip:10, crew1:false, flatCost:400, chems:['soap','rubber'], mktUnit:[8,20], floorUnit:6.00, wageAdj:1.15,
   desc:'Boom or scissor lift work for mid-rise exteriors, glass over entrances, and atrium interiors. The lift rental is a hard cost passed straight into the build-up: a 30-45 ft boom runs $200-400 a day plus $150-500 delivery, a 60 ft boom $600-1,500. Two techs minimum (operator rules), ANSI aerial lift training required.'},
- {id:'rope', name:'High-Rise Rope Descent (RDS)', sub:'SPRAT-certified techs above lift reach; certified anchors required', ico:'rope', unit:'panes',
+ {id:'rope', name:'High-Rise Rope Descent (RDS)', sub:'Outside glass above lift reach: certified rope techs, certified roof anchors', ico:'rope', unit:'panes',
   perHr:12, equip:12, crew1:false, chems:['soap','rubber'], mktUnit:[10,25], floorUnit:10.00, wageAdj:1.7, minOwn:500,
   desc:'Rope descent for glass above lift and pole reach. This is certified-specialist work: SPRAT-trained techs, OSHA 1910.27 certified roof anchors rated 5,000 lbs each, a separate fall-arrest line per worker, rigging and rescue plans, and insurance priced for height. Rope crews bill around $170 per tech-hour at retail, and whole buildings quote $800-3,000+.'},
- {id:'postcon', name:'Post-Construction Window Clean', sub:'Razor work: stucco, paint, silicone, sticker residue', ico:'razor', unit:'panes',
+ {id:'postcon', name:'Post-Construction Window Clean', sub:'Razor work: stucco, paint, silicone, stickers. Pick inside, outside, or both sides', ico:'razor', unit:'panes',
+  sides:true, sideDefault:'both',
+  sideDef:{out:{perHr:10,mkt:[8,20],floor:6.00,label:'Outside Only'}, inn:{perHr:12,mkt:[6,15],floor:5.00,label:'Inside Only'}, both:{perHr:5.5,mkt:[12,30],floor:10.00,label:'Both Sides'}},
   perHr:10, equip:4, crew1:true, chems:['soap','blades'], mktUnit:[8,20], floorUnit:6.00,
   desc:'First clean after construction: scraping stucco, paint overspray, silicone, and stickers with razors and heavy rinse. Runs 2-4x slower than maintenance cleaning and carries real scratch risk from fabricating debris on tempered glass. Never start without a signed scratched-glass waiver.'},
  {id:'hardwater', name:'Hard Water Stain Removal & Glass Restoration', sub:'The Las Vegas specialty: sprinkler overspray and mineral etching', ico:'droplet', unit:'panes',
@@ -328,7 +329,9 @@ const SERVICES=[
  {id:'skylight', name:'Skylights & Atrium Glass', sub:'Overhead glass, interior or exterior', ico:'skylight', unit:'skylights',
   perHr:6, equip:8, crew1:true, chems:['soap','purewater'], mktUnit:[12,35], floorUnit:10.00,
   desc:'Skylights and overhead atrium glass, cleaned by WFP from below or lift access above. Price per unit and add the lift line when interior height demands it.'},
- {id:'route', name:'Storefront Route Program', sub:'Recurring weekly to monthly service, route pricing', ico:'store', unit:'panes',
+ {id:'route', name:'Storefront Route Program', sub:'Recurring weekly to monthly service. Pick inside, outside, or both sides', ico:'store', unit:'panes',
+  sides:true, sideDefault:'out',
+  sideDef:{out:{perHr:60,mkt:[0.8,2.0],floor:0.8,label:'Outside Only'}, inn:{perHr:70,mkt:[0.7,1.8],floor:0.7,label:'Inside Only'}, both:{perHr:32,mkt:[1.4,3.5],floor:1.4,label:'Both Sides'}},
   perHr:60, equip:2, crew1:true, freqDefault:12, chems:['soap','rubber'], mktUnit:[0.8,2.0], floorUnit:0.8, minOwn:75,
   desc:'The recurring program: in-and-out storefront glass on a weekly, bi-weekly, or monthly route. Route pros move at 60-100 panes an hour and the market prices near $1 per pane-side per visit with $25-75 visit minimums. Low ticket, high density, sticky revenue: this is how window vendors build wealth, and how we keep clients between deep services.'},
  {id:'solar', name:'Solar Panel Cleaning', sub:'Pure water and soft brush, the desert add-on', ico:'solar', unit:'panels',
@@ -370,9 +373,12 @@ function priceService(s){
   const events=parseFloat(st.events)||s.freqDefault||1;
   const qty=parseFloat(st.sf)||0;
   if(!qty)return null;
+  const sides=s.sides?((st.sides)||s.sideDefault||'both'):null;
+  const sd=sides?s.sideDef[sides]:null;
+  const sidesLabel=sd?sd.label:null;
 
   /* labor */
-  let manHrs=qty/s.perHr*cond.lab;
+  let manHrs=qty/(sd?sd.perHr:s.perHr)*cond.lab;
   manHrs=Math.max(manHrs,1);
   const crew=s.crew1?1:2;
   const clockHrs=manHrs/crew;
@@ -383,7 +389,7 @@ function priceService(s){
   let chems=[]; let chemCost=0;
   (s.chems||[]).forEach(k=>{
     const c=CHEMS[k]; if(!c)return;
-    const cost=qty*c.perUnit*cond.chem;
+    const cost=qty*c.perUnit*cond.chem*(sides==='both'?2:1);
     if(cost<0.5)return;
     chemCost+=cost;
     chems.push({prod:c.name,label:c.name,cost,packNote:c.pack,packPrice:c.cost,perUnit:c.perUnit});
@@ -405,14 +411,16 @@ function priceService(s){
   const svcOv=parseFloat(st.margin);
   const margin=(!isNaN(svcOv)&&svcOv>0)?svcOv:(!isNaN(ov)&&ov>0)?ov:autoMargin(qty);
   let price=totalCost/(1-margin/100)*region.mult;
-  if(s.floorUnit)price=Math.max(price, qty*s.floorUnit*region.mult+flatCost/(1-margin/100));
+  const unitFloor=sd?sd.floor:s.floorUnit;
+  if(unitFloor)price=Math.max(price, qty*unitFloor*region.mult+flatCost/(1-margin/100));
 
   /* per-unit override */
   const rateOv=parseFloat(st.rateOv);
   if(!isNaN(rateOv)&&rateOv>0)price=qty*rateOv+flatCost/(1-margin/100);
 
-  const mktLow=s.mktUnit[0]*region.mult, mktHigh=s.mktUnit[1]*region.mult;
-  return {s,sf:qty,isUnit:true,cond,events,manHrs,crew,clockHrs,wage,laborCost,chems,chemCost,cwChems,vendorChems,equipCost,flatCost,vendorCost,totalCost,margin,price,perSF:(price-flatCost)/qty,mktLow,mktHigh};
+  const mktArr=sd?sd.mkt:s.mktUnit;
+  const mktLow=mktArr[0]*region.mult, mktHigh=mktArr[1]*region.mult;
+  return {s,sf:qty,isUnit:true,sidesLabel,cond,events,manHrs,crew,clockHrs,wage,laborCost,chems,chemCost,cwChems,vendorChems,equipCost,flatCost,vendorCost,totalCost,margin,price,perSF:(price-flatCost)/qty,mktLow,mktHigh};
 }
 function activeResults(){return SERVICES.filter(s=>S.svcOn[s.id]).map(priceService).filter(Boolean);}
 function applyMinimums(results){
@@ -443,7 +451,8 @@ function renderServices(){
     let body='';
     if(on){
       body='<div class="svc-grid">'
-      +'<div class="field"><label>Number of '+unitCap+'</label><input type="number" value="'+(st.sf||'')+'" placeholder="e.g. '+(s.id==='route'?'80':'120')+'" onchange="setSvc(\''+s.id+'\',\'sf\',this.value)"><small>'+(s.unit==='panes'?'Count every framed pane, each side counts once per service.':'')+'</small></div>'
+      +'<div class="field"><label>'+(s.unit==='panes'?'How Many Panes of Glass?':'Number of '+unitCap)+'</label><input type="number" value="'+(st.sf||'')+'" placeholder="e.g. '+(s.id==='route'?'80':'120')+'" onchange="setSvc(\''+s.id+'\',\'sf\',this.value)"><small>'+(s.unit==='panes'?'Count each framed piece of glass once.'+(s.sides?' The sides toggle handles inside vs outside.':' This service cleans the outside face.'):'')+'</small></div>'
+      +(s.sides?'<div class="field"><label>Which Sides Are We Cleaning?</label><div style="padding-top:3px">'+['out','inn','both'].map(function(k){var cur=(st.sides||s.sideDefault);return '<span class="chip '+(cur===k?'sel':'')+'" onclick="setSvc(\''+s.id+'\',\'sides\',\''+k+'\')">'+s.sideDef[k].label+'</span>';}).join('')+'</div></div>':'')
       +'<div class="field"><label>Condition</label><select onchange="setSvc(\''+s.id+'\',\'cond\',this.value)">'+CONDITIONS.map(c=>'<option value="'+c.k+'"'+((st.cond||'good')===c.k?' selected':'')+'>'+c.label+'</option>').join('')+'</select></div>'
       +'<div class="field"><label>Visits / Year</label><select onchange="setSvc(\''+s.id+'\',\'events\',this.value)">'+FREQS.map(f=>'<option value="'+f[0]+'"'+((parseFloat(st.events)||s.freqDefault||1)===f[0]?' selected':'')+'>'+f[1]+'</option>').join('')+'</select></div>'
       +'<div class="field"><label>Tech Wage $/hr</label><input type="number" step="0.5" value="'+(st.wage||'')+'" placeholder="'+(REGIONS[$('region').value].wage*(s.wageAdj||1)).toFixed(2)+'" onchange="setSvc(\''+s.id+'\',\'wage\',this.value)"><small>'+(s.wageAdj&&s.wageAdj>1.3?'SPRAT-certified rope techs earn a real premium.':'')+'</small></div>'
@@ -531,7 +540,7 @@ function recalc(){
   renderServices();
   const showInt=$('showInternal').checked;
   const lines=results.map(r=>{
-    return '<div class="sline cat"><span class="n">'+r.s.name+' ('+r.sf+' '+r.s.unit+')</span><span>'+money(r.finalPrice)+'</span></div>'
+    return '<div class="sline cat"><span class="n">'+r.s.name+' ('+r.sf+' '+r.s.unit+(r.sidesLabel?', '+r.sidesLabel.toLowerCase():'')+')</span><span>'+money(r.finalPrice)+'</span></div>'
     +(r.events>1?'<div class="sline sub"><span class="n">'+r.events+'x per year = '+money(r.finalPrice*r.events)+'/yr ('+money(r.finalPrice*r.events/12)+'/mo accrual)</span></div>':'')
     +(showInt?'<div class="sline sub"><span class="n">crew '+money(r.vendorCost)+(r.cwChems?' + our supplies '+money(r.cwChems):'')+' | margin '+r.margin+'% | '+money2(r.finalPrice/r.sf)+'/'+r.s.unit.replace(/s$/,'')+'</span></div>':'');
   }).join('');
@@ -579,8 +588,10 @@ function renderFloors(){
   +'</table>'
   +'<h2>Las Vegas Hard Water: the Standing Upsell</h2>'
   +'<p>Vegas tap water runs 400-600+ TDS and every sprinkler head that touches glass writes minerals onto it permanently. Stage 1 wipes off with acid-side chemistry; stage 2 is etched into the glass and needs cerium oxide polishing at 3-8x standard pricing. Walk the sprinkler line on every LV property, photograph the staining, and quote restoration plus a maintenance frequency that keeps it from coming back. This is the highest-value line on the whole calculator.</p>'
-  +'<h2>Counting Panes Like a Pro</h2>'
-  +'<p>A pane is one framed sheet of glass, counted once per side per service. A storefront door is 1 pane, a divided-lite door can be 6. French and grid windows count every lite. Interior and exterior are separate services with separate counts. When a client says "40 windows," walk it: 40 windows is routinely 120+ panes, and quoting off the client count is how window jobs go underwater.</p>';
+  +'<h2>Counting Glass Like a Pro</h2>'
+  +'<p>A pane is one framed sheet of glass, and you count it ONCE. A storefront door is 1 pane, a divided-lite door can be 6, and grid windows count every lite. Then the sides toggle on each service says whether the crew cleans the outside, the inside, or both: the tool prices the extra work automatically. When a client says "40 windows," walk it yourself: 40 windows is routinely 120+ panes, and quoting off the client count is how window jobs go underwater.</p>'
+  +'<h2>Which Services Have the Sides Toggle?</h2>'
+  +'<p>Ground-level glass, storefront routes, and post-construction cleans ask which sides we are cleaning. Pole, water-fed pole, lift, and rope services are outside-face work by nature: if the client also wants those windows cleaned inside, count the same panes again under Window &amp; Glass Cleaning set to Inside Only.</p>';
 }
 
 function renderProcess(){
@@ -656,7 +667,7 @@ function renderRates(){
   +'<tr><td>City Wide margin</td><td>32-40%</td><td>Auto by pane count. Override with a reason.</td></tr>'
   +'<tr><td>Minimums</td><td>$300 visit ($500 rope, $75 route visit)</td><td>Lead service only on multi-service visits.</td></tr>'
   +'<tr><td>Lift rentals</td><td>Pass-through at cost</td><td>Margin applies to labor, not rented steel.</td></tr>'
-  +'<tr><td>Price floors per pane</td><td>Ext $4, int $3, pole $5, WFP $4, lift $6, rope $10, post-con $6, restoration $15</td><td>Anchored to the OS Pricing book and 2026 market bands.</td></tr></table>';
+  +'<tr><td>Price floors per pane</td><td>Ground glass: outside $4, inside $3, both sides $6.50. Pole $5, WFP $4, lift $6, rope $10, restoration $15</td><td>Anchored to the OS Pricing book and 2026 market bands.</td></tr></table>';
 }
 function setChem(k,v){CHEMS[k].perUnit=parseFloat(v)||CHEMS[k].perUnit;
   const slim={};Object.keys(CHEMS).forEach(kk=>{slim[kk]={perUnit:CHEMS[kk].perUnit};});
@@ -679,7 +690,7 @@ function printQuote(internal){
   const total=results.reduce((a,r)=>a+r.finalPrice,0);
   let h='<div class="p-head"><img src="'+LOGO+'"><div class="pt"><b>'+(internal?'Internal Pricing Sheet':'Window Cleaning Investment Recap')+'</b><span>'+acct+' | '+region.label+' | '+d+'</span></div></div>';
   results.forEach(r=>{
-    h+='<div class="p-svc"><span class="p-price">'+money(r.finalPrice)+(r.events>1?' per visit':'')+'</span><h4>'+r.s.name+' | '+r.sf+' '+r.s.unit+(r.events>1?' | '+r.events+'x per year':'')+'</h4><p>'+r.s.desc+'</p>';
+    h+='<div class="p-svc"><span class="p-price">'+money(r.finalPrice)+(r.events>1?' per visit':'')+'</span><h4>'+r.s.name+' | '+r.sf+' '+r.s.unit+(r.sidesLabel?' | '+r.sidesLabel:'')+(r.events>1?' | '+r.events+'x per year':'')+'</h4><p>'+r.s.desc+'</p>';
     if(r.events>1)h+='<p><b>Annual: '+money(r.finalPrice*r.events)+' ('+money(r.finalPrice*r.events/12)+'/month)</b></p>';
     if(internal){
       h+='<table class="p-table"><tr><th>Cost Line</th><th>Amount</th></tr>'
