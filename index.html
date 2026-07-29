@@ -1,1491 +1,780 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>City Wide Las Vegas Commercial Window Cleaning Calculator</title>
-    <style>
-        :root {
-            --primary-blue: #a81e26;
-            --secondary-blue: #d22730;
-            --accent-red: #d22730;
-            --dark-gray: #2d2a26;
-            --light-gray: #f5f5f5;
-            --success-green: #0aa6a9;
-            --white: #FFFFFF;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Verdana, 'Liberation Sans', 'DejaVu Sans', Geneva, Tahoma, sans-serif;
-            background-color: var(--light-gray);
-            color: var(--dark-gray);
-            line-height: 1.6;
-        }
-
-        .header {
-            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
-            color: white;
-            text-align: center;
-            padding: 2rem 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-
-        .calculator-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .cost-provider-section {
-            grid-column: 1 / -1;
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 1rem;
-        }
-
-        .cost-provider-section h3 {
-            color: var(--primary-blue);
-            margin-bottom: 1rem;
-            font-size: 1.3rem;
-        }
-
-        .toggle-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-
-        .toggle-group {
-            text-align: center;
-        }
-
-        .toggle-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--dark-gray);
-        }
-
-        .toggle-buttons {
-            display: flex;
-            border-radius: 6px;
-            overflow: hidden;
-            border: 2px solid var(--light-gray);
-        }
-
-        .toggle-buttons button {
-            flex: 1;
-            padding: 0.75rem 1rem;
-            border: none;
-            background: white;
-            color: var(--dark-gray);
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .vendor-btn.active {
-            background: var(--accent-red);
-            color: white;
-        }
-
-        .inhouse-btn.active {
-            background: var(--success-green);
-            color: white;
-        }
-
-        .toggle-buttons button:hover {
-            opacity: 0.8;
-        }
-
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 1rem;
-        }
-
-        .card h3 {
-            color: var(--primary-blue);
-            margin-bottom: 1rem;
-            font-size: 1.3rem;
-            border-bottom: 2px solid var(--light-gray);
-            padding-bottom: 0.5rem;
-        }
-
-        .input-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-
-        .input-group {
-            margin-bottom: 1rem;
-        }
-
-        .input-group.full-width {
-            grid-column: 1 / -1;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: var(--dark-gray);
-        }
-
-        .input-group input,
-        .input-group select {
-            width: 100%;
-            padding: 0.75rem;
-            border: 2px solid var(--light-gray);
-            border-radius: 6px;
-            font-size: 1rem;
-            transition: border-color 0.3s ease;
-        }
-
-        .input-group input:focus,
-        .input-group select:focus {
-            outline: none;
-            border-color: var(--secondary-blue);
-        }
-
-        .story-section {
-            background: #f5f5f5;
-            border: 2px solid var(--secondary-blue);
-            border-radius: 8px;
-            padding: 1rem;
-            margin: 1rem 0;
-        }
-
-        .story-section h4 {
-            color: var(--secondary-blue);
-            margin-bottom: 0.75rem;
-            font-size: 1.1rem;
-        }
-
-        .window-count-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 0.75rem;
-            margin-bottom: 1rem;
-        }
-
-        .window-input {
-            text-align: center;
-        }
-
-        .window-input label {
-            display: block;
-            font-size: 0.9rem;
-            color: var(--dark-gray);
-            margin-bottom: 0.25rem;
-        }
-
-        .window-input input {
-            width: 100%;
-            padding: 0.5rem;
-            border: 1px solid var(--light-gray);
-            border-radius: 4px;
-            text-align: center;
-        }
-
-        .window-input small {
-            display: block;
-            font-size: 0.75rem;
-            color: #636466;
-            margin-top: 0.25rem;
-        }
-
-        .ic-breakdown {
-            background: #f5f5f5;
-            border: 2px solid var(--secondary-blue);
-            border-radius: 8px;
-            padding: 1rem;
-            margin: 1rem 0;
-        }
-
-        .ic-breakdown h4 {
-            color: var(--secondary-blue);
-            margin-bottom: 0.75rem;
-            font-size: 1.1rem;
-        }
-
-        .breakdown-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-        }
-
-        .breakdown-grid .label {
-            color: var(--dark-gray);
-        }
-
-        .breakdown-grid .value {
-            text-align: right;
-            font-weight: 600;
-            color: var(--primary-blue);
-        }
-
-        .results-section {
-            grid-column: 1 / -1;
-            margin-top: 2rem;
-        }
-
-        .results-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .result-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-
-        .result-card.highlight {
-            background: linear-gradient(135deg, var(--accent-red), #d22730);
-            color: white;
-        }
-
-        .result-card h4 {
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-            opacity: 0.8;
-        }
-
-        .result-card .value {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 0.25rem;
-        }
-
-        .result-card .unit {
-            font-size: 0.8rem;
-            opacity: 0.7;
-        }
-
-        .breakdown-section {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .breakdown-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .breakdown-card h4 {
-            color: var(--primary-blue);
-            margin-bottom: 1rem;
-            font-size: 1.1rem;
-            border-bottom: 1px solid var(--light-gray);
-            padding-bottom: 0.5rem;
-        }
-
-        .breakdown-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-            padding: 0.25rem 0;
-        }
-
-        .breakdown-item.total {
-            border-top: 2px solid var(--light-gray);
-            margin-top: 0.5rem;
-            padding-top: 0.75rem;
-            font-weight: 700;
-            color: var(--primary-blue);
-        }
-
-        .export-section {
-            grid-column: 1 / -1;
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-
-        .export-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .export-btn {
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: white;
-        }
-
-        .export-btn.vendor {
-            background: var(--accent-red);
-        }
-
-        .export-btn.client {
-            background: var(--secondary-blue);
-        }
-
-        .export-btn.fsm {
-            background: var(--success-green);
-        }
-
-        .export-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-        }
-
-        .checkbox-group {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 0.75rem;
-            margin-top: 1rem;
-        }
-
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .checkbox-item input[type="checkbox"] {
-            width: auto;
-            margin: 0;
-        }
-
-        .minimum-charge-notice {
-            grid-column: 1 / -1;
-            background: #fbf2d3;
-            border: 2px solid #e5b423;
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-            display: none;
-        }
-
-        .minimum-charge-notice h3 {
-            color: #7a6013;
-            margin-bottom: 1rem;
-        }
-
-        .minimum-charge-notice .price-comparison {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            margin-bottom: 1rem;
-        }
-
-        @media (max-width: 768px) {
-            .calculator-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .input-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .toggle-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .header h1 {
-                font-size: 2rem;
-            }
-
-            .results-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .breakdown-section {
-                grid-template-columns: 1fr;
-            }
-
-            .export-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .window-count-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>City Wide Window Cleaning Calculator</title>
+<style>
+:root{
+  --cw-red:#D22730; --cw-red-dark:#a81e26; --cw-black:#2D2A26; --cw-grey:#636466;
+  --cw-white:#FFFFFF; --cw-teal:#0AA6A9; --cw-gold:#E5B423; --cw-light:#F5F5F5; --cw-border:#E5E5E5;
+  --sp-xs:4px; --sp-sm:8px; --sp-md:16px; --sp-lg:24px; --sp-xl:32px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:Verdana,'Liberation Sans','DejaVu Sans',Geneva,Tahoma,sans-serif;
+  background:linear-gradient(135deg,#ffffff 0%,#f0f0f0 100%);
+  min-height:100vh;color:var(--cw-black);padding:16px;font-size:14px;
+}
+.container{max-width:1500px;margin:0 auto;background:#fff;border-radius:15px;box-shadow:0 20px 40px rgba(0,0,0,.12);overflow:hidden}
+.logobar{background:#fff;padding:16px 30px 12px;text-align:center;border-bottom:1px solid var(--cw-border)}
+.logobar img{height:38px;width:auto;display:inline-block}
+.header{background:linear-gradient(135deg,var(--cw-red-dark) 0%,var(--cw-red) 100%);color:#fff;padding:20px 30px 18px;position:relative}
+.header h1{font-size:2em;font-weight:700;text-align:center;letter-spacing:.02em}
+.header p{text-align:center;font-size:13px;margin-top:6px;color:#fbe9ea}
+.header .hdr-actions{position:absolute;top:16px;right:20px;display:flex;gap:8px}
+.header .hdr-btn{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.5);color:#fff;border-radius:16px;padding:6px 14px;font-size:11.5px;font-weight:700;cursor:pointer;font-family:inherit}
+.header .hdr-btn:hover{background:rgba(255,255,255,.28)}
+.tabs{display:flex;background:var(--cw-black);flex-wrap:wrap}
+.tab{flex:1;min-width:130px;padding:14px 10px;text-align:center;color:#cfcecd;cursor:pointer;font-weight:700;font-size:13px;border-bottom:4px solid transparent;user-select:none}
+.tab:hover{color:#fff}
+.tab.active{color:#fff;border-bottom-color:var(--cw-red);background:#3a3733}
+.controlbar{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;padding:14px 24px;background:#fafafa;border-bottom:1px solid var(--cw-border)}
+.controlbar .cfield label{display:block;font-size:10px;font-weight:700;color:var(--cw-grey);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.controlbar select,.controlbar input{padding:8px 10px;border:2px solid var(--cw-border);border-radius:6px;font-size:13px;font-family:inherit;background:#fff}
+.controlbar select:focus,.controlbar input:focus{outline:none;border-color:var(--cw-red)}
+.marginpill{font-size:12px;padding:6px 12px;border-radius:12px;font-weight:700;background:#e8f4fb;color:#1565a5}
+.marginpill.hot{background:#fde9ea;color:var(--cw-red-dark)}
+.tricnote{font-size:10px;color:var(--cw-grey);max-width:200px;line-height:1.35}
+.main{display:grid;grid-template-columns:1fr 360px;gap:24px;padding:24px}
+@media(max-width:1000px){.main{grid-template-columns:1fr}}
+.card{background:#fff;border:1px solid var(--cw-border);border-radius:12px;padding:20px;margin-bottom:20px}
+.card h2{font-size:1.15em;font-weight:700;border-bottom:2px solid var(--cw-red);padding-bottom:8px;margin-bottom:14px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:700px){.grid3,.grid2{grid-template-columns:1fr}}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--cw-grey);margin-bottom:5px}
+.field input,.field select,.field textarea{width:100%;padding:9px 10px;border:2px solid var(--cw-border);border-radius:6px;font-size:14px;font-family:inherit;background:#fff}
+.field input:focus,.field select:focus{outline:none;border-color:var(--cw-red)}
+.field small{display:block;color:var(--cw-grey);font-size:10.5px;margin-top:3px;line-height:1.4}
+.svc-card{border:1px solid var(--cw-border);border-radius:10px;margin-bottom:14px;overflow:hidden;background:#fff}
+.svc-head{display:flex;align-items:center;gap:12px;padding:12px 16px;cursor:pointer;background:#fafafa;user-select:none}
+.svc-head:hover{background:#f3f3f3}
+.svc-ico{width:34px;height:34px;background:#fff;border-radius:50%;border:1px solid var(--cw-border);padding:5px;flex-shrink:0}
+.svc-ico svg{width:100%;height:100%;stroke:var(--cw-grey);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.svc-head .t{flex:1}
+.svc-head .t b{font-size:14px;display:block}
+.svc-head .t span{font-size:11px;color:var(--cw-grey)}
+.svc-price{font-weight:700;color:var(--cw-red);font-size:14px;white-space:nowrap}
+.svc-toggle{width:44px;height:24px;border-radius:12px;background:#d5d5d5;position:relative;flex-shrink:0;transition:background .2s}
+.svc-toggle::after{content:'';position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;left:3px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.svc-card.on .svc-toggle{background:var(--cw-teal)}
+.svc-card.on .svc-toggle::after{left:23px}
+.svc-body{display:none;padding:16px;border-top:1px solid var(--cw-border)}
+.svc-card.on .svc-body{display:block}
+.svc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:12px}
+.buildup{background:var(--cw-light);border-radius:8px;padding:12px;font-size:12px;margin-top:10px}
+.buildup .bl{display:flex;justify-content:space-between;padding:2.5px 0;color:#3d3a36}
+.buildup .bl b{font-weight:700}
+.buildup .bl.tot{border-top:1px solid #d9d9d9;margin-top:5px;padding-top:7px;font-weight:700}
+.buildup .bl.mkt{color:var(--cw-grey);font-size:11px}
+.mktflag{font-weight:700}
+.mktflag.ok{color:#1b7a43}
+.mktflag.warn{color:#b26a10}
+.howto{margin-top:12px;border:1px dashed var(--cw-border);border-radius:8px}
+.howto summary{padding:10px 12px;font-size:12px;font-weight:700;color:var(--cw-teal);cursor:pointer;user-select:none}
+.howto .hbody{padding:0 14px 14px;font-size:12px;line-height:1.6;color:#3d3a36}
+.howto .hbody h4{font-size:11.5px;margin:10px 0 4px;color:var(--cw-black)}
+.howto .hbody ol,.howto .hbody ul{margin-left:18px}
+.howto .hbody li{margin-bottom:3px}
+.warnbox{background:#fdf1e2;border-left:4px solid var(--cw-gold);padding:8px 12px;border-radius:0 6px 6px 0;font-size:11.5px;margin-top:8px;line-height:1.5}
+.chip{padding:7px 13px;border:2px solid var(--cw-border);border-radius:18px;font-size:12px;cursor:pointer;user-select:none;background:#fff;display:inline-block;margin:0 6px 6px 0}
+.chip:hover{border-color:var(--cw-grey)}
+.chip.sel{background:var(--cw-black);color:#fff;border-color:var(--cw-black);font-weight:700}
+.summarywrap{position:sticky;top:16px;align-self:start}
+.summary{background:var(--cw-black);color:#fff;border-radius:12px;padding:20px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.summary h3{font-size:1.05em;border-bottom:2px solid var(--cw-red);padding-bottom:8px;margin-bottom:12px;letter-spacing:.02em}
+.sline{display:flex;justify-content:space-between;gap:8px;font-size:12px;padding:4px 0;color:#e8e7e6}
+.sline .n{flex:1}
+.sline.cat{font-weight:700;color:#fff;border-top:1px solid #4a4742;margin-top:6px;padding-top:8px}
+.sline.sub{padding-left:12px;color:#bdbbb8;font-size:11.5px}
+.stotal{display:flex;justify-content:space-between;font-size:1.35em;font-weight:700;border-top:2px solid var(--cw-red);margin-top:12px;padding-top:12px}
+.smeta{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:14px}
+.smeta .box{background:#3a3733;border-radius:8px;padding:8px;text-align:center}
+.smeta .box b{display:block;font-size:15px;color:#fff}
+.smeta .box span{font-size:9.5px;color:#bdbbb8;text-transform:uppercase;letter-spacing:.04em}
+.sbtns{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.btn{flex:1;min-width:100px;padding:11px 10px;border:none;border-radius:8px;font-family:inherit;font-weight:700;font-size:12.5px;cursor:pointer;text-align:center}
+.btn-red{background:var(--cw-red);color:#fff}
+.btn-red:hover{background:var(--cw-red-dark)}
+.btn-ghost{background:transparent;color:#fff;border:2px solid #5a5751}
+.btn-ghost:hover{border-color:#fff}
+.btn-teal{background:var(--cw-teal);color:#fff}
+.btn-grey{background:var(--cw-light);color:var(--cw-black);border:1px solid var(--cw-border)}
+.btn-grey:hover{background:#ebebeb}
+.minrow{display:flex;align-items:center;gap:10px;margin-top:10px;background:#3a3733;border-radius:8px;padding:8px 10px;font-size:11px;color:#e8e7e6}
+.minrow input{margin-right:4px}
+.internal-toggle{font-size:11px;color:#bdbbb8;margin-top:12px;display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.footer{background:var(--cw-black);color:#fff;text-align:center;padding:14px;font-size:11.5px}
+.footer b{font-weight:700}
+.footer a{color:#fff}
+.edu{padding:24px;max-width:1100px;margin:0 auto}
+.edu h2{font-size:1.3em;font-weight:700;border-bottom:2px solid var(--cw-red);padding-bottom:8px;margin:18px 0 12px}
+.edu h3{font-size:1.05em;font-weight:700;margin:16px 0 8px}
+.edu p,.edu li{font-size:13px;line-height:1.65;color:#3d3a36}
+.edu ul,.edu ol{margin:6px 0 12px 22px}
+.edu table{width:100%;border-collapse:collapse;font-size:12px;margin:10px 0 18px}
+.edu th{background:var(--cw-black);color:#fff;padding:8px 10px;text-align:left;font-weight:700}
+.edu td{padding:7px 10px;border-bottom:1px solid var(--cw-border);vertical-align:top;line-height:1.5}
+.edu tr:nth-child(even) td{background:#fafafa}
+.edu .tag{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-right:4px}
+.tag-yes{background:#e7f6ee;color:#1b7a43}
+.tag-no{background:#fde9ea;color:var(--cw-red-dark)}
+.tag-care{background:#fdf1e2;color:#b26a10}
+.ratebook input{width:90px;padding:5px 7px;border:1.5px solid var(--cw-border);border-radius:5px;font-size:12px;font-family:inherit;text-align:right}
+.savemodal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:60;align-items:center;justify-content:center}
+.savemodal.open{display:flex}
+.savebox{background:#fff;border-radius:12px;max-width:560px;width:92%;max-height:80vh;overflow:auto;padding:22px}
+.savebox h3{border-bottom:2px solid var(--cw-red);padding-bottom:8px;margin-bottom:12px;font-size:1.05em}
+.saverow{display:flex;align-items:center;gap:10px;padding:9px 6px;border-bottom:1px solid var(--cw-border);font-size:12.5px}
+.saverow .meta{flex:1}
+.saverow .meta b{display:block}
+.saverow .meta span{color:var(--cw-grey);font-size:11px}
+.saverow button{padding:6px 10px;border-radius:6px;border:1px solid var(--cw-border);background:#fff;font-family:inherit;font-size:11.5px;font-weight:700;cursor:pointer}
+.saverow button:hover{background:var(--cw-light)}
+.saverow button.del{color:var(--cw-red)}
+#printArea{display:none}
+@media print{
+  body *{visibility:hidden}
+  body{background:#fff;padding:0}
+  #printArea,#printArea *{visibility:visible}
+  #printArea{display:block;position:absolute;top:0;left:0;width:100%;padding:32px;font-size:12px}
+}
+.p-head{display:flex;justify-content:space-between;align-items:center;border-bottom:4px solid var(--cw-red);padding-bottom:14px;margin-bottom:18px}
+.p-head img{height:34px}
+.p-head .pt{text-align:right}
+.p-head .pt b{font-size:18px;display:block}
+.p-head .pt span{color:var(--cw-grey);font-size:11px}
+.p-svc{margin-bottom:14px;border:1px solid var(--cw-border);border-radius:8px;padding:12px 14px;page-break-inside:avoid}
+.p-svc h4{font-size:13px;margin-bottom:4px}
+.p-svc p{font-size:11px;color:#3d3a36;line-height:1.55}
+.p-svc .p-price{float:right;font-weight:700;font-size:14px;color:var(--cw-red)}
+.p-total{display:flex;justify-content:space-between;font-size:16px;font-weight:700;border-top:3px solid var(--cw-red);margin-top:14px;padding-top:10px}
+.p-note{font-size:10px;color:var(--cw-grey);margin-top:16px;line-height:1.5}
+.p-table{width:100%;border-collapse:collapse;font-size:10.5px;margin-top:8px}
+.p-table th{background:var(--cw-light);text-align:left;padding:5px 7px;border:1px solid var(--cw-border)}
+.p-table td{padding:5px 7px;border:1px solid var(--cw-border)}
+</style>
 </head>
 <body>
-<div style="background:#FFFFFF;border-bottom:3px solid #D22730;padding:10px 20px;"><img src="https://emailer.emfluence.com/clients/citywide/uploadedfiles/signature_logo.png" alt="City Wide Facility Solutions" style="height:42px;display:block;max-width:90%;object-fit:contain;object-position:left;"></div>
+<div class="container">
+  <div class="logobar"><img src="https://emailer.emfluence.com/clients/citywide/uploadedfiles/signature_logo.png" alt="City Wide Facility Solutions"></div>
+  <div class="header">
+    <h1>Window Cleaning Calculator</h1>
+    <p>Storefront to High-Rise: Every Method, Lift &amp; Access Plan for Las Vegas, Northern Nevada &amp; Arizona</p>
+    <div class="hdr-actions">
+      <button class="hdr-btn" id="userBtn" onclick="changeUser()">Set Your Name</button>
+      <button class="hdr-btn" onclick="openSaves()">Saved Work</button>
+    </div>
+  </div>
+  <div class="tabs">
+    <div class="tab active" data-tab="quote" onclick="showTab('quote')">Build a Quote</div>
+    <div class="tab" data-tab="floors" onclick="showTab('floors')">Methods &amp; Access</div>
+    <div class="tab" data-tab="process" onclick="showTab('process')">FSM Playbook</div>
+    <div class="tab" data-tab="rates" onclick="showTab('rates')">Chemicals &amp; Rate Book</div>
+  </div>
 
-    <div class="header">
-        <h1>Las Vegas Commercial Window Cleaning Calculator</h1>
-        <p>Professional Window Cleaning Pricing by Story Count & Window Types</p>
+  <div id="tab-quote">
+    <div class="controlbar">
+      <div class="cfield"><label>Region</label>
+        <select id="region" onchange="recalc()">
+          <option value="lv">Las Vegas</option>
+          <option value="reno">Reno / Sparks</option>
+          <option value="carson">Carson City</option>
+          <option value="tric">TRIC / USA Parkway</option>
+          <option value="az">Arizona Border (Laughlin, Kingman, Havasu)</option>
+        </select>
+      </div>
+      <div class="cfield"><label>Chemicals Provided By</label>
+        <select id="chemProvider" onchange="recalc()">
+          <option value="vendor">Crew Provides (their cost + 15%)</option>
+          <option value="cw">City Wide (tolled at our cost)</option>
+        </select>
+      </div>
+      <div class="cfield"><label>Override Margin % (blank = auto by job size)</label>
+        <input type="number" id="ovMargin" placeholder="auto 32-40" style="width:110px" oninput="recalc()">
+      </div>
+      <div class="cfield"><label>Active Margin</label><div class="marginpill" id="marginPill">auto</div></div>
+      <div class="tricnote" id="regionNote"></div>
     </div>
 
-    <div class="container">
-        <!-- Cost Provider Toggle System -->
-        <div class="cost-provider-section">
-            <h3>Cost Provider Selection</h3>
-            <div class="toggle-grid">
-                <div class="toggle-group">
-                    <label>Labor</label>
-                    <div class="toggle-buttons">
-                        <button class="vendor-btn active" data-category="labor">Vendor</button>
-                        <button class="inhouse-btn" data-category="labor">In-House</button>
-                    </div>
-                </div>
-                <div class="toggle-group">
-                    <label>Equipment</label>
-                    <div class="toggle-buttons">
-                        <button class="vendor-btn active" data-category="equipment">Vendor</button>
-                        <button class="inhouse-btn" data-category="equipment">In-House</button>
-                    </div>
-                </div>
-                <div class="toggle-group">
-                    <label>Materials</label>
-                    <div class="toggle-buttons">
-                        <button class="vendor-btn active" data-category="materials">Vendor</button>
-                        <button class="inhouse-btn" data-category="materials">In-House</button>
-                    </div>
-                </div>
-                <div class="toggle-group">
-                    <label>Supplies</label>
-                    <div class="toggle-buttons">
-                        <button class="vendor-btn active" data-category="supplies">Vendor</button>
-                        <button class="inhouse-btn" data-category="supplies">In-House</button>
-                    </div>
-                </div>
-            </div>
+    <div class="main">
+      <div>
+        <div class="card">
+          <h2>Job Info</h2>
+          <div class="grid3">
+            <div class="field"><label>Account / Property</label><input id="acct" placeholder="e.g. Summit Ridge Office Park" oninput="autosaveSoon()"></div>
+            <div class="field"><label>Quote Date</label><input type="date" id="qdate"></div>
+            <div class="field"><label>Prepared By</label><input id="prepBy" placeholder="Your name"></div>
+          </div>
         </div>
-
-        <div class="calculator-grid">
-            <!-- Project Details -->
-            <div class="card">
-                <h3>Building & Service Details</h3>
-                <div class="input-grid">
-                    <div class="input-group">
-                        <label for="serviceType">Service Type</label>
-                        <select id="serviceType" onchange="updateCalculations()">
-                            <option value="maintenance_exterior">Maintenance - Exterior Only</option>
-                            <option value="maintenance_interior">Maintenance - Interior Only</option>
-                            <option value="maintenance_both">Maintenance - Interior & Exterior</option>
-                            <option value="post_construction">Post-Construction Cleanup</option>
-                            <option value="initial_cleaning">Initial Deep Cleaning</option>
-                            <option value="high_rise">High-Rise Specialist Cleaning</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <label for="storyCount">Number of Stories</label>
-                        <select id="storyCount" onchange="generateStoryInputs()">
-                            <option value="1">1 Story (Ground Level)</option>
-                            <option value="2">2 Stories (Tucker Pole)</option>
-                            <option value="3">3 Stories (Extended Pole/Lift)</option>
-                            <option value="4">4 Stories (Scissor Lift)</option>
-                            <option value="5">5 Stories (Scissor Lift)</option>
-                            <option value="6">6 Stories (Scissor Lift)</option>
-                            <option value="mid_rise">7-15 Stories (Boom Lift)</option>
-                            <option value="high_rise">16+ Stories (Rappelling/RDS)</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <label for="windowCondition">Window Condition</label>
-                        <select id="windowCondition" onchange="updateCalculations()">
-                            <option value="excellent">Excellent - Recently cleaned</option>
-                            <option value="good" selected>Good - Well-maintained</option>
-                            <option value="fair">Fair - Some buildup/staining</option>
-                            <option value="poor">Poor - Heavy buildup</option>
-                            <option value="very_poor">Very Poor - Severe staining/oxidation</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <label for="accessDifficulty">Access Difficulty</label>
-                        <select id="accessDifficulty" onchange="updateCalculations()">
-                            <option value="easy">Easy - Open access, minimal obstacles</option>
-                            <option value="moderate" selected>Moderate - Some landscaping/obstacles</option>
-                            <option value="difficult">Difficult - Dense landscaping/equipment</option>
-                            <option value="very_difficult">Very Difficult - Severe access restrictions</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <label for="timeOfService">Time of Service</label>
-                        <select id="timeOfService" onchange="updateCalculations()">
-                            <option value="normal">Normal Hours (6 AM - 6 PM)</option>
-                            <option value="early_morning">Early Morning (4 AM - 8 AM) +15%</option>
-                            <option value="evening">Evening (6 PM - 10 PM) +20%</option>
-                            <option value="weekend">Weekend +25%</option>
-                            <option value="holiday">Holiday +50%</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <label for="buildingType">Building Type</label>
-                        <select id="buildingType" onchange="updateCalculations()">
-                            <option value="office">Office Building</option>
-                            <option value="retail">Retail/Shopping Center</option>
-                            <option value="medical">Medical Facility</option>
-                            <option value="industrial">Industrial/Warehouse</option>
-                            <option value="hotel">Hotel/Hospitality</option>
-                            <option value="restaurant">Restaurant/Food Service</option>
-                            <option value="mixed_use">Mixed Use</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Dynamic Story Window Inputs -->
-                <div id="storyInputsContainer">
-                    <!-- Populated by JavaScript -->
-                </div>
-
-                <!-- Add-On Services -->
-                <div class="input-group full-width">
-                    <label>Additional Services</label>
-                    <div class="checkbox-group">
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="screenCleaning" onchange="updateCalculations()">
-                            <label for="screenCleaning">Screen Cleaning & Removal</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="glassdoors" onchange="updateCalculations()">
-                            <label for="glassdoors">Glass Doors & Storefronts</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="framesCleaning" onchange="updateCalculations()">
-                            <label for="framesCleaning">Window Frame Cleaning</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="sillCleaning" onchange="updateCalculations()">
-                            <label for="sillCleaning">Sill & Track Cleaning</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="mineralRemoval" onchange="updateCalculations()">
-                            <label for="mineralRemoval">Hard Water Stain Removal</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="rustRemoval" onchange="updateCalculations()">
-                            <label for="rustRemoval">Rust & Oxidation Treatment</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Vendor Labor & Equipment -->
-            <div class="card">
-                <h3>Vendor Labor & Equipment Rates</h3>
-
-                <!-- IC Rate Breakdown -->
-                <div class="ic-breakdown">
-                    <h4>Independent Contractor Rate Breakdown</h4>
-                    <div class="input-grid">
-                        <div class="input-group">
-                            <label for="rawLaborRate">Raw Labor Rate ($/hour)</label>
-                            <input type="number" id="rawLaborRate" value="20.00" step="0.50" onchange="updateICBreakdown()">
-                        </div>
-                        <div class="input-group">
-                            <label for="stateTaxRate">State Income Tax (%)</label>
-                            <input type="number" id="stateTaxRate" value="0.00" step="0.01" onchange="updateICBreakdown()">
-                        </div>
-                        <div class="input-group">
-                            <label for="icProfitRate">IC Profit & OH (%)</label>
-                            <input type="number" id="icProfitRate" value="10.0" step="0.1" onchange="updateICBreakdown()">
-                        </div>
-                    </div>
-                    <div class="breakdown-grid" id="icBreakdownDisplay">
-                        <!-- Populated by JavaScript -->
-                    </div>
-                </div>
-
-                <div class="input-grid">
-                    <div class="input-group">
-                        <label for="crewSize">Crew Size</label>
-                        <select id="crewSize" onchange="updateCalculations()">
-                            <option value="1">1 Person</option>
-                            <option value="2" selected>2 People</option>
-                            <option value="3">3 People</option>
-                            <option value="4">4 People</option>
-                            <option value="5">5 People</option>
-                            <option value="6">6 People</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <label for="cityWideMargin">City Wide Margin (%)</label>
-                        <input type="number" id="cityWideMargin" value="35" step="1" onchange="updateCalculations()">
-                    </div>
-                    <div class="input-group">
-                        <label for="equipmentDailyRate">Base Equipment ($/day)</label>
-                        <input type="number" id="equipmentDailyRate" value="75" onchange="updateCalculations()">
-                    </div>
-                    <div class="input-group">
-                        <label for="liftRentalDaily">Lift Rental ($/day)</label>
-                        <input type="number" id="liftRentalDaily" value="450" onchange="updateCalculations()">
-                    </div>
-                    <div class="input-group">
-                        <label for="materialCostPerWindow">Materials ($/window)</label>
-                        <input type="number" id="materialCostPerWindow" value="0.35" step="0.05" onchange="updateCalculations()">
-                    </div>
-                    <div class="input-group">
-                        <label for="supplyCostBase">Supply Cost Base ($)</label>
-                        <input type="number" id="supplyCostBase" value="35" onchange="updateCalculations()">
-                    </div>
-                </div>
-            </div>
+        <div class="card">
+          <h2>Window &amp; Glass Services</h2>
+          <p style="font-size:11.5px;color:var(--cw-grey);margin-bottom:12px">Toggle on every service in this bid. Each service prices from a cost build-up: crew labor, supplies, equipment (including lift rentals passed through at cost), and a small crew-company profit, then City Wide margin. Every number is adjustable.</p>
+          <div id="svcList"></div>
         </div>
-
-        <!-- Results Section -->
-        <div class="results-section">
-            <!-- Minimum Charge Notice -->
-            <div class="minimum-charge-notice" id="minimumChargeNotice">
-                <h3>⚠️ Below Minimum Service Charge</h3>
-                <div class="price-comparison">
-                    <div>
-                        <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">
-                            <strong>Calculated Price:</strong> 
-                            <span id="calculatedPrice" style="color: var(--dark-gray); font-size: 1.3rem; font-weight: bold;"></span>
-                        </p>
-                        <p style="color: var(--dark-gray);">Based on actual time and materials</p>
-                    </div>
-                    <div>
-                        <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">
-                            <strong>Standard Minimum:</strong> 
-                            <span style="color: var(--accent-red); font-size: 1.3rem; font-weight: bold;">$350</span>
-                        </p>
-                        <p style="color: var(--dark-gray);">For standalone window cleaning</p>
-                    </div>
-                </div>
-                <div style="background: white; padding: 1rem; border-radius: 6px; border-left: 4px solid #e5b423;">
-                    <p style="margin-bottom: 0.5rem; font-weight: 600; color: #7a6013;">
-                        FSM Decision Required:
-                    </p>
-                    <ul style="margin: 0; padding-left: 1.5rem; color: #7a6013;">
-                        <li>If this is a standalone service, charge the $350 minimum</li>
-                        <li>If bundled with other services at the same location, you may charge the calculated price</li>
-                        <li>Consider travel time, setup costs, and opportunity cost when making this decision</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3>Pricing Results</h3>
-                <div class="results-grid" id="resultsGrid">
-                    <!-- Populated by JavaScript -->
-                </div>
-            </div>
-
-            <!-- Detailed Breakdown -->
-            <div class="breakdown-section" id="breakdownSection">
-                <!-- Populated by JavaScript -->
-            </div>
-
-            <!-- Export Functions -->
-            <div class="export-section">
-                <h3>Export Options</h3>
-                <p style="margin-bottom: 1rem;">Generate professional documents for job management</p>
-                <div class="export-buttons">
-                    <button class="export-btn vendor" onclick="exportVendorSpecs()">
-                        Export Vendor Specifications
-                    </button>
-                    <button class="export-btn fsm" onclick="exportFSMSummary()">
-                        Export FSM Job Summary
-                    </button>
-                </div>
-            </div>
+        <div class="card" id="shopCard" style="display:none">
+          <h2>Supplies &amp; Equipment for This Job</h2>
+          <p style="font-size:11.5px;color:var(--cw-grey);margin-bottom:10px">What this job consumes and rents, by item. Unit prices are seeded costs: double-check current pricing (WindowCleaner.com, J.Racenstein, rental yards) before committing, and update the Rate Book if it moved.</p>
+          <div id="shopList"></div>
         </div>
+      </div>
+      <div class="summarywrap">
+        <div class="summary">
+          <h3>Quote Summary</h3>
+          <div id="sumLines"><div style="font-size:12px;color:#bdbbb8">Turn on services to build the quote.</div></div>
+          <div class="stotal"><span>Total</span><span id="sumTotal">$0</span></div>
+          <div class="smeta">
+            <div class="box"><b id="mPerSF">$0.00</b><span>Blended / Unit</span></div>
+            <div class="box"><b id="mHours">0.0</b><span>Crew Hours</span></div>
+            <div class="box"><b id="mSvcs">0</b><span>Services</span></div>
+          </div>
+          <div class="minrow" id="minRow" style="display:none">
+            <div style="flex:1" id="minMsg"></div>
+          </div>
+          <div class="minrow">
+            <label style="cursor:pointer"><input type="checkbox" id="minOverride" onchange="recalc()"> Override $300 minimum</label>
+            <input id="minReason" placeholder="Reason (multi-service bid, GM approval...)" style="flex:1;padding:6px 8px;border:none;border-radius:5px;font-family:inherit;font-size:11px" oninput="recalc()">
+          </div>
+          <label class="internal-toggle"><input type="checkbox" id="showInternal" onchange="recalc()"> Show cost &amp; margin (internal)</label>
+          <div class="sbtns">
+            <button class="btn btn-red" onclick="printQuote(false)">Print Client Quote</button>
+            <button class="btn btn-ghost" onclick="printQuote(true)">Print Internal</button>
+            <button class="btn btn-teal" onclick="copyQuote()">Copy Quote Text</button>
+            <button class="btn btn-ghost" onclick="saveWork(true)">Save Work</button>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <script>
-        // REALISTIC Commercial window cleaning base rates (in minutes per window)
-        // Based on industry standards for commercial cleaning
-        const windowPricing = {
-            small: { 
-                minutes: 3.0,  // 3 minutes for small windows
-                description: "Small (up to 3 sq ft)" 
-            },
-            medium: { 
-                minutes: 5.0,  // 5 minutes for medium windows
-                description: "Medium (3-15 sq ft)" 
-            },
-            large: { 
-                minutes: 8.0,  // 8 minutes for large windows
-                description: "Large (15-40 sq ft)" 
-            },
-            xlarge: { 
-                minutes: 12.0,  // 12 minutes for extra large
-                description: "Extra Large (40+ sq ft)" 
-            },
-            doors: { 
-                minutes: 10.0,  // 10 minutes for glass doors
-                description: "Glass Doors & Entries" 
-            }
-        };
+  <div id="tab-floors" style="display:none"><div class="edu" id="floorsContent"></div></div>
+  <div id="tab-process" style="display:none"><div class="edu" id="processContent"></div></div>
+  <div id="tab-rates" style="display:none"><div class="edu ratebook" id="ratesContent"></div></div>
 
-        // Service type multipliers
-        const serviceMultipliers = {
-            maintenance_exterior: 1.0,
-            maintenance_interior: 0.8,
-            maintenance_both: 1.6,
-            post_construction: 2.2,
-            initial_cleaning: 1.5,
-            high_rise: 1.8
-        };
-
-        // Condition multipliers
-        const conditionMultipliers = {
-            excellent: 0.85,
-            good: 1.0,
-            fair: 1.25,
-            poor: 1.6,
-            very_poor: 2.0
-        };
-
-        // Access difficulty multipliers
-        const difficultyMultipliers = {
-            easy: 1.0,
-            moderate: 1.1,
-            difficult: 1.25,
-            very_difficult: 1.45
-        };
-
-        // Time multipliers
-        const timeMultipliers = {
-            normal: 1.0,
-            early_morning: 1.15,
-            evening: 1.20,
-            weekend: 1.25,
-            holiday: 1.50
-        };
-
-        // Height complexity multipliers
-        const heightMultipliers = {
-            1: 1.0,    // Ground level
-            2: 1.1,    // 2nd floor - slightly more complex
-            3: 1.2,    // 3rd floor - need extended poles
-            4: 1.35,   // 4th floor - lift required
-            5: 1.5,    // 5th floor - more lift positioning
-            6: 1.65,   // 6th floor - significantly more time
-            7: 1.8,    // 7th floor and up
-            8: 1.95,
-            9: 2.1,
-            10: 2.25
-        };
-
-        // Equipment requirements
-        const equipmentRequirements = {
-            1: { needsLift: false, type: 'ground', setupTime: 15 },
-            2: { needsLift: false, type: 'tucker_pole', setupTime: 20 },
-            3: { needsLift: true, type: 'scissor_lift', setupTime: 45 },
-            4: { needsLift: true, type: 'scissor_lift', setupTime: 45 },
-            5: { needsLift: true, type: 'scissor_lift', setupTime: 60 },
-            6: { needsLift: true, type: 'scissor_lift', setupTime: 60 },
-            mid_rise: { needsLift: true, type: 'boom_lift', setupTime: 90 },
-            high_rise: { needsLift: true, type: 'rappelling', setupTime: 120 }
-        };
-
-        function generateStoryInputs() {
-            const storyCount = document.getElementById('storyCount').value;
-            const container = document.getElementById('storyInputsContainer');
-            
-            let storiesNum;
-            if (storyCount === 'mid_rise') {
-                storiesNum = 10;
-            } else if (storyCount === 'high_rise') {
-                storiesNum = 20;
-            } else {
-                storiesNum = parseInt(storyCount);
-            }
-            
-            container.innerHTML = '';
-            
-            for (let i = 1; i <= storiesNum; i++) {
-                const storySection = document.createElement('div');
-                storySection.className = 'story-section';
-                storySection.innerHTML = `
-                    <h4>Floor ${i} Window Count</h4>
-                    <div class="window-count-grid">
-                        <div class="window-input">
-                            <label>Small</label>
-                            <input type="number" id="story${i}_small" value="${i === 1 ? '5' : '0'}" min="0" onchange="updateCalculations()">
-                            <small>${windowPricing.small.description}</small>
-                        </div>
-                        <div class="window-input">
-                            <label>Medium</label>
-                            <input type="number" id="story${i}_medium" value="${i === 1 ? '10' : '8'}" min="0" onchange="updateCalculations()">
-                            <small>${windowPricing.medium.description}</small>
-                        </div>
-                        <div class="window-input">
-                            <label>Large</label>
-                            <input type="number" id="story${i}_large" value="${i === 1 ? '4' : '2'}" min="0" onchange="updateCalculations()">
-                            <small>${windowPricing.large.description}</small>
-                        </div>
-                        <div class="window-input">
-                            <label>Extra Large</label>
-                            <input type="number" id="story${i}_xlarge" value="0" min="0" onchange="updateCalculations()">
-                            <small>${windowPricing.xlarge.description}</small>
-                        </div>
-                        <div class="window-input">
-                            <label>Glass Doors</label>
-                            <input type="number" id="story${i}_doors" value="${i === 1 ? '2' : '0'}" min="0" onchange="updateCalculations()">
-                            <small>${windowPricing.doors.description}</small>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(storySection);
-            }
-            
-            updateCalculations();
-        }
-
-        function updateICBreakdown() {
-            const rawRate = parseFloat(document.getElementById('rawLaborRate').value) || 20.00;
-            const stateTax = parseFloat(document.getElementById('stateTaxRate').value) || 0.00;
-            const icProfitRate = parseFloat(document.getElementById('icProfitRate').value) || 10.0;
-            
-            const fica = rawRate * 0.0765;
-            const futa = rawRate * 0.0060;
-            const workComp = rawRate * 0.0250;
-            const gl = rawRate * 0.0050;
-            const stateTaxAmount = rawRate * (stateTax / 100);
-            
-            const subTotal = rawRate + fica + futa + workComp + gl + stateTaxAmount;
-            const icProfitAmount = subTotal * (icProfitRate / 100);
-            const icLoadedRate = subTotal + icProfitAmount;
-            
-            const breakdownDisplay = document.getElementById('icBreakdownDisplay');
-            breakdownDisplay.innerHTML = `
-                <div class="label">Raw Labor Rate:</div>
-                <div class="value">$${rawRate.toFixed(2)}</div>
-                <div class="label">FICA (7.65%):</div>
-                <div class="value">$${fica.toFixed(2)}</div>
-                <div class="label">FUTA (0.60%):</div>
-                <div class="value">$${futa.toFixed(2)}</div>
-                <div class="label">Work Comp (2.50%):</div>
-                <div class="value">$${workComp.toFixed(2)}</div>
-                <div class="label">General Liability (0.50%):</div>
-                <div class="value">$${gl.toFixed(2)}</div>
-                <div class="label">State Income Tax:</div>
-                <div class="value">$${stateTaxAmount.toFixed(2)}</div>
-                <div class="label">Subtotal:</div>
-                <div class="value">$${subTotal.toFixed(2)}</div>
-                <div class="label">IC Profit & OH (${icProfitRate}%):</div>
-                <div class="value">$${icProfitAmount.toFixed(2)}</div>
-                <div class="label"><strong>IC Loaded Rate:</strong></div>
-                <div class="value"><strong>$${icLoadedRate.toFixed(2)}</strong></div>
-            `;
-            
-            updateCalculations();
-        }
-
-        function getICLoadedRate() {
-            const rawRate = parseFloat(document.getElementById('rawLaborRate').value) || 20.00;
-            const stateTax = parseFloat(document.getElementById('stateTaxRate').value) || 0.00;
-            const icProfitRate = parseFloat(document.getElementById('icProfitRate').value) || 10.0;
-            
-            const fica = rawRate * 0.0765;
-            const futa = rawRate * 0.0060;
-            const workComp = rawRate * 0.0250;
-            const gl = rawRate * 0.0050;
-            const stateTaxAmount = rawRate * (stateTax / 100);
-            
-            const subTotal = rawRate + fica + futa + workComp + gl + stateTaxAmount;
-            const icProfitAmount = subTotal * (icProfitRate / 100);
-            
-            return subTotal + icProfitAmount;
-        }
-
-        function calculateInHouseLoadedRate() {
-            const rawRate = parseFloat(document.getElementById('rawLaborRate').value) || 20.00;
-            const stateTax = parseFloat(document.getElementById('stateTaxRate').value) || 0.00;
-            
-            const fica = rawRate * 0.0765;
-            const futa = rawRate * 0.0060;
-            const workComp = rawRate * 0.0250;
-            const gl = rawRate * 0.0050;
-            const stateTaxAmount = rawRate * (stateTax / 100);
-            
-            return rawRate + fica + futa + workComp + gl + stateTaxAmount;
-        }
-
-        function calculateProviderCosts(category, baseCost) {
-            const vendorBtn = document.querySelector(`[data-category="${category}"] .vendor-btn`);
-            if (!vendorBtn) return baseCost;
-            
-            const isVendor = vendorBtn.classList.contains('active');
-            const margin = parseFloat(document.getElementById('cityWideMargin').value) || 35;
-            
-            if (category === 'labor') {
-                return baseCost; // Labor handled separately
-            } else {
-                if (isVendor) {
-                    const costWithICProfit = baseCost * 1.10;
-                    return costWithICProfit / (1 - margin / 100);
-                } else {
-                    return baseCost / (1 - margin / 100);
-                }
-            }
-        }
-
-        function updateCalculations() {
-            const storyCount = document.getElementById('storyCount').value;
-            const serviceType = document.getElementById('serviceType').value;
-            const windowCondition = document.getElementById('windowCondition').value;
-            const accessDifficulty = document.getElementById('accessDifficulty').value;
-            const timeOfService = document.getElementById('timeOfService').value;
-            const crewSize = parseInt(document.getElementById('crewSize').value) || 2;
-            const margin = parseFloat(document.getElementById('cityWideMargin').value) || 35;
-            
-            // Calculate total windows and base minutes
-            let totalWindows = 0;
-            let totalBaseMinutes = 0;
-            let windowsByFloor = [];
-            
-            let storiesNum;
-            if (storyCount === 'mid_rise') {
-                storiesNum = 10;
-            } else if (storyCount === 'high_rise') {
-                storiesNum = 20;
-            } else {
-                storiesNum = parseInt(storyCount);
-            }
-            
-            // Calculate time for each floor
-            for (let i = 1; i <= storiesNum; i++) {
-                let floorWindows = 0;
-                let floorMinutes = 0;
-                
-                // Get height multiplier for this floor
-                const heightMultiplier = heightMultipliers[Math.min(i, 10)] || 2.25;
-                
-                for (const [size, pricing] of Object.entries(windowPricing)) {
-                    const elementId = `story${i}_${size === 'doors' ? 'doors' : size}`;
-                    const element = document.getElementById(elementId);
-                    if (element) {
-                        const count = parseInt(element.value) || 0;
-                        floorWindows += count;
-                        // Apply height multiplier to base time
-                        floorMinutes += count * pricing.minutes * heightMultiplier;
-                    }
-                }
-                
-                totalWindows += floorWindows;
-                totalBaseMinutes += floorMinutes;
-                
-                if (floorWindows > 0) {
-                    windowsByFloor.push({ floor: i, windows: floorWindows, minutes: floorMinutes });
-                }
-            }
-            
-            // Apply service, condition, and difficulty multipliers
-            const serviceMultiplier = serviceMultipliers[serviceType] || 1.0;
-            const conditionMultiplier = conditionMultipliers[windowCondition] || 1.0;
-            const difficultyMultiplier = difficultyMultipliers[accessDifficulty] || 1.0;
-            const timeMultiplier = timeMultipliers[timeOfService] || 1.0;
-            
-            // Calculate volume efficiency (larger jobs are more efficient)
-            let volumeEfficiency = 1.0;
-            if (totalWindows > 300) {
-                volumeEfficiency = 0.85; // 15% more efficient for very large jobs
-            } else if (totalWindows > 200) {
-                volumeEfficiency = 0.90; // 10% more efficient
-            } else if (totalWindows > 100) {
-                volumeEfficiency = 0.95; // 5% more efficient
-            }
-            
-            // Apply all multipliers
-            let adjustedMinutes = totalBaseMinutes * serviceMultiplier * conditionMultiplier * 
-                                 difficultyMultiplier * timeMultiplier * volumeEfficiency;
-            
-            // Add setup and mobilization time
-            const equipment = equipmentRequirements[storyCount] || equipmentRequirements[1];
-            const setupMinutes = equipment.setupTime || 15;
-            adjustedMinutes += setupMinutes;
-            
-            // Calculate labor hours
-            const totalLaborHours = adjustedMinutes / 60 / crewSize;
-            
-            // Calculate labor costs
-            const laborVendorBtn = document.querySelector('[data-category="labor"] .vendor-btn');
-            const isLaborVendor = laborVendorBtn ? laborVendorBtn.classList.contains('active') : true;
-            
-            let laborHourlyRate;
-            if (isLaborVendor) {
-                laborHourlyRate = getICLoadedRate();
-            } else {
-                laborHourlyRate = calculateInHouseLoadedRate();
-            }
-            
-            const billableHourlyRate = laborHourlyRate / (1 - margin / 100);
-            const totalLaborCost = billableHourlyRate * totalLaborHours * crewSize;
-            
-            // Equipment costs
-            let equipmentCost = 0;
-            let liftRentalCost = 0;
-            
-            const baseEquipmentRate = parseFloat(document.getElementById('equipmentDailyRate').value) || 75;
-            const equipmentDays = Math.max(1, Math.ceil(totalLaborHours / 8));
-            equipmentCost = calculateProviderCosts('equipment', baseEquipmentRate * equipmentDays);
-            
-            if (equipment.needsLift) {
-                const liftDaily = parseFloat(document.getElementById('liftRentalDaily').value) || 450;
-                liftRentalCost = calculateProviderCosts('equipment', liftDaily * equipmentDays);
-            }
-            
-            // Materials and supplies
-            const materialRate = parseFloat(document.getElementById('materialCostPerWindow').value) || 0.35;
-            const materialCost = calculateProviderCosts('materials', materialRate * totalWindows);
-            
-            const supplyBase = parseFloat(document.getElementById('supplyCostBase').value) || 35;
-            const supplyCost = calculateProviderCosts('supplies', supplyBase + (totalWindows * 0.15));
-            
-            // Add-on services
-            let addOnCost = 0;
-            let addOnMinutes = 0;
-            
-            if (document.getElementById('screenCleaning').checked) {
-                addOnMinutes += totalWindows * 4; // 4 minutes per screen
-            }
-            if (document.getElementById('glassdoors').checked) {
-                addOnMinutes += totalWindows * 0.1 * 6; // Extra time for door details
-            }
-            if (document.getElementById('framesCleaning').checked) {
-                addOnMinutes += totalWindows * 2; // 2 minutes per frame
-            }
-            if (document.getElementById('sillCleaning').checked) {
-                addOnMinutes += totalWindows * 3; // 3 minutes per sill
-            }
-            if (document.getElementById('mineralRemoval').checked) {
-                addOnMinutes += totalWindows * 5; // 5 extra minutes for mineral removal
-                addOnCost += calculateProviderCosts('materials', totalWindows * 0.75);
-            }
-            if (document.getElementById('rustRemoval').checked) {
-                addOnMinutes += totalWindows * 4; // 4 extra minutes for rust
-                addOnCost += calculateProviderCosts('materials', totalWindows * 1.00);
-            }
-            
-            // Add labor cost for add-on time
-            if (addOnMinutes > 0) {
-                const addOnHours = addOnMinutes / 60 / crewSize;
-                addOnCost += billableHourlyRate * addOnHours * crewSize;
-            }
-            
-            // Total costs
-            const totalCostToCW = totalLaborCost + equipmentCost + liftRentalCost + 
-                                 materialCost + supplyCost + addOnCost;
-            
-            // Check minimum charge
-            const minimumCharge = 350;
-            const isMinimumApplied = totalCostToCW < minimumCharge;
-            
-            // Show/hide minimum charge notice
-            const minimumNotice = document.getElementById('minimumChargeNotice');
-            if (minimumNotice) {
-                minimumNotice.style.display = isMinimumApplied ? 'block' : 'none';
-                if (isMinimumApplied) {
-                    const calculatedPriceSpan = document.getElementById('calculatedPrice');
-                    if (calculatedPriceSpan) {
-                        calculatedPriceSpan.textContent = formatCurrency(totalCostToCW);
-                    }
-                }
-            }
-            
-            const pricePerWindow = totalCostToCW / Math.max(1, totalWindows);
-            const grossProfit = totalCostToCW * (margin / 100) / (1 - margin / 100);
-            
-            // Update displays
-            updateResultsDisplay({
-                totalWindows,
-                totalLaborHours: totalLaborHours * crewSize,
-                totalLaborCost,
-                equipmentCost: equipmentCost + liftRentalCost,
-                materialCost: materialCost + supplyCost,
-                totalCostToCW,
-                pricePerWindow,
-                finalClientPrice: totalCostToCW,
-                grossProfit,
-                isMinimumApplied
-            });
-            
-            updateBreakdownDisplay({
-                totalWindows,
-                laborHours: totalLaborHours,
-                crewHours: totalLaborHours * crewSize,
-                laborRate: laborHourlyRate,
-                billableRate: billableHourlyRate,
-                totalLaborCost,
-                equipmentDays,
-                baseEquipmentRate,
-                liftDays: equipment.needsLift ? equipmentDays : 0,
-                liftRate: equipment.needsLift ? parseFloat(document.getElementById('liftRentalDaily').value) : 0,
-                materialRate,
-                materialCost,
-                supplyCost,
-                addOnCost,
-                serviceType,
-                equipment: equipment.type,
-                adjustedMinutes: adjustedMinutes - setupMinutes,
-                setupMinutes,
-                totalMinutes: totalBaseMinutes,
-                crewSize,
-                isLaborVendor,
-                volumeEfficiency,
-                windowsByFloor
-            });
-        }
-
-        function updateResultsDisplay(results) {
-            const resultsGrid = document.getElementById('resultsGrid');
-            
-            const priceLabel = results.isMinimumApplied ? 
-                "Calculated Price" : 
-                "Final Client Price";
-            
-            resultsGrid.innerHTML = `
-                <div class="result-card">
-                    <h4>Total Windows</h4>
-                    <div class="value">${results.totalWindows}</div>
-                    <div class="unit">windows</div>
-                </div>
-                <div class="result-card">
-                    <h4>Total Labor Hours</h4>
-                    <div class="value">${results.totalLaborHours.toFixed(1)}</div>
-                    <div class="unit">man-hours</div>
-                </div>
-                <div class="result-card">
-                    <h4>Labor Cost</h4>
-                    <div class="value">${formatCurrency(results.totalLaborCost)}</div>
-                    <div class="unit">with margin</div>
-                </div>
-                <div class="result-card">
-                    <h4>Equipment & Lift</h4>
-                    <div class="value">${formatCurrency(results.equipmentCost)}</div>
-                    <div class="unit">including rentals</div>
-                </div>
-                <div class="result-card">
-                    <h4>Materials & Supplies</h4>
-                    <div class="value">${formatCurrency(results.materialCost)}</div>
-                    <div class="unit">cleaning supplies</div>
-                </div>
-                <div class="result-card">
-                    <h4>Price Per Window</h4>
-                    <div class="value">${formatCurrencyDetailed(results.pricePerWindow)}</div>
-                    <div class="unit">average per window</div>
-                </div>
-                <div class="result-card ${results.isMinimumApplied ? '' : 'highlight'}">
-                    <h4>${priceLabel}</h4>
-                    <div class="value">${formatCurrency(results.finalClientPrice)}</div>
-                    <div class="unit">${results.isMinimumApplied ? '(Below $350 minimum)' : 'total project'}</div>
-                </div>
-                <div class="result-card ${results.isMinimumApplied ? '' : 'highlight'}">
-                    <h4>CW Gross Profit</h4>
-                    <div class="value">${formatCurrency(results.grossProfit)}</div>
-                    <div class="unit">margin earned</div>
-                </div>
-            `;
-        }
-
-        function updateBreakdownDisplay(data) {
-            const breakdownSection = document.getElementById('breakdownSection');
-            const providerType = data.isLaborVendor ? 'Vendor' : 'In-House';
-            
-            breakdownSection.innerHTML = `
-                <div class="breakdown-card">
-                    <h4>Window Count & Time</h4>
-                    <div class="breakdown-item">
-                        <span>Total Windows:</span>
-                        <span>${data.totalWindows} windows</span>
-                    </div>
-                    <div class="breakdown-item">
-                        <span>Base Cleaning Time:</span>
-                        <span>${(data.totalMinutes/60).toFixed(1)} hrs</span>
-                    </div>
-                    ${data.volumeEfficiency < 1 ? `
-                    <div class="breakdown-item" style="color: var(--success-green);">
-                        <span>Volume Efficiency:</span>
-                        <span>${Math.round((1 - data.volumeEfficiency) * 100)}% faster</span>
-                    </div>
-                    ` : ''}
-                    <div class="breakdown-item">
-                        <span>Adjusted Time:</span>
-                        <span>${(data.adjustedMinutes/60).toFixed(1)} hrs</span>
-                    </div>
-                    <div class="breakdown-item">
-                        <span>Setup/Mobilization:</span>
-                        <span>${(data.setupMinutes/60).toFixed(1)} hrs</span>
-                    </div>
-                    <div class="breakdown-item">
-                        <span>Crew Size:</span>
-                        <span>${data.crewSize} people</span>
-                    </div>
-                    <div class="breakdown-item total">
-                        <span>Total Man-Hours:</span>
-                        <span>${data.crewHours.toFixed(1)} hrs</span>
-                    </div>
-                </div>
-                
-                <div class="breakdown-card">
-                    <h4>Labor Cost Structure</h4>
-                    <div class="breakdown-item">
-                        <span>Provider Type:</span>
-                        <span>${providerType}</span>
-                    </div>
-                    <div class="breakdown-item">
-                        <span>${providerType} Loaded Rate:</span>
-                        <span>${formatCurrencyDetailed(data.laborRate)}/hr</span>
-                    </div>
-                    <div class="breakdown-item">
-                        <span>Billable Rate:</span>
-                        <span>${formatCurrencyDetailed(data.billableRate)}/hr</span>
-                    </div>
-                    <div class="breakdown-item">
-                        <span>Man-Hours:</span>
-                        <span>${data.crewHours.toFixed(1)} hrs</span>
-                    </div>
-                    <div class="breakdown-item total">
-                        <span>Total Labor Cost:</span>
-                        <span>${formatCurrency(data.totalLaborCost)}</span>
-                    </div>
-                </div>
-                
-                <div class="breakdown-card">
-                    <h4>Equipment & Access</h4>
-                    <div class="breakdown-item">
-                        <span>Access Method:</span>
-                        <span>${data.equipment.replace('_', ' ').toUpperCase()}</span>
-                    </div>
-                    <div class="breakdown-item">
-                        <span>Equipment Days:</span>
-                        <span>${data.equipmentDays} days</span>
-                    </div>
-                    ${data.liftDays > 0 ? `
-                    <div class="breakdown-item">
-                        <span>Lift Rental:</span>
-                        <span>${formatCurrency(data.liftRate * data.liftDays)}</span>
-                    </div>
-                    ` : ''}
-                    <div class="breakdown-item">
-                        <span>Provider Type:</span>
-                        <span>${getProviderType('equipment')}</span>
-                    </div>
-                </div>
-                
-                <div class="breakdown-card">
-                    <h4>Materials & Supplies</h4>
-                    <div class="breakdown-item">
-                        <span>Windows:</span>
-                        <span>${data.totalWindows} @ ${formatCurrencyDetailed(data.materialRate)}/ea</span>
-                    </div>
-                    <div class="breakdown-item">
-                        <span>Materials:</span>
-                        <span>${formatCurrency(data.materialCost)}</span>
-                    </div>
-                    <div class="breakdown-item">
-                        <span>Supplies:</span>
-                        <span>${formatCurrency(data.supplyCost)}</span>
-                    </div>
-                    ${data.addOnCost > 0 ? `
-                    <div class="breakdown-item">
-                        <span>Add-On Services:</span>
-                        <span>${formatCurrency(data.addOnCost)}</span>
-                    </div>
-                    ` : ''}
-                </div>
-            `;
-        }
-
-        function formatCurrency(amount) {
-            return new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD',
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-            }).format(amount);
-        }
-
-        function formatCurrencyDetailed(amount) {
-            return new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD',
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            }).format(amount);
-        }
-
-        function getProviderType(category) {
-            const activeBtn = document.querySelector(`[data-category="${category}"] .active`);
-            return activeBtn ? activeBtn.textContent : 'Vendor';
-        }
-
-        function exportVendorSpecs() {
-            const content = `{\\rtf1\\ansi\\deff0 {\\fonttbl {\\f0 Times New Roman;}}
-\\f0\\fs24
-VENDOR SPECIFICATIONS - COMMERCIAL WINDOW CLEANING\\line\\line
-Service details and requirements...\\line
-}`;
-            downloadRTF(content, 'vendor-specifications.rtf');
-        }
-
-        function exportFSMSummary() {
-            const content = `{\\rtf1\\ansi\\deff0 {\\fonttbl {\\f0 Times New Roman;}}
-\\f0\\fs24
-FACILITY SOLUTIONS MANAGER - JOB SUMMARY\\line\\line
-Complete job details...\\line
-}`;
-            downloadRTF(content, 'fsm-job-summary.rtf');
-        }
-
-        function downloadRTF(content, filename) {
-            const blob = new Blob([content], { type: 'application/rtf' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(function() {
-                // Set up toggle buttons
-                const toggleButtons = document.querySelectorAll('.toggle-buttons button');
-                toggleButtons.forEach(button => {
-                    button.addEventListener('click', function() {
-                        const parent = this.parentElement;
-                        const buttons = parent.querySelectorAll('button');
-                        buttons.forEach(btn => btn.classList.remove('active'));
-                        this.classList.add('active');
-                        updateCalculations();
-                    });
-                });
-                
-                // Initialize calculations
-                updateICBreakdown();
-                generateStoryInputs();
-                updateCalculations();
-            }, 100);
-        });
-    </script>
-
-<div style="text-align:center;padding:18px 12px 24px;font-family:Verdana, &#39;Liberation Sans&#39;, &#39;DejaVu Sans&#39;, Geneva, Tahoma, sans-serif;font-size:11px;color:#636466;">City Wide Facility Solutions | <a href="https://www.gocitywide.com" style="color:#D22730;font-weight:bold;">GoCityWide.com</a></div>
-<!-- CW Save Results to Google Sheets -->
-<div id="cwSaveBar" style="position:fixed;bottom:18px;right:18px;z-index:9999;font-family:Verdana,'Liberation Sans','DejaVu Sans',Geneva,Tahoma,sans-serif;">
-<button id="cwSaveBtn" type="button" style="background:#D22730;color:#FFFFFF;border:none;border-radius:6px;padding:12px 20px;font-size:13px;font-weight:bold;font-family:inherit;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,0.25);">Save Results</button>
+  <div class="footer"><b>City Wide Facility Solutions</b> of Las Vegas &amp; Northern Nevada. Internal pricing tool. GoCityWide.com</div>
 </div>
-<script>
-(function(){
-  var CW_TOOL='windows';
-  var CW_HOOK='https://script.google.com/macros/s/AKfycbyZz6vEqjzdq0v15FVMfnrC5-lC_urvHe9aUI8LMaWHv_muqLGximMocH0_6IwB3mZOZQ/exec';
-  function txt(el){return (el.innerText||'').replace(/\s+/g,' ').trim();}
-  function vis(el){return !!(el.offsetWidth||el.offsetHeight||el.getClientRects().length);}
-  function labelFor(inp){
-    if(inp.id){var l=document.querySelector('label[for="'+inp.id+'"]');if(l&&txt(l))return txt(l);}
-    var w=inp.closest('label');if(w){var t=txt(w);if(t)return t;}
-    var p=inp.previousElementSibling;
-    while(p){if(/^(LABEL|H[1-6]|SPAN|DIV|P|STRONG|B)$/.test(p.tagName)){var t2=txt(p);if(t2&&t2.length<90)return t2;}p=p.previousElementSibling;}
-    var par=inp.parentElement;
-    if(par){var l2=par.querySelector('label');if(l2&&txt(l2))return txt(l2);
-      var pp=par.previousElementSibling;
-      while(pp){if(/^(LABEL|H[1-6]|SPAN|DIV|P|STRONG|B)$/.test(pp.tagName)){var t3=txt(pp);if(t3&&t3.length<90)return t3;}pp=pp.previousElementSibling;}}
-    return inp.name||inp.id||'Field';
-  }
-  function collect(){
-    var inputs=[];
-    document.querySelectorAll('input,select,textarea').forEach(function(el){
-      if(!vis(el))return;
-      if(el.closest('#cwSaveBar'))return;
-      if(el.type==='button'||el.type==='submit'||el.type==='hidden')return;
-      var v;
-      if(el.type==='checkbox'){v=el.checked?'Yes':'No';}
-      else if(el.type==='radio'){if(!el.checked)return;v=el.value;}
-      else if(el.tagName==='SELECT'){v=el.selectedIndex>=0?txt(el.options[el.selectedIndex])||el.value:'';}
-      else{v=el.value;}
-      if(v==null||String(v).trim()==='')return;
-      inputs.push([labelFor(el),String(v)]);
-    });
-    var results=[],seenR={};
-    document.querySelectorAll('.result-card,.result-box').forEach(function(card){
-      if(!vis(card))return;
-      var lab=card.querySelector('.result-label,h3,h4,.label')||null;
-      var val=card.querySelector('.result-value,.value')||null;
-      var L=lab?txt(lab):'',V=val?txt(val):'';
-      var unit=card.querySelector('.result-unit');if(unit&&V)V+=' '+txt(unit);
-      if(!V){var t=txt(card);if(L)t=t.replace(L,'').trim();V=t;}
-      if(!L&&!V)return;
-      var k=L+'|'+V;if(seenR[k])return;seenR[k]=1;
-      results.push([L,V]);
-    });
-    var details=[],seenD={};
-    document.querySelectorAll('body *').forEach(function(el){
-      if(el.children.length>0)return;
-      if(!vis(el))return;
-      if(el.closest('#cwSaveBar'))return;
-      if(el.closest('.result-card')||el.closest('.result-box'))return;
-      if(/^(INPUT|SELECT|TEXTAREA|OPTION|SCRIPT|STYLE|BUTTON|LABEL|A|TITLE)$/.test(el.tagName))return;
-      var t=txt(el);
-      if(!t||t.length>130)return;
-      if(!/\$\s?[\d,.]|[\d.]+\s?%/.test(t))return;
-      var lbl='';
-      var par=el.parentElement;
-      if(par){var pt=txt(par);if(pt!==t&&pt.length<170){lbl=pt.replace(t,'').replace(/[:\s]+$/,'').trim();}}
-      var k=lbl+'|'+t;if(seenD[k])return;seenD[k]=1;
-      details.push([lbl,t]);
-    });
-    var meta={};
-    var c=document.querySelector('#clientName,#client,input[id*="lient"]');
-    if(c&&c.value)meta.client=c.value;
-    var p=document.querySelector('#preparedBy,input[id*="repared"]');
-    if(p&&p.value)meta.preparedBy=p.value;
-    return {tool:CW_TOOL,title:document.title,url:location.href,meta:meta,
-      sections:[{title:'Inputs',rows:inputs},{title:'Results',rows:results},{title:'Detail Lines',rows:details}]};
-  }
-  var btn=document.getElementById('cwSaveBtn');
-  btn.addEventListener('click',function(){
-    btn.disabled=true;btn.textContent='Saving...';
-    var payload=JSON.stringify(collect());
-    fetch(CW_HOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:payload})
-      .then(function(){btn.textContent='Saved to Google Sheets';btn.style.background='#0AA6A9';
-        setTimeout(function(){btn.textContent='Save Results';btn.style.background='#D22730';btn.disabled=false;},4000);})
-      .catch(function(){btn.textContent='Save failed, retry';btn.style.background='#2D2A26';btn.disabled=false;});
-  });
-})();
-</script>
 
+<div class="savemodal" id="saveModal" onclick="if(event.target===this)closeSaves()">
+  <div class="savebox">
+    <h3>Saved Work</h3>
+    <div id="saveList"></div>
+    <div style="margin-top:14px;text-align:right"><button class="btn btn-grey" style="flex:none" onclick="closeSaves()">Close</button></div>
+  </div>
+</div>
+
+<div id="printArea"></div>
+<script>
+/* City Wide Window Cleaning Calculator. Built July 2026. */
+'use strict';
+const ENDPOINT='https://script.google.com/macros/s/AKfycbzfNnrpidCbWB1DeUNgXvRhDFMQgApfpn-3C9GU45wMEHcJpWFl8ZQVo6PUBSRfEVfRdg/exec';
+const LOGO='https://emailer.emfluence.com/clients/citywide/uploadedfiles/signature_logo.png';
+function $(id){return document.getElementById(id)}
+function money(n){return '$'+Math.round(n).toLocaleString()}
+function money2(n){return '$'+n.toFixed(2)}
+
+/* ---------- REGIONS (window cleaner wages: Salary.com LV $19 avg July 2026; SPRAT rope techs price separately) ---------- */
+const REGIONS={
+  lv:   {label:'Las Vegas',          wage:19.0, mult:1.00, note:'Competitive baseline. Desert dust and sprinkler overspray make hard water restoration a standing upsell on almost every LV storefront.'},
+  reno: {label:'Reno / Sparks',      wage:20.5, mult:1.08, note:'Northern Nevada premium. Thinner vendor pool, and many older buildings lack certified roof anchors: check before promising rope work.'},
+  carson:{label:'Carson City',       wage:20.5, mult:1.08, note:'Same premium band as Reno. Expect drive-time on anything off the main corridor.'},
+  tric: {label:'TRIC / USA Parkway', wage:22.5, mult:1.15, note:'Tahoe Regional Industrial Center premium: big tilt-up glass, zero on-corridor vendors, mobilization is real money. Hold this premium.'},
+  az:   {label:'Arizona Border',     wage:18.5, mult:1.05, note:'Laughlin, Kingman &amp; Havasu: lower wages, almost no commercial window vendors. Price like a travel market.'}
+};
+
+/* ---------- SUPPLIES & CONSUMABLES (WindowCleaner.com / J.Racenstein street prices, July 2026). perUnit = $ consumed per pane/panel/screen. ---------- */
+const DEFAULT_CHEMS={
+  soap:{name:'Titan Glass Gleam-4 concentrate', pack:'1 qt (512 gal solution)', cost:21.08, perUnit:0.02, note:'Quarter ounce per gallon. A quart runs a crew for months.'},
+  rubber:{name:'Squeegee rubber + washer sleeve wear', pack:'per-pane allowance', cost:0, perUnit:0.03, note:'Rubbers flip and swap daily in desert heat and grit.'},
+  purewater:{name:'RO/DI pure water (resin + membrane wear)', pack:'XERO resin $146/cu ft', cost:146.40, perUnit:0.06, note:'Vegas tap runs 400-600 TDS. DI-only burns $0.25+/gal of resin; behind an RO membrane it drops to pennies. RO/DI is mandatory economics here.'},
+  hardwaterchem:{name:'EaCo Chem OneRestore + Bio-Clean + cerium oxide', pack:'$53.24/gal + kit', cost:53.24, perUnit:1.50, note:'Acid-side mineral remover, then mechanical polish for stage-2 etching.'},
+  blades:{name:'Razor blades, scrapers, steel wool (post-construction)', pack:'per-pane allowance', cost:0, perUnit:0.15, note:'Blades get swapped constantly on stucco and silicone. Never dry-scrape.'},
+  screenchem:{name:'Screen wash solution + brushes', pack:'allowance', cost:0, perUnit:0.05},
+  solarwater:{name:'Pure water + soft brush wear (solar)', pack:'allowance', cost:0, perUnit:0.06, note:'No soap, no hard tools on panels: pure water and soft brushes only, per manufacturer warranties.'}
+};
+
+/* ---------- SERVICES. All unit-priced. perHr = units per tech-hour all-in (setup, ladders, detailing). ---------- */
+const SERVICES=[
+ {id:'ext', name:'Exterior Windows: Ground Level', sub:'Mop and squeegee, storefronts and first-story glass', ico:'squeegee', unit:'panes',
+  perHr:30, equip:3, crew1:true, chems:['soap','rubber'], mktUnit:[3,7], floorUnit:4.00,
+  desc:'Traditional strip washer and squeegee on ground-level exterior glass, edges and frames detailed dry. The bread and butter of commercial window work, and still the highest-quality finish on accessible glass.'},
+ {id:'int', name:'Interior Windows & Partition Glass', sub:'Inside faces, lobby glass, office partitions, glass doors', ico:'partition', unit:'panes',
+  perHr:35, equip:2, crew1:true, chems:['soap','rubber'], mktUnit:[2,7], floorUnit:3.00,
+  desc:'Interior faces of exterior windows plus lobby glass, sidelites, partitions, and glass doors. No weather soil, but drop cloths, furniture, and working around tenants set the pace.'},
+ {id:'pole', name:'Upper Floors by Pole (2-3 Stories)', sub:'Extension pole squeegee work, no ladders', ico:'pole', unit:'panes',
+  perHr:22, equip:4, crew1:true, chems:['soap','rubber'], mktUnit:[5,10], floorUnit:5.00,
+  desc:'Second and third story exterior glass cleaned from the ground on extension poles. Slower and harder to detail than ground work, which is why upper-story panes carry a $2-5 premium.'},
+ {id:'wfp', name:'Water-Fed Pole: Pure Water (to 6 Stories)', sub:'RO/DI purified water, spot-free, no squeegee needed', ico:'wfp', unit:'panes',
+  perHr:40, equip:8, crew1:true, chems:['purewater'], mktUnit:[4,10], floorUnit:4.00,
+  desc:'A brush on a carbon fiber pole fed with purified water. At 0-10 TDS the water carries no minerals, so glass rinses clean and dries spot-free with no squeegee and no toweling. Reaches 5-6 stories from the ground with no lift and no ladder, and runs about 75% faster than traditional methods on open elevations. Exterior only.'},
+ {id:'lift', name:'Aerial Lift Work (Boom / Scissor)', sub:'3-12 stories with ground access; rental passed through', ico:'lift', unit:'panes',
+  perHr:15, equip:10, crew1:false, flatCost:400, chems:['soap','rubber'], mktUnit:[8,20], floorUnit:6.00, wageAdj:1.15,
+  desc:'Boom or scissor lift work for mid-rise exteriors, glass over entrances, and atrium interiors. The lift rental is a hard cost passed straight into the build-up: a 30-45 ft boom runs $200-400 a day plus $150-500 delivery, a 60 ft boom $600-1,500. Two techs minimum (operator rules), ANSI aerial lift training required.'},
+ {id:'rope', name:'High-Rise Rope Descent (RDS)', sub:'SPRAT-certified techs above lift reach; certified anchors required', ico:'rope', unit:'panes',
+  perHr:12, equip:12, crew1:false, chems:['soap','rubber'], mktUnit:[10,25], floorUnit:10.00, wageAdj:1.7, minOwn:500,
+  desc:'Rope descent for glass above lift and pole reach. This is certified-specialist work: SPRAT-trained techs, OSHA 1910.27 certified roof anchors rated 5,000 lbs each, a separate fall-arrest line per worker, rigging and rescue plans, and insurance priced for height. Rope crews bill around $170 per tech-hour at retail, and whole buildings quote $800-3,000+.'},
+ {id:'postcon', name:'Post-Construction Window Clean', sub:'Razor work: stucco, paint, silicone, sticker residue', ico:'razor', unit:'panes',
+  perHr:10, equip:4, crew1:true, chems:['soap','blades'], mktUnit:[8,20], floorUnit:6.00,
+  desc:'First clean after construction: scraping stucco, paint overspray, silicone, and stickers with razors and heavy rinse. Runs 2-4x slower than maintenance cleaning and carries real scratch risk from fabricating debris on tempered glass. Never start without a signed scratched-glass waiver.'},
+ {id:'hardwater', name:'Hard Water Stain Removal & Glass Restoration', sub:'The Las Vegas specialty: sprinkler overspray and mineral etching', ico:'droplet', unit:'panes',
+  perHr:6, equip:5, crew1:true, chems:['hardwaterchem'], mktUnit:[15,60], floorUnit:15.00, minOwn:300,
+  desc:'Mineral deposit removal with acid-side chemistry (OneRestore, Bio-Clean) and cerium oxide polishing for etched glass. Sprinkler overspray plus 500+ TDS water writes permanent stains on LV storefront glass, and this service prices at 3-8x standard cleaning. Quote a sealed-glass upsell after restoration.'},
+ {id:'screens', name:'Screen Cleaning', sub:'Wash, brush, and reinstall', ico:'screen', unit:'screens',
+  perHr:20, equip:1, crew1:true, chems:['screenchem'], mktUnit:[2,5], floorUnit:1.50,
+  desc:'Screens washed, brushed, dried, and reinstalled. Quick add-on revenue on any full-service window job.'},
+ {id:'tracks', name:'Track & Sill Detailing', sub:'Vacuum and wipe-out of tracks, sills, and frames', ico:'track', unit:'windows',
+  perHr:15, equip:1, crew1:true, chems:['soap'], mktUnit:[3,6], floorUnit:2.00,
+  desc:'Tracks vacuumed and wiped, sills and frames detailed. What separates a professional full-service clean from a glass-only wipe.'},
+ {id:'skylight', name:'Skylights & Atrium Glass', sub:'Overhead glass, interior or exterior', ico:'skylight', unit:'skylights',
+  perHr:6, equip:8, crew1:true, chems:['soap','purewater'], mktUnit:[12,35], floorUnit:10.00,
+  desc:'Skylights and overhead atrium glass, cleaned by WFP from below or lift access above. Price per unit and add the lift line when interior height demands it.'},
+ {id:'route', name:'Storefront Route Program', sub:'Recurring weekly to monthly service, route pricing', ico:'store', unit:'panes',
+  perHr:60, equip:2, crew1:true, freqDefault:12, chems:['soap','rubber'], mktUnit:[0.8,2.0], floorUnit:0.8, minOwn:75,
+  desc:'The recurring program: in-and-out storefront glass on a weekly, bi-weekly, or monthly route. Route pros move at 60-100 panes an hour and the market prices near $1 per pane-side per visit with $25-75 visit minimums. Low ticket, high density, sticky revenue: this is how window vendors build wealth, and how we keep clients between deep services.'},
+ {id:'solar', name:'Solar Panel Cleaning', sub:'Pure water and soft brush, the desert add-on', ico:'solar', unit:'panels',
+  perHr:20, equip:8, crew1:true, chems:['solarwater'], mktUnit:[5,15], floorUnit:4.00,
+  desc:'Dust-caked panels lose 10-25% output in the desert. Same pure-water rig as window work: soft brush, no soap, no hard tools, per manufacturer warranty rules. Commercial visits run $400-2,500 by array size; residential $10-20 per panel.'}
+];
+const CONDITIONS=[{k:'good',label:'Maintained',lab:1,chem:1},{k:'heavy',label:'Dirty (1+ yr)',lab:1.3,chem:1.4},{k:'neglect',label:'Neglected / First Clean',lab:1.6,chem:1.8}];
+const FREQS=[[1,'One-time / 1x per year'],[2,'2x per year'],[4,'Quarterly'],[6,'Every other month'],[12,'Monthly'],[26,'Bi-weekly'],[52,'Weekly']];
+const BURDEN=0.15; const SUB_PROFIT=0.07; const VENDOR_CHEM_MARKUP=0.15; const MIN_PRICE=300;
+function autoMargin(units){ if(units<50)return 40; if(units<150)return 38; if(units<300)return 36; if(units<600)return 34; return 32; }
+
+const ICONS={
+ squeegee:'<svg viewBox="0 0 24 24"><path d="M4 7h16v3H4z"/><path d="M6 10v2M12 10v2M18 10v2"/><path d="M12 12v8"/><path d="M9 20h6"/></svg>',
+ partition:'<svg viewBox="0 0 24 24"><rect x="3" y="4" width="7" height="16" rx="1"/><rect x="14" y="4" width="7" height="16" rx="1"/><path d="M5 8l3-2M5 12l3-2"/></svg>',
+ pole:'<svg viewBox="0 0 24 24"><path d="M6 21 18 3"/><path d="M15 3h6v3"/><path d="M14 8l4 3"/></svg>',
+ wfp:'<svg viewBox="0 0 24 24"><path d="M8 21 17 4"/><path d="M14 4h6"/><path d="M17 4v-1"/><circle cx="6" cy="17" r="2.5"/><path d="M6 14.5V9c0-2 1.5-3 3-3"/></svg>',
+ lift:'<svg viewBox="0 0 24 24"><rect x="14" y="3" width="7" height="5" rx="1"/><path d="M3 20l7-7 4 2 4-8"/><circle cx="5" cy="21" r="1.5"/><circle cx="12" cy="21" r="1.5"/><path d="M3 21h12"/></svg>',
+ rope:'<svg viewBox="0 0 24 24"><path d="M12 3v7"/><circle cx="12" cy="12" r="2"/><path d="M12 14v3l-2 4M12 17l2 4M10 10h4"/><path d="M8 3h8"/></svg>',
+ razor:'<svg viewBox="0 0 24 24"><path d="M3 15l9-9 3 3-9 9H3z"/><path d="M14 4l3-1 4 4-1 3"/><path d="M12 8l2 2"/></svg>',
+ droplet:'<svg viewBox="0 0 24 24"><path d="M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11z"/><path d="M8 14h8M9 17h6"/></svg>',
+ screen:'<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="1"/><path d="M4 9h16M4 14h16M9 4v16M14 4v16"/></svg>',
+ track:'<svg viewBox="0 0 24 24"><path d="M3 17h18M3 20h18"/><rect x="5" y="4" width="14" height="10" rx="1"/><path d="M12 4v10"/></svg>',
+ skylight:'<svg viewBox="0 0 24 24"><path d="M4 14 12 4l8 10"/><rect x="7" y="14" width="10" height="6" rx="1"/><path d="M12 4v10"/></svg>',
+ store:'<svg viewBox="0 0 24 24"><path d="M4 9l1-5h14l1 5"/><path d="M4 9a2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0 5 0"/><path d="M5 11v9h14v-9"/><rect x="9" y="14" width="6" height="6"/></svg>',
+ solar:'<svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="9" rx="1" transform="skewX(-8)"/><path d="M7 10v9M12 10v9M17 10v9M4 13h16M4 16h16"/><circle cx="18" cy="5" r="2"/></svg>'
+};
+
+/* ---------- STATE ---------- */
+let S={svcOn:{}, inputs:{}, user:localStorage.getItem('cwwindow_user')||''};
+let CHEMS=JSON.parse(JSON.stringify(DEFAULT_CHEMS));
+try{const saved=localStorage.getItem('cwwindow_chems'); if(saved){const p=JSON.parse(saved); Object.keys(CHEMS).forEach(k=>{if(p[k]&&typeof p[k].perUnit==='number')CHEMS[k].perUnit=p[k].perUnit;});}}catch(e){}
+function setSvc(id,field,val){if(!S.inputs[id])S.inputs[id]={};S.inputs[id][field]=val;recalc();autosaveSoon();}
+
+/* ---------- PRICING ENGINE ---------- */
+function priceService(s){
+  const st=S.inputs[s.id]||{};
+  const region=REGIONS[$('region').value];
+  const cond=CONDITIONS.find(c=>c.k===(st.cond||'good'));
+  const events=parseFloat(st.events)||s.freqDefault||1;
+  const qty=parseFloat(st.sf)||0;
+  if(!qty)return null;
+
+  /* labor */
+  let manHrs=qty/s.perHr*cond.lab;
+  manHrs=Math.max(manHrs,1);
+  const crew=s.crew1?1:2;
+  const clockHrs=manHrs/crew;
+  const wage=parseFloat(st.wage)||(region.wage*(s.wageAdj||1));
+  const laborCost=manHrs*wage*(1+BURDEN);
+
+  /* supplies */
+  let chems=[]; let chemCost=0;
+  (s.chems||[]).forEach(k=>{
+    const c=CHEMS[k]; if(!c)return;
+    const cost=qty*c.perUnit*cond.chem;
+    if(cost<0.5)return;
+    chemCost+=cost;
+    chems.push({prod:c.name,label:c.name,cost,packNote:c.pack,packPrice:c.cost,perUnit:c.perUnit});
+  });
+
+  /* equipment + flat pass-through (lift rental) */
+  const equipCost=clockHrs*(parseFloat(st.equip)||s.equip);
+  const flatCost=('flat' in st && st.flat!=='')?(parseFloat(st.flat)||0):(s.flatCost||0);
+
+  /* vendor build-up */
+  const chemProvider=$('chemProvider').value;
+  const vendorChems=chemProvider==='vendor'?chemCost*(1+VENDOR_CHEM_MARKUP):0;
+  const cwChems=chemProvider==='cw'?chemCost:0;
+  const vendorCost=(laborCost+equipCost+flatCost+vendorChems)*(1+SUB_PROFIT);
+  const totalCost=vendorCost+cwChems;
+
+  /* margin, regional multiplier, unit price floor */
+  const ov=parseFloat($('ovMargin').value);
+  const svcOv=parseFloat(st.margin);
+  const margin=(!isNaN(svcOv)&&svcOv>0)?svcOv:(!isNaN(ov)&&ov>0)?ov:autoMargin(qty);
+  let price=totalCost/(1-margin/100)*region.mult;
+  if(s.floorUnit)price=Math.max(price, qty*s.floorUnit*region.mult+flatCost/(1-margin/100));
+
+  /* per-unit override */
+  const rateOv=parseFloat(st.rateOv);
+  if(!isNaN(rateOv)&&rateOv>0)price=qty*rateOv+flatCost/(1-margin/100);
+
+  const mktLow=s.mktUnit[0]*region.mult, mktHigh=s.mktUnit[1]*region.mult;
+  return {s,sf:qty,isUnit:true,cond,events,manHrs,crew,clockHrs,wage,laborCost,chems,chemCost,cwChems,vendorChems,equipCost,flatCost,vendorCost,totalCost,margin,price,perSF:(price-flatCost)/qty,mktLow,mktHigh};
+}
+function activeResults(){return SERVICES.filter(s=>S.svcOn[s.id]).map(priceService).filter(Boolean);}
+function applyMinimums(results){
+  if(!results.length)return {results,minApplied:false,minMsg:''};
+  const override=$('minOverride').checked;
+  let minApplied=false,minMsg='';
+  const sorted=[...results].sort((a,b)=>b.price-a.price);
+  results.forEach(r=>{
+    const floor=(r.s.minOwn||MIN_PRICE);
+    r.finalPrice=r.price;
+    if(results.length===1){
+      if(r.price<floor&&!override){r.finalPrice=floor;minApplied=true;minMsg='Minimum applied: '+money(floor)+' floor on '+r.s.name+'.';}
+      else if(r.price<floor&&override){minMsg='Minimum overridden ('+($('minReason').value||'no reason given')+'). Price stands at computed '+money(r.price)+'.';}
+    }else{
+      if(r===sorted[0]&&r.price<floor&&!override){r.finalPrice=floor;minApplied=true;minMsg='Minimum applied to lead service only. Secondary services on the same visit price without a second minimum.';}
+    }
+  });
+  return {results,minApplied,minMsg};
+}
+/* ---------- RENDER: SERVICE CARDS ---------- */
+function renderServices(){
+  const wrap=$('svcList');
+  wrap.innerHTML=SERVICES.map(s=>{
+    const on=!!S.svcOn[s.id];
+    const st=S.inputs[s.id]||{};
+    const r=on?priceService(s):null;
+    const unitCap=s.unit.charAt(0).toUpperCase()+s.unit.slice(1);
+    let body='';
+    if(on){
+      body='<div class="svc-grid">'
+      +'<div class="field"><label>Number of '+unitCap+'</label><input type="number" value="'+(st.sf||'')+'" placeholder="e.g. '+(s.id==='route'?'80':'120')+'" onchange="setSvc(\''+s.id+'\',\'sf\',this.value)"><small>'+(s.unit==='panes'?'Count every framed pane, each side counts once per service.':'')+'</small></div>'
+      +'<div class="field"><label>Condition</label><select onchange="setSvc(\''+s.id+'\',\'cond\',this.value)">'+CONDITIONS.map(c=>'<option value="'+c.k+'"'+((st.cond||'good')===c.k?' selected':'')+'>'+c.label+'</option>').join('')+'</select></div>'
+      +'<div class="field"><label>Visits / Year</label><select onchange="setSvc(\''+s.id+'\',\'events\',this.value)">'+FREQS.map(f=>'<option value="'+f[0]+'"'+((parseFloat(st.events)||s.freqDefault||1)===f[0]?' selected':'')+'>'+f[1]+'</option>').join('')+'</select></div>'
+      +'<div class="field"><label>Tech Wage $/hr</label><input type="number" step="0.5" value="'+(st.wage||'')+'" placeholder="'+(REGIONS[$('region').value].wage*(s.wageAdj||1)).toFixed(2)+'" onchange="setSvc(\''+s.id+'\',\'wage\',this.value)"><small>'+(s.wageAdj&&s.wageAdj>1.3?'SPRAT-certified rope techs earn a real premium.':'')+'</small></div>'
+      +'<div class="field"><label>Equipment $/hr</label><input type="number" step="1" value="'+(st.equip||'')+'" placeholder="'+s.equip+'" onchange="setSvc(\''+s.id+'\',\'equip\',this.value)"></div>'
+      +(s.flatCost!==undefined||s.id==='lift'||s.id==='rope'||s.id==='skylight'?'<div class="field"><label>Flat Cost Pass-Through $ (lift rental, rigging)</label><input type="number" step="10" value="'+(('flat' in st)?st.flat:'')+'" placeholder="'+(s.flatCost||0)+'" onchange="setSvc(\''+s.id+'\',\'flat\',this.value)"><small>Rental + delivery billed at cost into the build-up.</small></div>':'')
+      +'<div class="field"><label>Price per '+unitCap.replace(/s$/,'')+' Override</label><input type="number" step="0.05" value="'+(st.rateOv||'')+'" placeholder="auto build-up" onchange="setSvc(\''+s.id+'\',\'rateOv\',this.value)"></div>'
+      +'<div class="field"><label>Service Margin % Override</label><input type="number" value="'+(st.margin||'')+'" placeholder="auto '+(st.sf?autoMargin(parseFloat(st.sf)||0):'32-40')+'" onchange="setSvc(\''+s.id+'\',\'margin\',this.value)"></div>'
+      +'</div>';
+      if(r){
+        const uw='/'+s.unit.replace(/s$/,'');
+        const flag=r.perSF>=r.mktLow&&r.perSF<=r.mktHigh?'<span class="mktflag ok">inside market range</span>':(r.perSF<r.mktLow?'<span class="mktflag warn">below market, room to hold price</span>':'<span class="mktflag warn">above market, check inputs or expect pushback</span>');
+        body+='<div class="buildup">'
+        +'<div class="bl"><span>Tech labor: '+r.manHrs.toFixed(1)+' tech-hrs ('+r.crew+' tech'+(r.crew>1?'s':'')+' x '+r.clockHrs.toFixed(1)+' hrs) @ $'+r.wage.toFixed(2)+' + '+(BURDEN*100)+'% burden</span><b>'+money(r.laborCost)+'</b></div>'
+        +r.chems.map(c=>'<div class="bl"><span>'+c.label+' ('+money2(c.perUnit)+uw+')</span><b>'+money(c.cost)+'</b></div>').join('')
+        +'<div class="bl"><span>Equipment fee ('+r.clockHrs.toFixed(1)+' hrs @ $'+((st.equip)||s.equip)+'/hr)</span><b>'+money(r.equipCost)+'</b></div>'
+        +(r.flatCost?'<div class="bl"><span>Lift rental / rigging pass-through</span><b>'+money(r.flatCost)+'</b></div>':'')
+        +'<div class="bl"><span>Crew company profit ('+(SUB_PROFIT*100).toFixed(0)+'%, hold 5-8%)</span><b>'+money(r.vendorCost-(r.laborCost+r.equipCost+r.flatCost+r.vendorChems))+'</b></div>'
+        +'<div class="bl tot"><span>We pay the crew'+(r.cwChems?' (City Wide supplies: '+money(r.cwChems)+')':'')+'</span><b>'+money(r.vendorCost)+'</b></div>'
+        +'<div class="bl tot" style="color:var(--cw-red)"><span>Client price @ '+r.margin+'% margin x '+REGIONS[$('region').value].mult.toFixed(2)+' regional</span><b>'+money(r.price)+' ('+money2(r.perSF)+uw+(r.flatCost?' + lift':'')+')</b></div>'
+        +'<div class="bl mkt"><span>2026 market check: '+money2(r.mktLow)+'-'+money2(r.mktHigh)+uw+' here. '+flag+'</span></div>'
+        +'</div>';
+      }
+      body+=howTo(s);
+    }
+    return '<div class="svc-card'+(on?' on':'')+'" id="svc-'+s.id+'">'
+    +'<div class="svc-head" onclick="toggleSvc(\''+s.id+'\')">'
+    +'<div class="svc-ico">'+ICONS[s.ico]+'</div>'
+    +'<div class="t"><b>'+s.name+'</b><span>'+s.sub+'</span></div>'
+    +(on&&r?'<div class="svc-price">'+money(r.price)+'</div>':'')
+    +'<div class="svc-toggle"></div></div>'
+    +'<div class="svc-body">'+body+'</div></div>';
+  }).join('');
+}
+function toggleSvc(id){S.svcOn[id]=!S.svcOn[id];recalc();autosaveSoon();}
+
+/* ---------- HOW-TO EDUCATION PER SERVICE ---------- */
+function howTo(s){
+  const H={
+   ext:'<h4>Kit</h4><ul><li>Strip washer (mop), quality channel and rubber (Ettore, Unger, Sorbo, Moerman), scraper for debris, huck towels, holster, bucket with Glass Gleam or dish soap solution.</li></ul><h4>Process</h4><ol><li>Brush or dust heavy debris and cobwebs first.</li><li>Mop the glass edge to edge, agitate soil, scrape spots at a low angle only on wet glass.</li><li>Squeegee in fanning strokes or straight pulls, wipe the blade between passes.</li><li>Detail edges with a towel, wipe sills.</li></ol><div class="warnbox">A competent tech runs 30-40 panes an hour with detailing. Desert grit eats rubber: expect blade flips daily.</div>',
+   int:'<h4>Process</h4><p>Same wash-and-squeegee craft with less soil and more care: drop cloths under work, microfiber for partitions and mirrors, work around tenants and IT equipment. Count partitions, sidelites, and glass doors as panes when quoting.</p>',
+   pole:'<h4>Process</h4><p>Washer and squeegee mounted on extension poles (Unger OptiLoc class) for 2nd and 3rd story glass from the ground. No ladders means no ladder risk, but detailing suffers at height, which is exactly why water-fed pole took this work over. Quote pole work when glass quality demands squeegee finish or water access is impossible.</p>',
+   wfp:'<h4>What pure water is</h4><p>Tap water filtered through RO membranes and DI resin to near-zero TDS (total dissolved solids). At 0-10 TDS water dries without spots, so the brush scrubs and the water rinses: no squeegee, no towels, no ladder. Vegas tap runs 400-600 TDS, so an RO/DI system (XERO Pure class, about $1,900) is the required rig: DI-only resin at our TDS costs 5-10x more per gallon.</p><h4>Process</h4><ol><li>Verify TDS under 10 with an inline meter.</li><li>Brush the frames first, then the glass, top down.</li><li>Rinse off-glass with the brush lifted an inch. Let dry: no touching.</li></ol><div class="warnbox">First cleans on neglected glass need a traditional wash before WFP maintenance. Expect a few spotting callbacks while frames purge old soap: warn the client on visit one.</div>',
+   lift:'<h4>Decision rules</h4><ul><li>Scissor lift: flat slab access, straight up work (19 ft $100-150/day, 26 ft $150-250/day).</li><li>Boom lift: reach over landscaping, canopies, setbacks (30-45 ft $200-400/day, 60 ft $600-1,500/day). Articulating booms +10-20%.</li><li>Delivery $100-500 each way. Book weekly when the job runs 3+ days: weekly is about 2.5x the day rate.</li></ul><div class="warnbox">Operators need ANSI A92 training, harness anchoring in booms, and a spotter in drive lanes. The rental is a pass-through cost: put the real quote in the flat cost box and let margin apply to labor, not steel.</div>',
+   rope:'<h4>What has to be true before rope work happens</h4><ol><li>The BUILDING must have OSHA 1910.27 certified roof anchors: 5,000 lb rating per worker, inspected annually, recertified every 10 years. The owner provides written certification; no paper, no drops.</li><li>Techs carry SPRAT (or IRATA) certification, roughly $2,000 of training plus a few thousand in personal rope kit.</li><li>Every tech rigs a working line plus an independent fall-arrest line, with a rescue plan on site. RDS is legal to 300 ft above grade.</li></ol><div class="warnbox">This is why rope work bills around $170 per tech-hour retail and whole towers quote $800-3,000+. If a mid-rise lacks certified anchors, the real answer is lift work or a swing stage, and older Reno buildings fail this check constantly. Ask about anchors BEFORE you promise a price.</div>',
+   postcon:'<h4>Process</h4><ol><li>Walk the glass with the GC and document existing scratches.</li><li>Get the scratched-glass waiver signed. Tempered glass with fabricating debris (fused glass fines from the tempering line) WILL scratch under a razor and it is a manufacturer defect, not technique.</li><li>Soak heavily, scrape flat and wet with fresh blades, never dry.</li><li>Wash and squeegee normally, detail frames, pull stickers with steam or solvent.</li></ol><div class="warnbox">2-4x slower than maintenance cleaning. Confirm the vendor carries Care, Custody &amp; Control coverage: standard liability excludes damage to the glass being worked on.</div>',
+   hardwater:'<h4>Process</h4><ol><li>Test a corner: stage 1 (surface minerals) responds to chemistry, stage 2 (etched) needs polishing.</li><li>Apply mineral remover (OneRestore, Bio-Clean) with white pads, keep wet, rinse hard.</li><li>Stage 2: cerium oxide slurry under a low-speed polisher, then rinse and squeegee.</li><li>Fix the cause or sell the maintenance: adjust sprinklers, or schedule quarterly cleans before minerals re-etch.</li></ol><div class="warnbox">Six panes an hour is honest on restoration. At $15-60 per pane this is the highest-value line in window care, and in Las Vegas nearly every ground-floor perimeter has some of it.</div>',
+   screens:'<h4>Process</h4><p>Remove, wash with a soft brush and mild solution, rinse, dry, reinstall. Note torn screens on the quality log: rescreening is a handyman upsell we can route.</p>',
+   tracks:'<h4>Process</h4><p>Vacuum the dead bugs and grit first, then wipe tracks with detail brushes and towels. Sliders and storefront door tracks matter most: grit in tracks is what kills rollers.</p>',
+   skylight:'<h4>Process</h4><p>Exterior: WFP from the roof or ground where reach allows, fall protection per roof rules. Interior atrium glass usually means a scissor lift indoors: protect floors, book the lift, and put the rental in the flat cost box.</p>',
+   route:'<h4>Route economics</h4><p>Route work is speed and density: in-and-out storefront glass at 60-100 panes an hour, about $1 per pane-side per visit, $25-75 visit minimums, weekly and bi-weekly clients anchoring the schedule. The win for City Wide: routes keep our brand in front of the client every week and feed the bigger tickets (hard water, post-construction, building washes). Price routes tight, keep them dense, and never route two stops 20 minutes apart.</p>',
+   solar:'<h4>Process</h4><ol><li>Panels off or in service mode per the site contact; early morning cleans avoid thermal shock on hot glass.</li><li>Pure water and soft brush only. No soap film, no abrasives, no pressure washers: warranty killers.</li><li>Document output-robbing soiling with photos; sell the quarterly program on production recovery.</li></ol></div>'
+  };
+  return '<details class="howto"><summary>How it is done: kit, access &amp; process</summary><div class="hbody"><p>'+s.desc+'</p>'+(H[s.id]||'')+'</div></details>';
+}
+
+/* ---------- SUPPLIES LIST ---------- */
+function renderShopping(results){
+  const agg={};
+  results.forEach(r=>{
+    (r.chems||[]).forEach(c=>{
+      if(!agg[c.prod])agg[c.prod]={prod:c.prod,packLabel:c.packNote,packPrice:c.packPrice,cost:0};
+      agg[c.prod].cost+=c.cost;
+    });
+    if(r.flatCost){
+      const k='Lift rental / rigging ('+r.s.name+')';
+      agg[k]={prod:k,packLabel:'day rate + delivery',packPrice:r.flatCost,cost:r.flatCost};
+    }
+  });
+  const items=Object.values(agg);
+  $('shopCard').style.display=items.length?'':'none';
+  if(!items.length)return;
+  $('shopList').innerHTML='<table style="width:100%;border-collapse:collapse;font-size:12px">'
+  +'<tr><th style="text-align:left;padding:6px 8px;background:var(--cw-black);color:#fff">Item</th><th style="text-align:right;padding:6px 8px;background:var(--cw-black);color:#fff">Basis</th><th style="text-align:right;padding:6px 8px;background:var(--cw-black);color:#fff">Job Cost</th></tr>'
+  +items.map(it=>'<tr><td style="padding:6px 8px;border-bottom:1px solid var(--cw-border)">'+it.prod+'</td><td style="text-align:right;padding:6px 8px;border-bottom:1px solid var(--cw-border)">'+it.packLabel+(it.packPrice?' @ '+money2(it.packPrice):'')+'</td><td style="text-align:right;padding:6px 8px;border-bottom:1px solid var(--cw-border)"><b>'+money(it.cost)+'</b></td></tr>').join('')
+  +'</table>'
+  +'<p style="font-size:10.5px;color:var(--cw-grey);margin-top:8px">Consumables are per-pane allowances; lift rentals are day-rate pass-throughs. Verify rental quotes with the yard (scissor $100-250/day, 30-45 ft boom $200-400/day, 60 ft boom $600-1,500/day, plus delivery each way) and current supply prices at WindowCleaner.com or J.Racenstein. The vendor tool kit itself lives in the Rate Book tab.</p>';
+}
+
+/* ---------- SUMMARY ---------- */
+function recalc(){
+  const region=REGIONS[$('region').value];
+  $('regionNote').innerHTML=region.note;
+  const raw=activeResults();
+  const {results,minMsg}=applyMinimums(raw);
+  renderServices();
+  const showInt=$('showInternal').checked;
+  const lines=results.map(r=>{
+    return '<div class="sline cat"><span class="n">'+r.s.name+' ('+r.sf+' '+r.s.unit+')</span><span>'+money(r.finalPrice)+'</span></div>'
+    +(r.events>1?'<div class="sline sub"><span class="n">'+r.events+'x per year = '+money(r.finalPrice*r.events)+'/yr ('+money(r.finalPrice*r.events/12)+'/mo accrual)</span></div>':'')
+    +(showInt?'<div class="sline sub"><span class="n">crew '+money(r.vendorCost)+(r.cwChems?' + our supplies '+money(r.cwChems):'')+' | margin '+r.margin+'% | '+money2(r.finalPrice/r.sf)+'/'+r.s.unit.replace(/s$/,'')+'</span></div>':'');
+  }).join('');
+  $('sumLines').innerHTML=lines||'<div style="font-size:12px;color:#bdbbb8">Turn on services to build the quote.</div>';
+  const total=results.reduce((a,r)=>a+r.finalPrice,0);
+  const totUnits=results.reduce((a,r)=>a+r.sf,0);
+  const totHrs=results.reduce((a,r)=>a+r.clockHrs,0);
+  $('sumTotal').textContent=money(total);
+  $('mPerSF').textContent=totUnits?money2(total/totUnits):'$0.00';
+  $('mHours').textContent=totHrs.toFixed(1);
+  $('mSvcs').textContent=results.length;
+  renderShopping(results);
+  $('minRow').style.display=minMsg?'flex':'none';
+  $('minMsg').textContent=minMsg;
+  const ov=parseFloat($('ovMargin').value);
+  const shown=(!isNaN(ov)&&ov>0)?ov:(results.length?Math.round(results.reduce((a,r)=>a+r.margin,0)/results.length):null);
+  $('marginPill').textContent=shown?shown+'%'+((!isNaN(ov)&&ov>0)?' override':' auto by size'):'32-40% auto';
+  $('marginPill').className='marginpill'+(shown&&shown<32?' hot':'');
+}
+/* ---------- EDUCATION TABS ---------- */
+function renderFloors(){
+  $('floorsContent').innerHTML=
+  '<h2>Pick the Access Before You Pick the Price</h2>'
+  +'<p>Window pricing is access pricing. The same pane costs $3 from the sidewalk, $6 from a pole, $12 from a boom lift, and $20 on ropes. Walk the building, decide how every elevation gets reached, then let the calculator build each access method as its own line.</p>'
+  +'<table><tr><th>Stories / Situation</th><th>Right Method</th><th>Why</th></tr>'
+  +'<tr><td>Ground floor</td><td>Mop &amp; squeegee</td><td>Fastest, best detail finish, no equipment cost.</td></tr>'
+  +'<tr><td>2-3 stories</td><td>Water-fed pole (or extension pole)</td><td>No ladders, no lift. WFP is about 75% faster and dries spot-free.</td></tr>'
+  +'<tr><td>4-6 stories, open elevation</td><td>Water-fed pole (tall system)</td><td>45-60 ft poles reach 5-6 stories from the ground.</td></tr>'
+  +'<tr><td>3-12 stories with ground access</td><td>Boom / scissor lift</td><td>Rental passed through at cost. Watch landscaping and slopes.</td></tr>'
+  +'<tr><td>Above 12 stories, or no ground access</td><td>Rope descent (RDS) or swing stage</td><td>SPRAT techs + OSHA-certified roof anchors required. Premium work, premium price.</td></tr>'
+  +'<tr><td>Glass over entrances, atrium interiors</td><td>Small lift or specialty pole</td><td>Floor protection indoors; book electric lifts only.</td></tr>'
+  +'<tr><td>Occupied offices, interior glass</td><td>Traditional hand tools</td><td>Drop cloths, microfiber, tenant scheduling.</td></tr>'
+  +'</table>'
+  +'<h2>The Methods at a Glance</h2>'
+  +'<table><tr><th>Method</th><th>Production</th><th>Cost Level</th><th>Watch Out</th></tr>'
+  +'<tr><td><b>Squeegee, ground</b></td><td>30-40 panes/hr</td><td>$</td><td>Desert grit eats rubber blades.</td></tr>'
+  +'<tr><td><b>Extension pole</b></td><td>~22 panes/hr</td><td>$</td><td>Detail quality drops at height.</td></tr>'
+  +'<tr><td><b>Water-fed pole</b></td><td>~40 panes/hr</td><td>$</td><td>Needs RO/DI purity under 10 TDS. First cleans need traditional wash first.</td></tr>'
+  +'<tr><td><b>Lift work</b></td><td>~15 panes/hr + moves</td><td>$$$ + rental</td><td>ANSI training, spotters, rental logistics.</td></tr>'
+  +'<tr><td><b>Rope descent</b></td><td>~12 panes/hr, 8-15 drops/day</td><td>$$$$</td><td>Certified anchors or no job. SPRAT techs only.</td></tr>'
+  +'<tr><td><b>Post-construction</b></td><td>~10 panes/hr</td><td>$$$</td><td>Fabricating debris scratches: waiver first, always.</td></tr>'
+  +'<tr><td><b>Hard water restoration</b></td><td>~6 panes/hr</td><td>$$$$</td><td>Stage-2 etching needs polishing, not chemistry.</td></tr>'
+  +'<tr><td><b>Storefront route</b></td><td>60-100 panes/hr</td><td>$ per visit</td><td>Density is everything. Keep stops tight.</td></tr>'
+  +'<tr><td><b>Solar</b></td><td>~20 panels/hr</td><td>$$</td><td>Pure water and soft brush only, warranty rules.</td></tr>'
+  +'</table>'
+  +'<h2>Las Vegas Hard Water: the Standing Upsell</h2>'
+  +'<p>Vegas tap water runs 400-600+ TDS and every sprinkler head that touches glass writes minerals onto it permanently. Stage 1 wipes off with acid-side chemistry; stage 2 is etched into the glass and needs cerium oxide polishing at 3-8x standard pricing. Walk the sprinkler line on every LV property, photograph the staining, and quote restoration plus a maintenance frequency that keeps it from coming back. This is the highest-value line on the whole calculator.</p>'
+  +'<h2>Counting Panes Like a Pro</h2>'
+  +'<p>A pane is one framed sheet of glass, counted once per side per service. A storefront door is 1 pane, a divided-lite door can be 6. French and grid windows count every lite. Interior and exterior are separate services with separate counts. When a client says "40 windows," walk it: 40 windows is routinely 120+ panes, and quoting off the client count is how window jobs go underwater.</p>';
+}
+
+function renderProcess(){
+  $('processContent').innerHTML=
+  '<h2>How to Quote a Window Job in 6 Steps</h2>'
+  +'<ol><li><b>Walk every elevation and count panes</b> per side, per service. Photograph problem glass (hard water, oxidation, scratches) as you go.</li>'
+  +'<li><b>Assign an access method to every elevation.</b> Ground, pole, WFP, lift, or rope. Each method is its own service line in this tool with its own honest production rate.</li>'
+  +'<li><b>Check the rope-work paperwork early.</b> Above lift reach, ask the building for their roof anchor certification (OSHA 1910.27: 5,000 lb anchors, annual inspection, 10-year recertification). No certified anchors means lift, swing stage, or renegotiate scope: find out before quoting, not after.</li>'
+  +'<li><b>Price lifts as pass-throughs.</b> Get the rental quote (scissor $100-250/day, 30-45 ft boom $200-400/day, 60 ft boom $600-1,500/day, delivery each way) and put it in the flat cost box so margin applies to labor, not rented steel.</li>'
+  +'<li><b>Structure the program.</b> Exterior quarterly, interior semi-annual, routes weekly to monthly, hard water maintenance before re-etching. Show the client the monthly accrual, not the visit price.</li>'
+  +'<li><b>Apply minimums and read the market flag.</b> $300 visit minimum ($500 rope, $75 route visits). If the build-up prices below the market band, hold the band: cheap window work reads as uninsured window work.</li></ol>'
+  +'<h2>Outsourcing: Picking the Right Window Vendor</h2>'
+  +'<ul><li><b>Match the vendor to the access.</b> Storefront route outfits, WFP mid-rise crews, and SPRAT rope companies are three different businesses. A vendor pitching ladders for 4th-story glass is the wrong vendor.</li>'
+  +'<li><b>Ask what they run.</b> Right answers: quality channels and rubber (Ettore, Unger, Sorbo, Moerman), an RO/DI water-fed system with a TDS meter for mid-rise, lift cards (ANSI A92) and SPRAT certs where claimed.</li>'
+  +'<li><b>Verify insurance for the height they work.</b> General liability is rated by access method; rope and lift work carries surcharged premiums, and post-construction needs Care, Custody &amp; Control coverage for scratch claims. Packet on file before the first pane, like every City Wide crew.</li>'
+  +'<li><b>Target rates.</b> Window subs get 60-70% of retail. This tool builds their side from labor, supplies, equipment, rentals at cost, and 5-8% profit after expenses: if their quote is far off the build-up, one line is wrong, and now you know which conversation to have.</li>'
+  +'<li><b>Red flags.</b> No waiver on post-construction razor work, "we do high-rise" with no SPRAT cards, DI-only tanks in a 500-TDS market, per-window prices with no pane definition, and anyone quoting a tower without asking about anchors.</li></ul>'
+  +'<h2>What the Crew Should Be Using</h2>'
+  +'<ul><li><b>Glass soap:</b> Titan Glass Gleam-4 or equivalent slip agent. </li>'
+  +'<li><b>Pure water:</b> RO/DI rig (XERO Pure class, about $1,900) verified under 10 TDS at the brush.</li>'
+  +'<li><b>Hard water:</b> EaCo Chem OneRestore or Bio-Clean, cerium oxide for etching.</li>'
+  +'<li><b>Post-construction:</b> fresh razor blades, scratch log, signed waiver.</li>'
+  +'<li><b>Solar:</b> pure water and soft brushes only. No soap, no abrasives, no pressure washer.</li></ul>'
+  +'<h2>Pricing It Effectively</h2>'
+  +'<ul><li>Margin auto-scales 32-40% by pane count, same family rules as the Waxable Floors and Carpet tools. Override with a reason when you know something the tool does not.</li>'
+  +'<li>Access premiums are real: upper-story glass earns $2-5 more per pane, rope glass 2-3x ground rates. The build-up prices the crew fairly and the price floors keep us from quoting sidewalk rates on rope work.</li>'
+  +'<li>Routes are the annuity: near $1 per pane-side per visit, $25-75 visit minimums, and they feed every premium service on this list.</li>'
+  +'<li>Bundle: exterior + interior + tracks + screens on one mobilization beats four visits, and the minimum applies once, on the lead service.</li></ul>'
+  +'<h2>Quality Gates Before the Crew Leaves</h2>'
+  +'<ol><li>Sight glass at an angle against the light: no streaks, hazing, or missed edges.</li>'
+  +'<li>Frames, sills, and tracks dry and wiped; no drips on stucco or signage.</li>'
+  +'<li>WFP jobs: spot-check TDS and confirm no white residue after drying.</li>'
+  +'<li>Post-construction: scratch log signed off against the pre-walk photos.</li>'
+  +'<li>Photos before and after. They sell the program and defend the invoice.</li></ol>';
+}
+
+function renderRates(){
+  let rows='';
+  Object.keys(CHEMS).forEach(k=>{
+    const c=CHEMS[k];
+    rows+='<tr><td>'+c.name+(c.note?'<br><span style="color:var(--cw-grey);font-size:11px">'+c.note+'</span>':'')+'</td><td>'+(c.pack||'')+'</td>'
+    +'<td><input type="number" step="0.01" value="'+c.perUnit.toFixed(2)+'" onchange="setChem(\''+k+'\',this.value)"></td></tr>';
+  });
+  $('ratesContent').innerHTML=
+  '<h2>Consumables Rate Book (cost per pane / panel)</h2>'
+  +'<p>Per-unit allowances seeded from WindowCleaner.com and J.Racenstein street prices, July 2026. Edit any allowance and it saves to this browser and flows into every build-up.</p>'
+  +'<table><tr><th>Item</th><th>Reference Pack</th><th>Cost per Unit $</th></tr>'+rows+'</table>'
+  +'<h2>The Vendor Tool Kit (what good crews own)</h2>'
+  +'<table><tr><th>Kit</th><th>2026 Street Price</th><th>Notes</th></tr>'
+  +'<tr><td>Channels, handles, rubber (Ettore, Unger, Sorbo, Moerman)</td><td>$6-30 per tool</td><td>Rubber by the gross for route crews.</td></tr>'
+  +'<tr><td>Extension poles (Unger OptiLoc class)</td><td>$40-150</td><td>2-3 story squeegee reach.</td></tr>'
+  +'<tr><td>Water-fed pole, carbon fiber</td><td>$800-2,500</td><td>45-60 ft reaches 5-6 stories.</td></tr>'
+  +'<tr><td>RO/DI pure water system (XERO Pure class)</td><td>$1,899; van systems $3,000-8,000</td><td>Mandatory in 400-600 TDS desert water. DI resin $146/cu ft.</td></tr>'
+  +'<tr><td>Inline TDS meter</td><td>$25-51</td><td>Under 10 TDS at the brush or it spots.</td></tr>'
+  +'<tr><td>Rope kit per SPRAT tech</td><td>$2,000-5,000 + $1,800-2,300 training</td><td>Plus surcharged insurance. This is why rope bills $170/hr.</td></tr>'
+  +'</table>'
+  +'<h2>Lift Rental Reference (2026 marketplace rates)</h2>'
+  +'<table><tr><th>Machine</th><th>Daily</th><th>Weekly</th></tr>'
+  +'<tr><td>19 ft electric scissor</td><td>$100-150</td><td>$225-350</td></tr>'
+  +'<tr><td>26 ft electric scissor</td><td>$150-250</td><td>$350-600</td></tr>'
+  +'<tr><td>30-45 ft boom</td><td>$200-400</td><td>$550-1,100</td></tr>'
+  +'<tr><td>60 ft boom</td><td>$600-1,500</td><td>$1,500-4,000</td></tr>'
+  +'<tr><td>Delivery</td><td colspan="2">$100-500 each way; articulating booms +10-20%</td></tr>'
+  +'</table>'
+  +'<h2>Regional Tech Wages &amp; Multipliers</h2>'
+  +'<table><tr><th>Region</th><th>Window Tech $/hr</th><th>Price Multiplier</th><th>Why</th></tr>'
+  +Object.keys(REGIONS).map(k=>{const r=REGIONS[k];return '<tr><td>'+r.label+'</td><td>$'+r.wage.toFixed(2)+' (rope x1.7)</td><td>x'+r.mult.toFixed(2)+'</td><td>'+r.note+'</td></tr>';}).join('')
+  +'</table>'
+  +'<h2>Structure Constants</h2>'
+  +'<table><tr><th>Item</th><th>Value</th><th>Rule</th></tr>'
+  +'<tr><td>Crew payroll burden</td><td>'+(BURDEN*100)+'%</td><td>On top of wages.</td></tr>'
+  +'<tr><td>Crew company profit</td><td>'+(SUB_PROFIT*100)+'%</td><td>After their expenses. Hold between 5% and 8%.</td></tr>'
+  +'<tr><td>City Wide margin</td><td>32-40%</td><td>Auto by pane count. Override with a reason.</td></tr>'
+  +'<tr><td>Minimums</td><td>$300 visit ($500 rope, $75 route visit)</td><td>Lead service only on multi-service visits.</td></tr>'
+  +'<tr><td>Lift rentals</td><td>Pass-through at cost</td><td>Margin applies to labor, not rented steel.</td></tr>'
+  +'<tr><td>Price floors per pane</td><td>Ext $4, int $3, pole $5, WFP $4, lift $6, rope $10, post-con $6, restoration $15</td><td>Anchored to the OS Pricing book and 2026 market bands.</td></tr></table>';
+}
+function setChem(k,v){CHEMS[k].perUnit=parseFloat(v)||CHEMS[k].perUnit;
+  const slim={};Object.keys(CHEMS).forEach(kk=>{slim[kk]={perUnit:CHEMS[kk].perUnit};});
+  localStorage.setItem('cwwindow_chems',JSON.stringify(slim));recalc();}
+
+/* ---------- TABS ---------- */
+function showTab(t){
+  document.querySelectorAll('.tab').forEach(el=>el.classList.toggle('active',el.dataset.tab===t));
+  ['quote','floors','process','rates'].forEach(k=>{$('tab-'+k).style.display=k===t?'':'none';});
+  if(t==='floors')renderFloors(); if(t==='process')renderProcess(); if(t==='rates')renderRates();
+}
+
+/* ---------- PRINT & COPY ---------- */
+function printQuote(internal){
+  const raw=activeResults(); const {results}=applyMinimums(raw);
+  if(!results.length){alert('Turn on at least one service first.');return;}
+  const region=REGIONS[$('region').value];
+  const acct=$('acct').value||'Client Facility';
+  const d=$('qdate').value||new Date().toISOString().slice(0,10);
+  const total=results.reduce((a,r)=>a+r.finalPrice,0);
+  let h='<div class="p-head"><img src="'+LOGO+'"><div class="pt"><b>'+(internal?'Internal Pricing Sheet':'Window Cleaning Investment Recap')+'</b><span>'+acct+' | '+region.label+' | '+d+'</span></div></div>';
+  results.forEach(r=>{
+    h+='<div class="p-svc"><span class="p-price">'+money(r.finalPrice)+(r.events>1?' per visit':'')+'</span><h4>'+r.s.name+' | '+r.sf+' '+r.s.unit+(r.events>1?' | '+r.events+'x per year':'')+'</h4><p>'+r.s.desc+'</p>';
+    if(r.events>1)h+='<p><b>Annual: '+money(r.finalPrice*r.events)+' ('+money(r.finalPrice*r.events/12)+'/month)</b></p>';
+    if(internal){
+      h+='<table class="p-table"><tr><th>Cost Line</th><th>Amount</th></tr>'
+      +'<tr><td>Tech labor '+r.manHrs.toFixed(1)+' tech-hrs @ $'+r.wage.toFixed(2)+' +'+(BURDEN*100)+'% burden</td><td>'+money(r.laborCost)+'</td></tr>'
+      +r.chems.map(c=>'<tr><td>'+c.label+'</td><td>'+money(c.cost)+'</td></tr>').join('')
+      +'<tr><td>Equipment fee</td><td>'+money(r.equipCost)+'</td></tr>'
+      +(r.flatCost?'<tr><td>Lift rental / rigging pass-through</td><td>'+money(r.flatCost)+'</td></tr>':'')
+      +'<tr><td><b>Crew company total (incl '+(SUB_PROFIT*100)+'% profit)</b></td><td><b>'+money(r.vendorCost)+'</b></td></tr>'
+      +(r.cwChems?'<tr><td>City Wide supplies</td><td>'+money(r.cwChems)+'</td></tr>':'')
+      +'<tr><td><b>Margin '+r.margin+'% | Regional x'+region.mult.toFixed(2)+' | '+money2(r.perSF)+'/'+r.s.unit.replace(/s$/,'')+' (market '+money2(r.mktLow)+'-'+money2(r.mktHigh)+')</b></td><td><b>'+money(r.finalPrice)+'</b></td></tr></table>';
+    }
+    h+='</div>';
+  });
+  h+='<div class="p-total"><span>Total Investment'+(results.some(r=>r.events>1)?' (per visit basis)':'')+'</span><span>'+money(total)+'</span></div>';
+  if(internal&&$('minOverride').checked)h+='<div class="p-note"><b>Minimum override active.</b> Reason: '+($('minReason').value||'not stated')+'</div>';
+  h+='<div class="p-note">'+(internal
+    ?'Internal document. Crew company profit held at '+(SUB_PROFIT*100)+'% after expenses. Lift rentals passed through at cost. Prepared by '+($('prepBy').value||S.user||'')+'.'
+    :'City Wide Facility Solutions manages your complete scope of work with certified crews, the right access equipment for every elevation, and documented safety compliance. Pricing reflects the full process: preparation, cleaning, detailing, and quality inspection. GoCityWide.com')+'</div>';
+  $('printArea').innerHTML=h;
+  window.print();
+}
+function copyQuote(){
+  const raw=activeResults(); const {results}=applyMinimums(raw);
+  if(!results.length){alert('Turn on at least one service first.');return;}
+  const region=REGIONS[$('region').value];
+  let t='WINDOW CLEANING QUOTE | '+($('acct').value||'')+' | '+region.label+'\n';
+  results.forEach(r=>{t+='\n'+r.s.name+' | '+r.sf+' '+r.s.unit+'\n  '+money(r.finalPrice)+(r.events>1?' per visit, '+r.events+'x/yr = '+money(r.finalPrice*r.events)+'/yr':'')+'\n';});
+  t+='\nTOTAL: '+money(results.reduce((a,r)=>a+r.finalPrice,0));
+  navigator.clipboard.writeText(t).then(()=>alert('Quote text copied.'));
+}
+
+/* ---------- SAVED WORK (local + cloud) ---------- */
+function snapshot(){return {acct:$('acct').value,qdate:$('qdate').value,prepBy:$('prepBy').value,region:$('region').value,chemProvider:$('chemProvider').value,ovMargin:$('ovMargin').value,minOverride:$('minOverride').checked,minReason:$('minReason').value,svcOn:S.svcOn,inputs:S.inputs};}
+function applySnapshot(p){
+  $('acct').value=p.acct||'';$('qdate').value=p.qdate||'';$('prepBy').value=p.prepBy||'';
+  $('region').value=p.region||'lv';$('chemProvider').value=p.chemProvider||'vendor';
+  $('ovMargin').value=p.ovMargin||'';$('minOverride').checked=!!p.minOverride;$('minReason').value=p.minReason||'';
+  S.svcOn=p.svcOn||{};S.inputs=p.inputs||{};recalc();
+}
+let saveTimer=null;
+function autosaveSoon(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>localSave(false),1200);}
+function localSave(announce){
+  localStorage.setItem('cwwindow_current',JSON.stringify({ts:Date.now(),payload:snapshot()}));
+  if(announce)alert('Saved locally.');
+}
+function saveWork(manual){
+  localSave(false);
+  if(!S.user){changeUser();if(!S.user)return;}
+  const id='wc_'+Date.now();
+  const rec={kind:'window_save',id,user:S.user,name:$('acct').value||'Untitled quote',ts:new Date().toISOString(),payload:snapshot()};
+  fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(rec)})
+   .then(r=>r.json()).then(j=>{if(manual)alert(j&&j.ok?'Saved to the cloud as "'+rec.name+'".':'Cloud save may not have landed. Your work is saved in this browser either way.');})
+   .catch(()=>{if(manual)alert('Cloud save unavailable. Your work is saved in this browser.');});
+}
+function openSaves(){
+  $('saveModal').classList.add('open');
+  $('saveList').innerHTML='<div style="font-size:12px;color:var(--cw-grey)">Loading...</div>';
+  const local=localStorage.getItem('cwwindow_current');
+  let html='';
+  if(local){const l=JSON.parse(local);html+=saveRowHtml({id:'local',name:(l.payload.acct||'Current work')+' (this browser)',ts:new Date(l.ts).toLocaleString()},true);}
+  if(!S.user){$('saveList').innerHTML=html+'<div style="font-size:12px;color:var(--cw-grey);padding:8px 0">Set your name to load cloud saves.</div>';return;}
+  fetch(ENDPOINT+'?windows='+encodeURIComponent(S.user)).then(r=>r.json()).then(j=>{
+    const items=(j&&j.items)||[];
+    $('saveList').innerHTML=html+(items.length?items.map(it=>saveRowHtml(it,false)).join(''):'<div style="font-size:12px;color:var(--cw-grey);padding:8px 0">No cloud saves yet for '+S.user+'.</div>');
+    window.__cloudSaves=items;
+  }).catch(()=>{$('saveList').innerHTML=html+'<div style="font-size:12px;color:var(--cw-grey);padding:8px 0">Cloud list unavailable right now.</div>';});
+}
+function saveRowHtml(it,isLocal){
+  return '<div class="saverow"><div class="meta"><b>'+(it.name||it.id)+'</b><span>'+(it.ts||'')+'</span></div>'
+  +'<button onclick="loadWork(\''+it.id+'\','+isLocal+')">Load</button>'
+  +(isLocal?'':'<button class="del" onclick="delWork(\''+it.id+'\')">Delete</button>')+'</div>';
+}
+function loadWork(id,isLocal){
+  if(isLocal){const l=JSON.parse(localStorage.getItem('cwwindow_current'));applySnapshot(l.payload);closeSaves();return;}
+  const it=(window.__cloudSaves||[]).find(x=>x.id===id);
+  if(it&&it.payload){applySnapshot(typeof it.payload==='string'?JSON.parse(it.payload):it.payload);closeSaves();}
+}
+function delWork(id){
+  if(!confirm('Delete this cloud save?'))return;
+  fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({kind:'window_save',id,del:true,user:S.user})}).then(()=>openSaves()).catch(()=>openSaves());
+}
+function closeSaves(){$('saveModal').classList.remove('open')}
+function changeUser(){
+  const n=prompt('Your name (used to store your saved work):',S.user||'');
+  if(n!==null){S.user=n.trim();localStorage.setItem('cwwindow_user',S.user);$('userBtn').textContent=S.user||'Set Your Name';}
+}
+
+/* ---------- INIT ---------- */
+(function init(){
+  $('qdate').value=new Date().toISOString().slice(0,10);
+  if(S.user)$('userBtn').textContent=S.user;
+  const cur=localStorage.getItem('cwwindow_current');
+  if(cur){try{applySnapshot(JSON.parse(cur).payload);}catch(e){recalc();}}else{recalc();}
+})();
+
+</script>
 </body>
 </html>
