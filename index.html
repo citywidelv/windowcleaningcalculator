@@ -189,7 +189,7 @@ body{
       <div class="cfield"><label>Chemicals Provided By</label>
         <select id="chemProvider" onchange="recalc()">
           <option value="vendor">Crew Provides (their cost + 15%)</option>
-          <option value="cw">City Wide (tolled at our cost)</option>
+          <option value="cw">City Wide Supplies</option>
         </select>
       </div>
       <div class="cfield"><label>Override Margin % (blank = auto by job size)</label>
@@ -211,7 +211,7 @@ body{
         </div>
         <div class="card">
           <h2>Window &amp; Glass Services</h2>
-          <p style="font-size:11.5px;color:var(--cw-grey);margin-bottom:12px">Count the glass, pick which sides we are cleaning, and switch on each service in this bid. The tool then builds the price from the ground up: tech labor, supplies, equipment, lift rentals at cost, a fair crew-company profit, and City Wide margin on top. If you know better than the tool on any number, type over it.</p>
+          <p style="font-size:11.5px;color:var(--cw-grey);margin-bottom:12px">Count the glass, pick which sides we are cleaning, and switch on each service in this bid. The tool then builds the price from the ground up: tech labor, supplies, equipment, lift rentals, a fair crew-company profit, and City Wide margin on top of every cost line. If you know better than the tool on any number, type over it.</p>
           <div id="svcList"></div>
         </div>
         <div class="card" id="shopCard" style="display:none">
@@ -307,7 +307,7 @@ const SERVICES=[
  {id:'wfp', name:'Water-Fed Pole: Pure Water (to 6 Stories)', sub:'Outside glass to 6 floors: purified water on a tall pole, dries spot-free', ico:'wfp', unit:'panes',
   perHr:40, equip:8, crew1:true, chems:['purewater'], mktUnit:[4,10], floorUnit:4.00,
   desc:'A brush on a carbon fiber pole fed with purified water. At 0-10 TDS the water carries no minerals, so glass rinses clean and dries spot-free with no squeegee and no toweling. Reaches 5-6 stories from the ground with no lift and no ladder, and runs about 75% faster than traditional methods on open elevations. Exterior only.'},
- {id:'lift', name:'Aerial Lift Work (Boom / Scissor)', sub:'Outside glass, 3-12 floors with ground access; lift rental billed at cost', ico:'lift', unit:'panes',
+ {id:'lift', name:'Aerial Lift Work (Boom / Scissor)', sub:'Outside glass, 3-12 floors with ground access; lift rental priced in', ico:'lift', unit:'panes',
   perHr:15, equip:10, crew1:false, flatCost:400, chems:['soap','rubber'], mktUnit:[8,20], floorUnit:6.00, wageAdj:1.15,
   desc:'Boom or scissor lift work for mid-rise exteriors, glass over entrances, and atrium interiors. The lift rental is a hard cost passed straight into the build-up: a 30-45 ft boom runs $200-400 a day plus $150-500 delivery, a 60 ft boom $600-1,500. Two techs minimum (operator rules), ANSI aerial lift training required.'},
  {id:'rope', name:'High-Rise Rope Descent (RDS)', sub:'Outside glass above lift reach: certified rope techs, certified roof anchors', ico:'rope', unit:'panes',
@@ -415,11 +415,11 @@ function priceService(s){
   const margin=(!isNaN(svcOv)&&svcOv>0)?svcOv:(!isNaN(ov)&&ov>0)?ov:autoMargin(qty);
   let price=totalCost/(1-margin/100)*region.mult;
   const unitFloor=sd?sd.floor:s.floorUnit;
-  if(unitFloor)price=Math.max(price, qty*unitFloor*region.mult+flatCost/(1-margin/100));
+  if(unitFloor)price=Math.max(price, qty*unitFloor*region.mult+(inhouse?flatCost:flatCost*(1+SUB_PROFIT))/(1-margin/100));
 
   /* per-unit override */
   const rateOv=parseFloat(st.rateOv);
-  if(!isNaN(rateOv)&&rateOv>0)price=qty*rateOv+flatCost/(1-margin/100);
+  if(!isNaN(rateOv)&&rateOv>0)price=qty*rateOv+(inhouse?flatCost:flatCost*(1+SUB_PROFIT))/(1-margin/100);
 
   const mktArr=sd?sd.mkt:s.mktUnit;
   const mktLow=mktArr[0]*region.mult, mktHigh=mktArr[1]*region.mult;
@@ -460,7 +460,7 @@ function renderServices(){
       +'<div class="field"><label>Visits / Year</label><select onchange="setSvc(\''+s.id+'\',\'events\',this.value)">'+FREQS.map(f=>'<option value="'+f[0]+'"'+((parseFloat(st.events)||s.freqDefault||1)===f[0]?' selected':'')+'>'+f[1]+'</option>').join('')+'</select></div>'
       +'<div class="field"><label>Tech Wage $/hr</label><input type="number" step="0.5" value="'+(st.wage||'')+'" placeholder="'+(REGIONS[$('region').value].wage*(s.wageAdj||1)).toFixed(2)+'" onchange="setSvc(\''+s.id+'\',\'wage\',this.value)"><small>'+(s.wageAdj&&s.wageAdj>1.3?'SPRAT-certified rope techs earn a real premium.':'')+'</small></div>'
       +'<div class="field"><label>Equipment $/hr</label><input type="number" step="1" value="'+(st.equip||'')+'" placeholder="'+s.equip+'" onchange="setSvc(\''+s.id+'\',\'equip\',this.value)"></div>'
-      +(s.flatCost!==undefined||s.id==='lift'||s.id==='rope'||s.id==='skylight'?'<div class="field"><label>Flat Cost Pass-Through $ (lift rental, rigging)</label><input type="number" step="10" value="'+(('flat' in st)?st.flat:'')+'" placeholder="'+(s.flatCost||0)+'" onchange="setSvc(\''+s.id+'\',\'flat\',this.value)"><small>Rental + delivery billed at cost into the build-up.</small></div>':'')
+      +(s.flatCost!==undefined||s.id==='lift'||s.id==='rope'||s.id==='skylight'?'<div class="field"><label>Lift &amp; Access Costs $ (rental, rigging)</label><input type="number" step="10" value="'+(('flat' in st)?st.flat:'')+'" placeholder="'+(s.flatCost||0)+'" onchange="setSvc(\''+s.id+'\',\'flat\',this.value)"><small>Rental + delivery priced into the build-up with margin.</small></div>':'')
       +'<div class="field"><label>Price per '+unitCap.replace(/s$/,'')+' Override</label><input type="number" step="0.05" value="'+(st.rateOv||'')+'" placeholder="auto build-up" onchange="setSvc(\''+s.id+'\',\'rateOv\',this.value)"></div>'
       +'<div class="field"><label>Service Margin % Override</label><input type="number" value="'+(st.margin||'')+'" placeholder="auto '+(st.sf?autoMargin(parseFloat(st.sf)||0):'32-40')+'" onchange="setSvc(\''+s.id+'\',\'margin\',this.value)"></div>'
       +'</div>';
@@ -498,7 +498,7 @@ function howTo(s){
    int:'<h4>Process</h4><p>Same wash-and-squeegee craft with less soil and more care: drop cloths under work, microfiber for partitions and mirrors, work around tenants and IT equipment. Count partitions, sidelites, and glass doors as panes when quoting.</p>',
    pole:'<h4>Process</h4><p>Washer and squeegee mounted on extension poles (Unger OptiLoc class) for 2nd and 3rd story glass from the ground. No ladders means no ladder risk, but detailing suffers at height, which is exactly why water-fed pole took this work over. Quote pole work when glass quality demands squeegee finish or water access is impossible.</p>',
    wfp:'<h4>What pure water is</h4><p>Tap water filtered through RO membranes and DI resin to near-zero TDS (total dissolved solids). At 0-10 TDS water dries without spots, so the brush scrubs and the water rinses: no squeegee, no towels, no ladder. Vegas tap runs 400-600 TDS, so an RO/DI system (XERO Pure class, about $1,900) is the required rig: DI-only resin at our TDS costs 5-10x more per gallon.</p><h4>Process</h4><ol><li>Verify TDS under 10 with an inline meter.</li><li>Brush the frames first, then the glass, top down.</li><li>Rinse off-glass with the brush lifted an inch. Let dry: no touching.</li></ol><div class="warnbox">First cleans on neglected glass need a traditional wash before WFP maintenance. Expect a few spotting callbacks while frames purge old soap: warn the client on visit one.</div>',
-   lift:'<h4>Decision rules</h4><ul><li>Scissor lift: flat slab access, straight up work (19 ft $100-150/day, 26 ft $150-250/day).</li><li>Boom lift: reach over landscaping, canopies, setbacks (30-45 ft $200-400/day, 60 ft $600-1,500/day). Articulating booms +10-20%.</li><li>Delivery $100-500 each way. Book weekly when the job runs 3+ days: weekly is about 2.5x the day rate.</li></ul><div class="warnbox">Operators need ANSI A92 training, harness anchoring in booms, and a spotter in drive lanes. The rental is a pass-through cost: put the real quote in the flat cost box and let margin apply to labor, not steel.</div>',
+   lift:'<h4>Decision rules</h4><ul><li>Scissor lift: flat slab access, straight up work (19 ft $100-150/day, 26 ft $150-250/day).</li><li>Boom lift: reach over landscaping, canopies, setbacks (30-45 ft $200-400/day, 60 ft $600-1,500/day). Articulating booms +10-20%.</li><li>Delivery $100-500 each way. Book weekly when the job runs 3+ days: weekly is about 2.5x the day rate.</li></ul><div class="warnbox">Operators need ANSI A92 training, harness anchoring in booms, and a spotter in drive lanes. The rental is a pass-through cost: put the real quote in the flat cost box: the tool prices margin on it like everything else.</div>',
    rope:'<h4>What has to be true before rope work happens</h4><ol><li>The BUILDING must have OSHA 1910.27 certified roof anchors: 5,000 lb rating per worker, inspected annually, recertified every 10 years. The owner provides written certification; no paper, no drops.</li><li>Techs carry SPRAT (or IRATA) certification, roughly $2,000 of training plus a few thousand in personal rope kit.</li><li>Every tech rigs a working line plus an independent fall-arrest line, with a rescue plan on site. RDS is legal to 300 ft above grade.</li></ol><div class="warnbox">This is why rope work bills around $170 per tech-hour retail and whole towers quote $800-3,000+. If a mid-rise lacks certified anchors, the real answer is lift work or a swing stage, and older Reno buildings fail this check constantly. Ask about anchors BEFORE you promise a price.</div>',
    postcon:'<h4>Process</h4><ol><li>Walk the glass with the GC and document existing scratches.</li><li>Get the scratched-glass waiver signed. Tempered glass with fabricating debris (fused glass fines from the tempering line) WILL scratch under a razor and it is a manufacturer defect, not technique.</li><li>Soak heavily, scrape flat and wet with fresh blades, never dry.</li><li>Wash and squeegee normally, detail frames, pull stickers with steam or solvent.</li></ol><div class="warnbox">2-4x slower than maintenance cleaning. Confirm the vendor carries Care, Custody &amp; Control coverage: standard liability excludes damage to the glass being worked on.</div>',
    hardwater:'<h4>Process</h4><ol><li>Test a corner: stage 1 (surface minerals) responds to chemistry, stage 2 (etched) needs polishing.</li><li>Apply mineral remover (OneRestore, Bio-Clean) with white pads, keep wet, rinse hard.</li><li>Stage 2: cerium oxide slurry under a low-speed polisher, then rinse and squeegee.</li><li>Fix the cause or sell the maintenance: adjust sprinklers, or schedule quarterly cleans before minerals re-etch.</li></ol><div class="warnbox">Six panes an hour is honest on restoration. At $15-60 per pane this is the highest-value line in window care, and in Las Vegas nearly every ground-floor perimeter has some of it.</div>',
@@ -572,7 +572,7 @@ function renderFloors(){
   +'<tr><td>Ground floor</td><td>Mop &amp; squeegee</td><td>Fastest, best detail finish, no equipment cost.</td></tr>'
   +'<tr><td>2-3 stories</td><td>Water-fed pole (or extension pole)</td><td>No ladders, no lift. WFP is about 75% faster and dries spot-free.</td></tr>'
   +'<tr><td>4-6 stories, open elevation</td><td>Water-fed pole (tall system)</td><td>45-60 ft poles reach 5-6 stories from the ground.</td></tr>'
-  +'<tr><td>3-12 stories with ground access</td><td>Boom / scissor lift</td><td>Rental passed through at cost. Watch landscaping and slopes.</td></tr>'
+  +'<tr><td>3-12 stories with ground access</td><td>Boom / scissor lift</td><td>Rental priced into the quote. Watch landscaping and slopes.</td></tr>'
   +'<tr><td>Above 12 stories, or no ground access</td><td>Rope descent (RDS) or swing stage</td><td>SPRAT techs + OSHA-certified roof anchors required. Premium work, premium price.</td></tr>'
   +'<tr><td>Glass over entrances, atrium interiors</td><td>Small lift or specialty pole</td><td>Floor protection indoors; book electric lifts only.</td></tr>'
   +'<tr><td>Occupied offices, interior glass</td><td>Traditional hand tools</td><td>Drop cloths, microfiber, tenant scheduling.</td></tr>'
@@ -603,14 +603,14 @@ function renderProcess(){
   +'<ol><li><b>Walk every elevation and count panes</b> per side, per service. Photograph problem glass (hard water, oxidation, scratches) as you go.</li>'
   +'<li><b>Assign an access method to every elevation.</b> Ground, pole, WFP, lift, or rope. Each method is its own service line in this tool with its own honest production rate.</li>'
   +'<li><b>Check the rope-work paperwork early.</b> Above lift reach, ask the building for their roof anchor certification (OSHA 1910.27: 5,000 lb anchors, annual inspection, 10-year recertification). No certified anchors means lift, swing stage, or renegotiate scope: find out before quoting, not after.</li>'
-  +'<li><b>Price lifts as pass-throughs.</b> Get the rental quote (scissor $100-250/day, 30-45 ft boom $200-400/day, 60 ft boom $600-1,500/day, delivery each way) and put it in the flat cost box so margin applies to labor, not rented steel.</li>'
+  +'<li><b>Price lifts as pass-throughs.</b> Get the rental quote (scissor $100-250/day, 30-45 ft boom $200-400/day, 60 ft boom $600-1,500/day, delivery each way) and put it in the flat cost box: the tool prices margin on it like everything else.</li>'
   +'<li><b>Structure the program.</b> Exterior quarterly, interior semi-annual, routes weekly to monthly, hard water maintenance before re-etching. Show the client the monthly accrual, not the visit price.</li>'
   +'<li><b>Apply minimums and read the market flag.</b> $300 visit minimum ($500 rope, $75 route visits). If the build-up prices below the market band, hold the band: cheap window work reads as uninsured window work.</li></ol>'
   +'<h2>Outsourcing: Picking the Right Window Vendor</h2>'
   +'<ul><li><b>Match the vendor to the access.</b> Storefront route outfits, WFP mid-rise crews, and SPRAT rope companies are three different businesses. A vendor pitching ladders for 4th-story glass is the wrong vendor.</li>'
   +'<li><b>Ask what they run.</b> Right answers: quality channels and rubber (Ettore, Unger, Sorbo, Moerman), an RO/DI water-fed system with a TDS meter for mid-rise, lift cards (ANSI A92) and SPRAT certs where claimed.</li>'
   +'<li><b>Verify insurance for the height they work.</b> General liability is rated by access method; rope and lift work carries surcharged premiums, and post-construction needs Care, Custody &amp; Control coverage for scratch claims. Packet on file before the first pane, like every City Wide crew.</li>'
-  +'<li><b>Target rates.</b> Window subs get 60-70% of retail. This tool builds their side from labor, supplies, equipment, rentals at cost, and 5-8% profit after expenses: if their quote is far off the build-up, one line is wrong, and now you know which conversation to have.</li>'
+  +'<li><b>Target rates.</b> Window subs get 60-70% of retail. This tool builds their side from labor, supplies, equipment, rentals, and 5-8% profit after expenses: if their quote is far off the build-up, one line is wrong, and now you know which conversation to have.</li>'
   +'<li><b>Red flags.</b> No waiver on post-construction razor work, "we do high-rise" with no SPRAT cards, DI-only tanks in a 500-TDS market, per-window prices with no pane definition, and anyone quoting a tower without asking about anchors.</li></ul>'
   +'<h2>What the Crew Should Be Using</h2>'
   +'<ul><li><b>Glass soap:</b> Titan Glass Gleam-4 or equivalent slip agent. </li>'
@@ -669,7 +669,7 @@ function renderRates(){
   +'<tr><td>Crew company profit</td><td>'+(SUB_PROFIT*100)+'%</td><td>After their expenses. Hold between 5% and 8%.</td></tr>'
   +'<tr><td>City Wide margin</td><td>32-40%</td><td>Auto by pane count. Override with a reason.</td></tr>'
   +'<tr><td>Minimums</td><td>$300 visit ($500 rope, $75 route visit)</td><td>Lead service only on multi-service visits.</td></tr>'
-  +'<tr><td>Lift rentals</td><td>Pass-through at cost</td><td>Margin applies to labor, not rented steel.</td></tr>'
+  +'<tr><td>Lift rentals</td><td>Margin applies</td><td>Enter the rental at our cost and it prices through the same chain as labor.</td></tr>'
   +'<tr><td>Price floors per pane</td><td>Ground glass: outside $4, inside $3, both sides $6.50. Pole $5, WFP $4, lift $6, rope $10, restoration $15</td><td>Anchored to the OS Pricing book and 2026 market bands.</td></tr></table>';
 }
 function setChem(k,v){CHEMS[k].perUnit=parseFloat(v)||CHEMS[k].perUnit;
@@ -710,7 +710,7 @@ function printQuote(internal){
   h+='<div class="p-total"><span>Total Investment'+(results.some(r=>r.events>1)?' (per visit basis)':'')+'</span><span>'+money(total)+'</span></div>';
   if(internal&&$('minOverride').checked)h+='<div class="p-note"><b>Minimum override active.</b> Reason: '+($('minReason').value||'not stated')+'</div>';
   h+='<div class="p-note">'+(internal
-    ?'Internal document. Crew company profit held at '+(SUB_PROFIT*100)+'% after expenses. Lift rentals passed through at cost. Prepared by '+($('prepBy').value||S.user||'')+'.'
+    ?'Internal document. Crew company profit held at '+(SUB_PROFIT*100)+'% after expenses. City Wide margin applies to every cost line. Prepared by '+($('prepBy').value||S.user||'')+'.'
     :'City Wide Facility Solutions manages your complete scope of work with certified crews, the right access equipment for every elevation, and documented safety compliance. Pricing reflects the full process: preparation, cleaning, detailing, and quality inspection. GoCityWide.com')+'</div>';
   $('printArea').innerHTML=h;
   window.print();
