@@ -6,7 +6,7 @@
 <title>City Wide Window Cleaning Calculator</title>
 <style>
 :root{
-  --cw-red:#D22730; --cw-red-dark:#a81e26; --cw-black:#2D2A26; --cw-grey:#636466;
+  --cw-red:#D22730; --cw-red-dark:#B01F27; --cw-black:#2D2A26; --cw-grey:#636466;
   --cw-white:#FFFFFF; --cw-teal:#0AA6A9; --cw-gold:#E5B423; --cw-light:#F5F5F5; --cw-border:#E5E5E5;
   --sp-xs:4px; --sp-sm:8px; --sp-md:16px; --sp-lg:24px; --sp-xl:32px;
 }
@@ -155,10 +155,18 @@ body{
 .p-table th{background:var(--cw-light);text-align:left;padding:5px 7px;border:1px solid var(--cw-border)}
 .p-table td{padding:5px 7px;border:1px solid var(--cw-border)}
 </style>
+<link rel="stylesheet" href="https://citywidelv.github.io/cw-base.css">
+<script src="https://citywidelv.github.io/cw-ops-desk/cw-auth.js"></script>
+<script>/* Internal tool. One team unlock per device (cw-auth.js). No passcode box here: without a
+   saved passcode this page sends the browser to the hub gate and comes straight back. */
+(function(){ if(!window.CWAuth) return; var hub = /sales-hub/.test(document.referrer||"") ? "sales" : "ops";
+  var p = CWAuth.require({hub:hub}); if(!p){ document.documentElement.style.visibility="hidden"; return; }
+  window.addEventListener("load", function(){ CWAuth.validate(p,"auth").then(function(r){ if(r.ok===false) CWAuth.locked(hub,"Wrong passcode."); }); }); })();
+</script>
 </head>
 <body>
 <div class="container">
-  <div class="logobar" style="position:relative"><a href="https://citywidelv.github.io/cw-ops-desk/" style="position:absolute;left:18px;top:50%;transform:translateY(-50%);font-size:12px;font-weight:700;color:#fff;background:var(--cw-red);text-decoration:none;border-radius:16px;padding:7px 15px;box-shadow:0 2px 6px rgba(210,39,48,.3)">&#8592; Back to Ops Hub</a><img src="https://emailer.emfluence.com/clients/citywide/uploadedfiles/signature_logo.png" alt="City Wide Facility Solutions"></div>
+  <div class="logobar" style="position:relative"><a href="https://citywidelv.github.io/cw-ops-desk/" style="position:absolute;left:18px;top:50%;transform:translateY(-50%);font-size:12px;font-weight:700;color:#fff;background:var(--cw-red);text-decoration:none;border-radius:16px;padding:7px 15px;box-shadow:0 2px 6px rgba(210,39,48,.3)">&larr; Ops Hub</a><img src="https://emailer.emfluence.com/clients/citywide/uploadedfiles/signature_logo.png" alt="City Wide Facility Solutions"></div>
   <div class="header">
     <h1>Window Cleaning Calculator</h1>
     <p>Storefront to High-Rise: Every Method, Lift &amp; Access Plan for Las Vegas, Northern Nevada &amp; Arizona</p>
