@@ -202,7 +202,7 @@ body{
         </select>
       </div>
       <div class="cfield"><label>Override Margin % (blank = auto by job size)</label>
-        <input type="number" id="ovMargin" placeholder="auto 32-40" style="width:110px" oninput="recalc()">
+        <input type="number" id="ovMargin" placeholder="auto 35-40" style="width:110px" oninput="recalc()">
       </div>
       <div class="cfield"><label>Active Margin</label><div class="marginpill" id="marginPill">auto</div></div>
       <div class="tricnote" id="regionNote"></div>
@@ -293,46 +293,47 @@ const REGIONS={
   az:   {label:'Arizona Border',     wage:25.0, mult:1.05, note:'Laughlin, Kingman &amp; Havasu: lower wages, almost no commercial window vendors. Price like a travel market.'}
 };
 
-/* ---------- SUPPLIES & CONSUMABLES (WindowCleaner.com / J.Racenstein street prices, July 2026). perUnit = $ consumed per pane/panel/screen. ---------- */
+/* ---------- SUPPLIES & CONSUMABLES. City Wide supplies come from Staples Advantage City Wide Facility Value Items only (prices pulled Oct 27 2026).
+   Items with no City Wide Value Item are crew supplied. perUnit = $ consumed per pane/panel/screen. ---------- */
 const DEFAULT_CHEMS={
-  soap:{name:'Titan Glass Gleam-4 concentrate', pack:'1 qt (512 gal solution)', cost:21.08, perUnit:0.02, note:'Quarter ounce per gallon. A quart runs a crew for months.'},
-  rubber:{name:'Squeegee rubber + washer sleeve wear', pack:'per-pane allowance', cost:0, perUnit:0.03, note:'Rubbers flip and swap daily in desert heat and grit.'},
-  purewater:{name:'RO/DI pure water (resin + membrane wear)', pack:'XERO resin $146/cu ft', cost:146.40, perUnit:0.06, note:'Vegas tap runs 400-600 TDS. DI-only burns $0.25+/gal of resin; behind an RO membrane it drops to pennies. RO/DI is mandatory economics here.'},
-  hardwaterchem:{name:'EaCo Chem OneRestore + Bio-Clean + cerium oxide', pack:'$53.24/gal + kit', cost:53.24, perUnit:1.50, note:'Acid-side mineral remover, then mechanical polish for stage-2 etching.'},
-  blades:{name:'Razor blades, scrapers, steel wool (post-construction)', pack:'per-pane allowance', cost:0, perUnit:0.15, note:'Blades get swapped constantly on stucco and silicone. Never dry-scrape.'},
-  screenchem:{name:'Screen wash solution + brushes', pack:'allowance', cost:0, perUnit:0.05},
-  solarwater:{name:'Pure water + soft brush wear (solar)', pack:'allowance', cost:0, perUnit:0.06, note:'No soap, no hard tools on panels: pure water and soft brushes only, per manufacturer warranties.'}
+  soap:{name:'Diversey Glance NA Glass &amp; Multi-Surface Cleaner SC (Staples #24527424, model 101106662)', pack:'47.3 oz concentrate, City Wide price $22.74', cost:22.74, perUnit:0.02, note:'Super-concentrate glass cleaner for the bucket and the spray bottle. City Wide Facility Value Item.'},
+  rubber:{name:'Unger WaterWand Multi-Use Squeegee (Staples #848922, model HM750) + Rubbermaid 14" Microfiber Glass Washer (Staples #24698980, model 2221945)', pack:'$26.08 squeegee, $20.41 washer, City Wide price', cost:46.49, perUnit:0.03, note:'Wear allowance per pane. Rubbers and sleeves swap often in desert heat and grit. City Wide Facility Value Items.'},
+  purewater:{name:'RO/DI pure water, resin and membrane wear (crew supplied: no City Wide Value Item at Staples)', pack:'XERO resin $146/cu ft', cost:146.40, perUnit:0.06, note:'Vegas tap runs 400-600 TDS. DI-only burns $0.25+/gal of resin; behind an RO membrane it drops to pennies. RO/DI is mandatory economics here.'},
+  hardwaterchem:{name:'Hard water remover and cerium oxide polish (crew supplied: no City Wide Value Item at Staples)', pack:'$53.24/gal + kit', cost:53.24, perUnit:1.50, note:'Acid-side mineral remover, then mechanical polish for stage-2 etching.'},
+  blades:{name:'Unger 4" Refill Blades, 10/Pack (Staples #637730, model RB10C) + Unger 1.5" Safety Scraper (Staples #637719, model SR500)', pack:'$9.74 blades, $3.04 scraper, City Wide price', cost:12.78, perUnit:0.15, note:'Fresh blades constantly on stucco and silicone. Never dry-scrape. City Wide Facility Value Items.'},
+  screenchem:{name:'Screen wash: Glance NA (Staples #24527424) + brushes', pack:'allowance', cost:0, perUnit:0.05},
+  solarwater:{name:'Pure water + soft brush wear for solar (crew supplied: no City Wide Value Item at Staples)', pack:'allowance', cost:0, perUnit:0.06, note:'No soap, no hard tools on panels: pure water and soft brushes only, per manufacturer warranties.'}
 };
 
 /* ---------- SERVICES. All unit-priced. perHr = units per tech-hour all-in (setup, ladders, detailing). ---------- */
 const SERVICES=[
  {id:'glass', name:'Window & Glass Cleaning: Ground Level', sub:'Storefronts, lobby glass, partitions, glass doors. Pick inside, outside, or both sides', ico:'squeegee', unit:'panes',
   sides:true, sideDefault:'both',
-  sideDef:{out:{perHr:30,mkt:[3,7],floor:4.00,label:'Outside Only'}, inn:{perHr:35,mkt:[2,7],floor:3.00,label:'Inside Only'}, both:{perHr:16,mkt:[5,12],floor:6.50,label:'Both Sides'}},
-  perHr:16, equip:3, crew1:true, chems:['soap','rubber'], mktUnit:[5,12], floorUnit:6.50,
+  sideDef:{out:{perHr:30,mkt:[3,7],floor:5.00,label:'Outside Only'}, inn:{perHr:35,mkt:[2,7],floor:3.75,label:'Inside Only'}, both:{perHr:16,mkt:[5,12],floor:8.00,label:'Both Sides'}},
+  perHr:16, equip:3, crew1:true, chems:['soap','rubber'], mktUnit:[5,12], floorUnit:8.00,
   desc:'Hand-tool window cleaning on everything a tech can reach from the floor: storefront glass, lobby glass, office partitions, sidelites, and glass doors. Count each framed piece of glass once, then use the sides toggle to say whether the crew cleans the outside, the inside, or both.'},
  {id:'pole', name:'Upper Floors by Pole (2-3 Stories)', sub:'Outside glass on floors 2-3, cleaned from the ground with no ladders', ico:'pole', unit:'panes',
-  perHr:22, equip:4, crew1:true, chems:['soap','rubber'], mktUnit:[5,10], floorUnit:5.00,
+  perHr:22, equip:4, crew1:true, chems:['soap','rubber'], mktUnit:[5,10], floorUnit:6.00,
   desc:'Second and third story exterior glass cleaned from the ground on extension poles. Slower and harder to detail than ground work, which is why upper-story panes carry a $2-5 premium.'},
  {id:'wfp', name:'Water-Fed Pole: Pure Water (to 6 Stories)', sub:'Outside glass to 6 floors: purified water on a tall pole, dries spot-free', ico:'wfp', unit:'panes',
-  perHr:40, equip:8, crew1:true, chems:['purewater'], mktUnit:[4,10], floorUnit:4.00,
+  perHr:40, equip:8, crew1:true, chems:['purewater'], mktUnit:[4,10], floorUnit:5.00,
   desc:'A brush on a carbon fiber pole fed with purified water. At 0-10 TDS the water carries no minerals, so glass rinses clean and dries spot-free with no squeegee and no toweling. Reaches 5-6 stories from the ground with no lift and no ladder, and runs about 75% faster than traditional methods on open elevations. Exterior only.'},
  {id:'lift', name:'Aerial Lift Work (Boom / Scissor)', sub:'Outside glass, 3-12 floors with ground access; lift rental priced in', ico:'lift', unit:'panes',
-  perHr:15, equip:10, crew1:false, flatCost:400, chems:['soap','rubber'], mktUnit:[8,20], floorUnit:6.00, wageAdj:1.15,
+  perHr:15, equip:10, crew1:false, flatCost:400, chems:['soap','rubber'], mktUnit:[8,20], floorUnit:9.00, wageAdj:1.15,
   desc:'Boom or scissor lift work for mid-rise exteriors, glass over entrances, and atrium interiors. The lift rental is a hard cost passed straight into the build-up: a 30-45 ft boom runs $200-400 a day plus $150-500 delivery, a 60 ft boom $600-1,500. Two techs minimum (operator rules), ANSI aerial lift training required.'},
  {id:'rope', name:'High-Rise Rope Descent (RDS)', sub:'Outside glass above lift reach: certified rope techs, certified roof anchors', ico:'rope', unit:'panes',
   perHr:12, equip:12, crew1:false, chems:['soap','rubber'], mktUnit:[10,25], floorUnit:10.00, wageAdj:1.7, minOwn:500,
   desc:'Rope descent for glass above lift and pole reach. This is certified-specialist work: SPRAT-trained techs, OSHA 1910.27 certified roof anchors rated 5,000 lbs each, a separate fall-arrest line per worker, rigging and rescue plans, and insurance priced for height. Rope crews bill around $170 per tech-hour at retail, and whole buildings quote $800-3,000+.'},
  {id:'postcon', name:'Post-Construction Window Clean', sub:'Razor work: stucco, paint, silicone, stickers. Pick inside, outside, or both sides', ico:'razor', unit:'panes',
   sides:true, sideDefault:'both',
-  sideDef:{out:{perHr:10,mkt:[8,20],floor:6.00,label:'Outside Only'}, inn:{perHr:12,mkt:[6,15],floor:5.00,label:'Inside Only'}, both:{perHr:5.5,mkt:[12,30],floor:10.00,label:'Both Sides'}},
-  perHr:10, equip:4, crew1:true, chems:['soap','blades'], mktUnit:[8,20], floorUnit:6.00,
+  sideDef:{out:{perHr:10,mkt:[8,20],floor:7.25,label:'Outside Only'}, inn:{perHr:12,mkt:[6,15],floor:6.00,label:'Inside Only'}, both:{perHr:5.5,mkt:[12,30],floor:12.00,label:'Both Sides'}},
+  perHr:10, equip:4, crew1:true, chems:['soap','blades'], mktUnit:[8,20], floorUnit:7.25,
   desc:'First clean after construction: scraping stucco, paint overspray, silicone, and stickers with razors and heavy rinse. Runs 2-4x slower than maintenance cleaning and carries real scratch risk from fabricating debris on tempered glass. Never start without a signed scratched-glass waiver.'},
  {id:'hardwater', name:'Hard Water Stain Removal & Glass Restoration', sub:'The Las Vegas specialty: sprinkler overspray and mineral etching', ico:'droplet', unit:'panes',
-  perHr:6, equip:5, crew1:true, chems:['hardwaterchem'], mktUnit:[15,60], floorUnit:15.00, minOwn:300,
+  perHr:6, equip:5, crew1:true, chems:['hardwaterchem'], mktUnit:[15,60], floorUnit:20.00, minOwn:300,
   desc:'Mineral deposit removal with acid-side chemistry (OneRestore, Bio-Clean) and cerium oxide polishing for etched glass. Sprinkler overspray plus 500+ TDS water writes permanent stains on LV storefront glass, and this service prices at 3-8x standard cleaning. Quote a sealed-glass upsell after restoration.'},
  {id:'screens', name:'Screen Cleaning', sub:'Wash, brush, and reinstall', ico:'screen', unit:'screens',
-  perHr:20, equip:1, crew1:true, chems:['screenchem'], mktUnit:[2,5], floorUnit:1.50,
+  perHr:20, equip:1, crew1:true, chems:['screenchem'], mktUnit:[2,5], floorUnit:3.00,
   desc:'Screens washed, brushed, dried, and reinstalled. Quick add-on revenue on any full-service window job.'},
  {id:'tracks', name:'Track & Sill Detailing', sub:'Vacuum and wipe-out of tracks, sills, and frames', ico:'track', unit:'windows',
   perHr:15, equip:1, crew1:true, chems:['soap'], mktUnit:[3,6], floorUnit:2.00,
@@ -342,8 +343,8 @@ const SERVICES=[
   desc:'Skylights and overhead atrium glass, cleaned by WFP from below or lift access above. Price per unit and add the lift line when interior height demands it.'},
  {id:'route', name:'Storefront Route Program', sub:'Recurring weekly to monthly service. Pick inside, outside, or both sides', ico:'store', unit:'panes',
   sides:true, sideDefault:'out',
-  sideDef:{out:{perHr:60,mkt:[0.8,2.0],floor:0.8,label:'Outside Only'}, inn:{perHr:70,mkt:[0.7,1.8],floor:0.7,label:'Inside Only'}, both:{perHr:32,mkt:[1.4,3.5],floor:1.4,label:'Both Sides'}},
-  perHr:60, equip:2, crew1:true, freqDefault:12, chems:['soap','rubber'], mktUnit:[0.8,2.0], floorUnit:0.8, minOwn:75,
+  sideDef:{out:{perHr:60,mkt:[0.8,2.0],floor:1.00,label:'Outside Only'}, inn:{perHr:70,mkt:[0.7,1.8],floor:0.90,label:'Inside Only'}, both:{perHr:32,mkt:[1.4,3.5],floor:1.75,label:'Both Sides'}},
+  perHr:60, equip:2, crew1:true, freqDefault:12, chems:['soap','rubber'], mktUnit:[0.8,2.0], floorUnit:1.00, minOwn:75,
   desc:'The recurring program: in-and-out storefront glass on a weekly, bi-weekly, or monthly route. Route pros move at 60-100 panes an hour and the market prices near $1 per pane-side per visit with $25-75 visit minimums. Low ticket, high density, sticky revenue: this is how window vendors build wealth, and how we keep clients between deep services.'},
  {id:'solar', name:'Solar Panel Cleaning', sub:'Pure water and soft brush, the desert add-on', ico:'solar', unit:'panels',
   perHr:20, equip:8, crew1:true, chems:['solarwater'], mktUnit:[5,15], floorUnit:4.00,
@@ -353,7 +354,7 @@ const CONDITIONS=[{k:'good',label:'Maintained',lab:1,chem:1},{k:'heavy',label:'D
 const FREQS=[[1,'One-time / 1x per year'],[2,'2x per year'],[4,'Quarterly'],[6,'Every other month'],[12,'Monthly'],[26,'Bi-weekly'],[52,'Weekly']];
 const SUP_WAGE=35;      /* working supervisor default $/hr, editable on every service */
 const BURDEN=0.15; const SUB_PROFIT=0.07; const VENDOR_CHEM_MARKUP=0.15; const MIN_PRICE=300;
-function autoMargin(units){ if(units<50)return 40; if(units<150)return 38; if(units<300)return 36; if(units<600)return 34; return 32; }
+function autoMargin(units){ if(units<50)return 40; if(units<150)return 38; if(units<300)return 36; return 35; }  /* never below 35% (TJ, Oct 2026) */
 
 const ICONS={
  squeegee:'<svg viewBox="0 0 24 24"><path d="M4 7h16v3H4z"/><path d="M6 10v2M12 10v2M18 10v2"/><path d="M12 12v8"/><path d="M9 20h6"/></svg>',
@@ -433,7 +434,7 @@ function priceService(s){
   const margin=(!isNaN(svcOv)&&svcOv>0)?svcOv:(!isNaN(ov)&&ov>0)?ov:autoMargin(qty);
   let price=totalCost/(1-margin/100)*region.mult;
   const unitFloor=sd?sd.floor:s.floorUnit;
-  if(unitFloor)price=Math.max(price, qty*unitFloor*region.mult+(inhouse?flatCost:flatCost*(1+SUB_PROFIT))/(1-margin/100));
+  if(unitFloor)price=Math.max(price, qty*unitFloor*cond.lab*region.mult+(inhouse?flatCost:flatCost*(1+SUB_PROFIT))/(1-margin/100));
 
   /* per-unit override */
   const rateOv=parseFloat(st.rateOv);
@@ -483,7 +484,7 @@ function renderServices(){
       +'<div class="field"><label>Equipment $/hr</label><input type="number" step="1" value="'+(st.equip||'')+'" placeholder="'+s.equip+'" onchange="setSvc(\''+s.id+'\',\'equip\',this.value)"></div>'
       +(s.flatCost!==undefined||s.id==='lift'||s.id==='rope'||s.id==='skylight'?'<div class="field"><label>Lift &amp; Access Costs $ (rental, rigging)</label><input type="number" step="10" value="'+(('flat' in st)?st.flat:'')+'" placeholder="'+(s.flatCost||0)+'" onchange="setSvc(\''+s.id+'\',\'flat\',this.value)"><small>Rental + delivery priced into the build-up with margin.</small></div>':'')
       +'<div class="field"><label>Price per '+unitCap.replace(/s$/,'')+' Override</label><input type="number" step="0.05" value="'+(st.rateOv||'')+'" placeholder="auto build-up" onchange="setSvc(\''+s.id+'\',\'rateOv\',this.value)"></div>'
-      +'<div class="field"><label>Service Margin % Override</label><input type="number" value="'+(st.margin||'')+'" placeholder="auto '+(st.sf?autoMargin(parseFloat(st.sf)||0):'32-40')+'" onchange="setSvc(\''+s.id+'\',\'margin\',this.value)"></div>'
+      +'<div class="field"><label>Service Margin % Override</label><input type="number" value="'+(st.margin||'')+'" placeholder="auto '+(st.sf?autoMargin(parseFloat(st.sf)||0):'35-40')+'" onchange="setSvc(\''+s.id+'\',\'margin\',this.value)"></div>'
       +'</div>';
       if(r){
         const uw='/'+s.unit.replace(/s$/,'');
@@ -582,7 +583,7 @@ function recalc(){
   $('minMsg').textContent=minMsg;
   const ov=parseFloat($('ovMargin').value);
   const shown=(!isNaN(ov)&&ov>0)?ov:(results.length?Math.round(results.reduce((a,r)=>a+r.margin,0)/results.length):null);
-  $('marginPill').textContent=shown?shown+'%'+((!isNaN(ov)&&ov>0)?' override':' auto by size'):'32-40% auto';
+  $('marginPill').textContent=shown?shown+'%'+((!isNaN(ov)&&ov>0)?' override':' auto by size'):'35-40% auto';
   $('marginPill').className='marginpill'+(shown&&shown<32?' hot':'');
 }
 /* ---------- EDUCATION TABS ---------- */
@@ -641,7 +642,7 @@ function renderProcess(){
   +'<li><b>Post-construction:</b> fresh razor blades, scratch log, signed waiver.</li>'
   +'<li><b>Solar:</b> pure water and soft brushes only. No soap, no abrasives, no pressure washer.</li></ul>'
   +'<h2>Pricing It Effectively</h2>'
-  +'<ul><li>Margin auto-scales 32-40% by pane count, same family rules as the Waxable Floors and Carpet tools. Override with a reason when you know something the tool does not.</li>'
+  +'<ul><li>Margin auto-scales 35-40% by pane count, same family rules as the Waxable Floors and Carpet tools. Override with a reason when you know something the tool does not.</li>'
   +'<li>Access premiums are real: upper-story glass earns $2-5 more per pane, rope glass 2-3x ground rates. The build-up prices the crew fairly and the price floors keep us from quoting sidewalk rates on rope work.</li>'
   +'<li>Routes are the annuity: near $1 per pane-side per visit, $25-75 visit minimums, and they feed every premium service on this list.</li>'
   +'<li>Bundle: exterior + interior + tracks + screens on one mobilization beats four visits, and the minimum applies once, on the lead service.</li></ul>'
@@ -689,7 +690,7 @@ function renderRates(){
   +'<table><tr><th>Item</th><th>Value</th><th>Rule</th></tr>'
   +'<tr><td>Crew payroll burden</td><td>'+(BURDEN*100)+'%</td><td>On top of wages.</td></tr>'
   +'<tr><td>Crew company profit</td><td>'+(SUB_PROFIT*100)+'%</td><td>After their expenses. Hold between 5% and 8%.</td></tr>'
-  +'<tr><td>City Wide margin</td><td>32-40%</td><td>Auto by pane count. Override with a reason.</td></tr>'
+  +'<tr><td>City Wide margin</td><td>35-40%</td><td>Auto by pane count. Override with a reason.</td></tr>'
   +'<tr><td>Minimums</td><td>$300 visit ($500 rope, $75 route visit)</td><td>Lead service only on multi-service visits.</td></tr>'
   +'<tr><td>Lift rentals</td><td>Margin applies</td><td>Enter the rental at our cost and it prices through the same chain as labor.</td></tr>'
   +'<tr><td>Price floors per pane</td><td>Ground glass: outside $4, inside $3, both sides $6.50. Pole $5, WFP $4, lift $6, rope $10, restoration $15</td><td>Anchored to the OS Pricing book and 2026 market bands.</td></tr></table>';
